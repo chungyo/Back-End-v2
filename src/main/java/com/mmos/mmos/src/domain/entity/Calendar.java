@@ -21,6 +21,7 @@ public class Calendar {
     @Column
     @ColumnDefault("true")
     private boolean calendar_status;
+
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Planner> calendar_planners;
 }
