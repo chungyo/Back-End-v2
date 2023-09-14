@@ -1,11 +1,9 @@
 package com.mmos.mmos.src.domain.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
@@ -15,4 +13,16 @@ public class UserStudy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userstudy_index;
+
+    @Column
+    @ColumnDefault("true")
+    private Boolean userstudy_status;
+
+    @ManyToOne
+    @JoinColumn(name = "user_index")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "study_index")
+    private Study study;
 }
