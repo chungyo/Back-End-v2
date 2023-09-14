@@ -17,7 +17,7 @@ public class Weather {
     private Long weather_index;
 
     @Column
-    @ColumnDefault("맑음")
+    @ColumnDefault("null")
     private String weather_image;
 
     @Column
