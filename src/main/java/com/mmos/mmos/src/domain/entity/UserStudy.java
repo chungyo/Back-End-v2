@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -15,6 +17,10 @@ public class UserStudy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userstudy_index;
+
+    @Column
+    @ColumnDefault("false")
+    private boolean userstudy_is_leader;
 
     @Column
     @ColumnDefault("true")
@@ -27,4 +33,7 @@ public class UserStudy {
     @ManyToOne
     @JoinColumn(name = "study_index")
     private Study study;
+
+    @OneToMany(mappedBy = "userStudy", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Plan> userstudy_plans;
 }
