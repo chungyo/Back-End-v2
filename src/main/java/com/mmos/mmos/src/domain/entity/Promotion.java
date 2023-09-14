@@ -17,4 +17,8 @@ public class Promotion {
     @Column
     @ColumnDefault("true")
     private boolean promotion_status;
+
+    @ManyToOne
+    @JoinColumn(name = "study_index")
+    private Study study;
 }
