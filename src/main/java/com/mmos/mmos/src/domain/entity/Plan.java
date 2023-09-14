@@ -33,12 +33,12 @@ public class Plan {
     @ColumnDefault("false")
     private boolean plan_is_visible_on_calendar;
 
-    @OneToMany(mappedBy = "studytime", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<StudyTime> studytime_times;
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<StudyTime> plan_studytime_times;
 
     @Column
     @ColumnDefault("true")
-    private boolean studytime_status;
+    private boolean plan_status;
 
     @ManyToOne
     @JoinColumn(name = "planner_index")
