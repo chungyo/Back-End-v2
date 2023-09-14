@@ -45,8 +45,8 @@ public class Plan {
     private Planner planner;
 
     @ManyToOne
-    @JoinColumn(name = "study_index")
-    private Study study;
+    @JoinColumn(name = "userstudy_index")
+    private UserStudy userStudy;
 
 
 }
