@@ -19,9 +19,6 @@ public class Study {
     @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<UserStudy> study_userstudies;
 
-    @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<User> study_users;
-
     @Column
     @ColumnDefault("null")
     @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE, orphanRemoval = true)
