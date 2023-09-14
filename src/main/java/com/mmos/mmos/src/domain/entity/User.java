@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+
 import java.util.List;
 
 @Entity
@@ -47,16 +48,6 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Planner> user_planners;
-
-    @Column
-    @ColumnDefault("null")
-    @ElementCollection
-    private List<Long> user_friends;
-
-    @Column
-    @ColumnDefault("null")
-    @ElementCollection
-    private List<Long> user_fixed_friends;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @ColumnDefault("null")
