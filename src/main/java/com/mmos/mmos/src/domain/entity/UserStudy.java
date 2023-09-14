@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@DynamicInsert
 public class UserStudy {
 
     @Id
@@ -16,7 +18,7 @@ public class UserStudy {
 
     @Column
     @ColumnDefault("true")
-    private Boolean userstudy_status;
+    private boolean userstudy_status;
 
     @ManyToOne
     @JoinColumn(name = "user_index")
