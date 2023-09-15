@@ -19,6 +19,7 @@ public class Post {
     @Column
     private String post_title;
 
+    @Lob
     @Column
     private String post_contents;
 
