@@ -25,4 +25,8 @@ public class UserBadge {
     @Column
     @ColumnDefault("true")
     private boolean userbadge_status;
+
+    @Column
+    @ColumnDefault("false")
+    private boolean userbadge_is_visible;
 }
