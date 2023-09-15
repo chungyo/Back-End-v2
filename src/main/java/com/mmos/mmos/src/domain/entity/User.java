@@ -1,13 +1,17 @@
 package com.mmos.mmos.src.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@ToString
 @Getter
 @NoArgsConstructor
 public class User {
@@ -29,6 +33,7 @@ public class User {
     private String user_nickname;
 
     @Column
+    @ColumnDefault("null")  // 추후에 기본 이미지 주소로 변경
     private String user_profile_image;
 
     @Column
@@ -47,7 +52,7 @@ public class User {
     private Long user_total_completed_schedule_num;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Planner> user_planners;
+    private List<Calendar> user_calendars = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @ColumnDefault("null")
@@ -55,7 +60,7 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @ColumnDefault("null")
-    private List<UserStudy> user_studies;
+    private List<UserStudy> user_userstudies;
 
     @Column
     @ColumnDefault("true")
@@ -65,4 +70,26 @@ public class User {
     @JoinColumn(name = "university_index")
     private University university;
 
+    @Builder
+    public User(String user_id, String user_password, String user_name, String user_nickname, Long user_student_id) {
+        this.user_id = user_id;
+        this.user_password = user_password;
+        this.user_name = user_name;
+        this.user_nickname = user_nickname;
+        this.user_student_id = user_student_id;
+    }
+
+
+    public void addCalendars(Calendar calendar) {
+        System.out.println("addCalendars = " + calendar.toString());
+        this.user_calendars.add(calendar);
+    }
+
+    public void addUserBadges(UserBadge userBadge) {
+        this.user_userbadges.add(userBadge);
+    }
+
+    public void adduserStudies(UserStudy userStudy) {
+        this.user_userstudies.add(userStudy);
+    }
 }
