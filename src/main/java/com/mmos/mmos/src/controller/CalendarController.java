@@ -13,6 +13,4 @@ public class CalendarController extends BaseController {
     private final static int SUCCESS_CODE = 200;
     private final CalendarService calendarService;
 
-
-
 }
