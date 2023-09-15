@@ -18,4 +18,5 @@ public class ResponseApiMessage {
         this.message = message;
         this.responseData = responseData;
     }
+
 }
