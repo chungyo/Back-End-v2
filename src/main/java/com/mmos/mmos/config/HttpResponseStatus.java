@@ -5,9 +5,8 @@ import org.springframework.http.HttpStatus;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
-
 @Getter
-public enum BaseResponseStatus {
+public enum HttpResponseStatus {
     /**
      * 200 : 요청 성공
      */
@@ -39,7 +38,7 @@ public enum BaseResponseStatus {
     private final int code;
     private final String message;
 
-    private BaseResponseStatus(boolean isSuccess, int code, String message) {
+    private HttpResponseStatus(boolean isSuccess, int code, String message) {
         this.isSuccess = isSuccess;
         this.code = code;
         this.message = message;
