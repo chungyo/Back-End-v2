@@ -1,16 +1,21 @@
 package com.mmos.mmos.src.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
+@ToString
 @Getter
 @NoArgsConstructor
+@DynamicInsert
 public class Planner {
 
     @Id
@@ -18,11 +23,12 @@ public class Planner {
     private Long planner_index;
 
     @Column
-    private Date planner_date;
+    private LocalDate planner_date;
 
     @Column
     @ColumnDefault("null")
     private String planner_memo;
+
     @Column
     @ColumnDefault("0")
     private Long planner_daily_study_time;
@@ -44,10 +50,6 @@ public class Planner {
     private List<Plan> planner_plans;
 
     @ManyToOne
-    @JoinColumn(name = "user_index")
-    private User user;
-
-    @ManyToOne
     @JoinColumn(name = "calendar_index")
     private Calendar calendar;
 
@@ -57,4 +59,9 @@ public class Planner {
     @Column
     private Long planner_dday;
 
+    @Builder
+    public Planner(LocalDate planner_date, Calendar calendar) {
+        this.planner_date = planner_date;
+        this.calendar = calendar;
+    }
 }
