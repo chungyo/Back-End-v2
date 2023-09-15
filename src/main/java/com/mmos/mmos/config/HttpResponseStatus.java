@@ -5,11 +5,9 @@ import org.springframework.http.HttpStatus;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
-/**
- * 에러 코드 관리
- */
+
 @Getter
-public enum HttpResponseStatus {
+public enum BaseResponseStatus {
     /**
      * 200 : 요청 성공
      */
@@ -27,9 +25,8 @@ public enum HttpResponseStatus {
     RESPONSE_ERROR(false, HttpStatus.NOT_FOUND.value(), "값을 불러오는데 실패하였습니다."),
 
 
-
     /**
-     * 50 : Database, Server 오류
+     * 500 : Database, Server 오류
      */
     DATABASE_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "데이터베이스 연결에 실패하였습니다."),
     SERVER_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버와의 연결에 실패하였습니다."),
@@ -42,10 +39,9 @@ public enum HttpResponseStatus {
     private final int code;
     private final String message;
 
-    private HttpResponseStatus(boolean isSuccess, int code, String message) {
+    private BaseResponseStatus(boolean isSuccess, int code, String message) {
         this.isSuccess = isSuccess;
         this.code = code;
         this.message = message;
     }
 }
-
