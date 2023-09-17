@@ -20,7 +20,7 @@ public class BadgeService {
 
     // 휘장 ID로 조회
     @Transactional
-    public BadgeResponseDto findById(Long badgeId) {
+    public BadgeResponseDto getBadge(Long badgeId) {
         Badge badge = findBadge(badgeId);
 
         return new BadgeResponseDto(badge);

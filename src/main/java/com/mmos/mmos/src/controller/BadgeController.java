@@ -14,13 +14,12 @@ import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
 @RequiredArgsConstructor
 public class BadgeController extends BaseController {
 
-    private final static int SUCCESS_CODE = 200;
     private final BadgeService badgeService;
 
     @ResponseBody
     @GetMapping("/{badgeIdx}")
     public ResponseEntity<ResponseApiMessage> getBadge(@PathVariable Long badgeIdx) {
-        BadgeResponseDto responseDto = badgeService.findById(badgeIdx);
+        BadgeResponseDto responseDto = badgeService.getBadge(badgeIdx);
 
         return sendResponseHttpByJson(SUCCESS, "Load Badge. BADGE_INDEX=" + badgeIdx, responseDto);
     }
