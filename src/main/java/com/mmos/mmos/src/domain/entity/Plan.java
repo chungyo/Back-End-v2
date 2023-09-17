@@ -22,23 +22,19 @@ public class Plan {
     private String plan_name;
 
     @Column
-    @ColumnDefault("true")
-    private boolean plan_is_complete;
+    private boolean plan_is_complete = true;
 
     @Column
-    @ColumnDefault("false")
-    private boolean plan_is_study;
+    private boolean plan_is_study = false;
 
     @Column
-    @ColumnDefault("false")
-    private boolean plan_is_visible_on_calendar;
+    private boolean plan_is_visible_on_calendar = false;
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<StudyTime> plan_studytime_times;
 
     @Column
-    @ColumnDefault("true")
-    private boolean plan_status;
+    private boolean plan_status = true;
 
     @ManyToOne
     @JoinColumn(name = "planner_index")

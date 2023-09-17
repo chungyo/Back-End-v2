@@ -15,11 +15,10 @@ public class Friend {
     private Long friend_index;
 
     @Column
-    private boolean friend_is_fixed;
+    private boolean friend_is_fixed = false;
 
     @Column
-    @ColumnDefault("true")
-    private boolean friend_status;
+    private boolean friend_status = false;
 
     @ManyToOne
     @JoinColumn(name = "user_index")

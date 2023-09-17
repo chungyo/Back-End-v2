@@ -63,8 +63,7 @@ public class User {
     private List<UserStudy> user_userstudies;
 
     @Column
-    @ColumnDefault("true")
-    private boolean user_status;
+    private boolean user_status = true;
 
     @ManyToOne
     @JoinColumn(name = "university_index")

@@ -27,8 +27,7 @@ public class Post {
     private String post_image;
 
     @Column
-    @ColumnDefault("true")
-    private boolean post_is_notice;
+    private boolean post_is_notice = true;
 
     @Column
     private String post_writer;
@@ -40,8 +39,7 @@ public class Post {
     private Timestamp post_updated_at;
 
     @Column
-    @ColumnDefault("true")
-    private boolean post_status;
+    private boolean post_status = true;
 
     @ManyToOne
     @JoinColumn(name = "notice_index")

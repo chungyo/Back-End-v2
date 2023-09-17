@@ -20,8 +20,7 @@ public class Major {
     private Long major_name;
 
     @Column
-    @ColumnDefault("true")
-    private boolean major_status;
+    private boolean major_status = true;
 
     @ManyToOne
     @JoinColumn(name = "univ_index")
