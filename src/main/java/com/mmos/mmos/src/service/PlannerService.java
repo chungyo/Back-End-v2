@@ -27,6 +27,8 @@ public class PlannerService {
     public Planner savePlanner(LocalDate today, Long calendarIdx) {
         Calendar calendar = findCalendar(calendarIdx);
         Planner planner = new Planner(today, calendar);
+        // Calendar, Planner 양방향 매핑
+        calendar.addPlanner(planner);
 
         return plannerRepository.save(planner);
     }

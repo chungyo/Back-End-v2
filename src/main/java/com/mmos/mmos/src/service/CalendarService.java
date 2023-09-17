@@ -25,6 +25,8 @@ public class CalendarService {
     public Calendar saveCalendar(int month, Long userIdx) {
         User user = findUser(userIdx);
         Calendar calendar = new Calendar(month, user);
+        // User, Calendar 양방향 매핑
+        user.addCalendars(calendar);
 
         return calendarRepository.save(calendar);
     }
