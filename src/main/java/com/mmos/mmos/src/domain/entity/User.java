@@ -79,7 +79,6 @@ public class User {
         this.tier = tier;
     }
 
-
     public void addCalendars(Calendar calendar) {
         System.out.println("addCalendars = " + calendar.toString());
         this.user_calendars.add(calendar);
