@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BadgeResponseDto {
     private Long badgeIdx;
-    private String badgeExp;
+    private Long badgeExp;
     private String badgeIcon;
     private String badgeInfo;
     private String badgeName;

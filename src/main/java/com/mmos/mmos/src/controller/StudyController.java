@@ -35,7 +35,6 @@ public class StudyController extends BaseController{
     public ResponseEntity<ResponseApiMessage> updateStudyName(@PathVariable Long studyIdx, @PathVariable String studyName) {
         studyService.updateStudyName(studyIdx,studyName);
 
-
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE STUDY_NAME. STUDY_INDEX=" + studyIdx, studyName);
     }
 

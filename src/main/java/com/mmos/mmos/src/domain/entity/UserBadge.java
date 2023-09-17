@@ -3,7 +3,6 @@ package com.mmos.mmos.src.domain.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
@@ -26,5 +25,15 @@ public class UserBadge {
     private boolean userbadge_status = true;
 
     @Column
-    private boolean userbadge_is_visible = false;
+    private boolean userbadge_is_visible = true;
+
+
+    public Long getUserbadge_index() {
+        return userbadge_index;
+    }
+
+    public UserBadge(User user, Badge badge) {
+        this.user = user;
+        this.badge = badge;
+    }
 }
