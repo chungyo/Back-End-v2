@@ -16,21 +16,28 @@ public class UserStudyService {
     final private UserRepository userRepository;
     final private UserStudyRepository userStudyRepository;
     final private StudyRepository studyRepository;
+
     public Study findStudy(Long studyIdx){
         return studyRepository.findById(studyIdx)
-                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 스터디입니다. STUDY_INDEX = " + studyIdx));
+                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 스터디입니다. STUDY_INDEX = " + studyIdx));
     }
     public User findUser(Long userIdx){
         return userRepository.findById(userIdx)
-                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 유저입니다. STUDY_INDEX = " + userIdx));
+                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 유저입니다. STUDY_INDEX = " + userIdx));
     }
 
     @Transactional
     public UserStudy saveUserStudy(boolean isLeader, Long studyIdx, Long userIdx) {
+        // 객체 불러오기
         Study study = findStudy(studyIdx);
         User user = findUser(userIdx);
-        UserStudy userStudy= new UserStudy(isLeader, user,study);
+        // 객체 생성
+        UserStudy userStudy = new UserStudy(isLeader, user, study);
+        // 매핑
         study.addUserStudy(userStudy);
+        user.adduserStudies(userStudy);
+
+
         return userStudyRepository.save(userStudy);
     }
 
