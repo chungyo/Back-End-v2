@@ -27,6 +27,11 @@ public class StudyService {
     @Transactional
     public void updateStudyName(Long studyIdx, String name) {
         Study study = findStudy(studyIdx);
-        study.setStudy_name(name);
+        study.updateStudy_name(name);
+    }
+    @Transactional
+    public void updateStudyStatus(Long studyIdx) {
+        Study study = findStudy(studyIdx);
+        study.updateStudy_status();
     }
 }
