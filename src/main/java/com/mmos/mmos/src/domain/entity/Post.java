@@ -1,9 +1,9 @@
 package com.mmos.mmos.src.domain.entity;
 
+import com.mmos.mmos.src.domain.dto.post.PostSaveRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.sql.Timestamp;
 
@@ -49,4 +49,21 @@ public class Post {
     @JoinColumn(name = "promotion_index")
     private Promotion promotion;
 
+    public Post(PostSaveRequestDto postSaveRequestDto, Notice notice, String userIdx) {
+        this.post_title = postSaveRequestDto.getPostTitle();
+        this.post_contents = postSaveRequestDto.getPostContents();
+        this.post_image = postSaveRequestDto.getPostImage();
+        this.post_is_notice = postSaveRequestDto.isNotice();
+        this.post_writer = userIdx;
+        this.notice = notice;
+    }
+
+    public Post(PostSaveRequestDto postSaveRequestDto, Promotion promotion, String userIdx) {
+        this.post_title = postSaveRequestDto.getPostTitle();
+        this.post_contents = postSaveRequestDto.getPostContents();
+        this.post_image = postSaveRequestDto.getPostImage();
+        this.post_is_notice = postSaveRequestDto.isNotice();
+        this.post_writer = post_writer;
+        this.promotion = promotion;
+    }
 }
