@@ -26,8 +26,7 @@ public class Calendar {
     private int calendar_month;
 
     @Column
-    @ColumnDefault("true")
-    private boolean calendar_status;
+    private boolean calendar_status = true;
 
     @Column
     @ColumnDefault("0")

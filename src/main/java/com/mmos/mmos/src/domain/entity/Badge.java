@@ -27,6 +27,5 @@ public class Badge {
     private String badge_exp;
 
     @Column
-    @ColumnDefault("true")
-    private boolean badge_status;
+    private boolean badge_status = true;
 }

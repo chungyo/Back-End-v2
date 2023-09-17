@@ -19,12 +19,10 @@ public class UserStudy {
     private Long userstudy_index;
 
     @Column
-    @ColumnDefault("false")
-    private boolean userstudy_is_leader;
+    private boolean userstudy_is_leader = false;
 
     @Column
-    @ColumnDefault("true")
-    private boolean userstudy_status;
+    private boolean userstudy_status = true;
 
     @ManyToOne
     @JoinColumn(name = "user_index")

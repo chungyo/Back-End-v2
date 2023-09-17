@@ -38,15 +38,12 @@ public class Planner {
     private Long planner_daily_schedule_num;
 
     @Column
-    @ColumnDefault("true")
-    private boolean planner_is_public;
+    private boolean planner_is_public = true;
 
     @Column
-    @ColumnDefault("true")
-    private boolean planner_status;
+    private boolean planner_status = true;
 
     @OneToMany(mappedBy = "planner", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @ColumnDefault("true")
     private List<Plan> planner_plans;
 
     @ManyToOne

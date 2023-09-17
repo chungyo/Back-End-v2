@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
+/*홍보게시판*/
 @Entity
 @Getter
 @NoArgsConstructor
@@ -15,8 +16,7 @@ public class Promotion {
     private Long promotion_index;
 
     @Column
-    @ColumnDefault("true")
-    private boolean promotion_status;
+    private boolean promotion_status = true;
 
     @ManyToOne
     @JoinColumn(name = "study_index")

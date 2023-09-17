@@ -23,10 +23,8 @@ public class UserBadge {
     private Badge badge;
 
     @Column
-    @ColumnDefault("true")
-    private boolean userbadge_status;
+    private boolean userbadge_status = true;
 
     @Column
-    @ColumnDefault("false")
-    private boolean userbadge_is_visible;
+    private boolean userbadge_is_visible = false;
 }

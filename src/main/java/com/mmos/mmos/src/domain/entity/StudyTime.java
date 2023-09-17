@@ -25,8 +25,7 @@ public class StudyTime {
     private Timestamp studytime_end_time;
 
     @Column
-    @ColumnDefault("true")
-    private boolean studytime_status;
+    private boolean studytime_status = true;
 
     @ManyToOne
     @JoinColumn(name = "plan_index")
