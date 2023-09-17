@@ -9,6 +9,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -44,7 +45,7 @@ public class Planner {
     private boolean planner_status = true;
 
     @OneToMany(mappedBy = "planner", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Plan> planner_plans;
+    private List<Plan> planner_plans = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "calendar_index")

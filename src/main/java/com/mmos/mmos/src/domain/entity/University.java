@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,8 +25,8 @@ public class University {
     private String university_status;
 
     @OneToMany(mappedBy = "university", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<User> university_users;
+    private List<User> university_users = new ArrayList<>();
 
     @OneToMany(mappedBy = "university", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Major> university_majors;
+    private List<Major> university_majors = new ArrayList<>();
 }

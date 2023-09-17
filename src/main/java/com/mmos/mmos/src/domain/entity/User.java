@@ -56,11 +56,11 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @ColumnDefault("null")
-    private List<UserBadge> user_userbadges;
+    private List<UserBadge> user_userbadges = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @ColumnDefault("null")
-    private List<UserStudy> user_userstudies;
+    private List<UserStudy> user_userstudies = new ArrayList<>();
 
     @Column
     private boolean user_status = true;
