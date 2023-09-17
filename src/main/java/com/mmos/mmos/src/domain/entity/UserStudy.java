@@ -3,7 +3,6 @@ package com.mmos.mmos.src.domain.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import java.util.List;
@@ -18,9 +17,9 @@ public class UserStudy {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userstudy_index;
 
+
     @Column
     private boolean userstudy_is_leader = false;
-
     @Column
     private boolean userstudy_status = true;
 
@@ -34,4 +33,10 @@ public class UserStudy {
 
     @OneToMany(mappedBy = "userStudy", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Plan> userstudy_plans;
+
+    public UserStudy(boolean userstudy_is_leader, User user, Study study) {
+        this.userstudy_is_leader = userstudy_is_leader;
+        this.user = user;
+        this.study = study;
+    }
 }
