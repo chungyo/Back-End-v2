@@ -41,15 +41,15 @@ public class User {
     private Long user_total_study_time;
 
     @Column
-    @ColumnDefault("0")
-    private Integer user_tier;
-
-    @Column
     private Long user_student_id;
 
     @Column
     @ColumnDefault("0")
     private Long user_total_completed_schedule_num;
+
+    @ManyToOne
+    @JoinColumn(name = "tier_index")
+    private Tier tier;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Calendar> user_calendars = new ArrayList<>();
@@ -70,12 +70,13 @@ public class User {
     private University university;
 
     @Builder
-    public User(String user_id, String user_password, String user_name, String user_nickname, Long user_student_id) {
+    public User(String user_id, String user_password, String user_name, String user_nickname, Long user_student_id, Tier tier) {
         this.user_id = user_id;
         this.user_password = user_password;
         this.user_name = user_name;
         this.user_nickname = user_nickname;
         this.user_student_id = user_student_id;
+        this.tier = tier;
     }
 
 
