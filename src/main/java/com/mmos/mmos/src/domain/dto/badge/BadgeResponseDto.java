@@ -1,6 +1,7 @@
 package com.mmos.mmos.src.domain.dto.badge;
 
 import com.mmos.mmos.src.domain.entity.Badge;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -15,6 +16,7 @@ public class BadgeResponseDto {
     private boolean badgeStatus;
 
 
+    @Builder
     public BadgeResponseDto(Badge entity) {
         this.badgeIdx = entity.getBadge_index();
         this.badgeExp = entity.getBadge_exp();
