@@ -24,6 +24,19 @@ public enum HttpResponseStatus {
     RESPONSE_ERROR(false, HttpStatus.NOT_FOUND.value(), "값을 불러오는데 실패하였습니다."),
 
 
+
+
+    // User
+    POST_USER_EMPTY_USERID(false, BAD_REQUEST.value(), "아이디를 입력해주세요."),
+    POST_USER_EMPTY_USERNAME(false, BAD_REQUEST.value(), "이름을 입력해주세요."),
+    POST_USER_EMPTY_USERPWD(false, BAD_REQUEST.value(), "비밀번호를 입력해주세요."),
+    POST_USER_EMPTY_USERSTUDENTID(false, BAD_REQUEST.value(), "학번을 입력해주세요."),
+    POST_USER_EMPTY_NICKNAME(false, BAD_REQUEST.value(), "닉네임을 입력해주세요."),
+
+    UPDATE_USER_SAME_PWD(false, BAD_REQUEST.value(), "기존 비밀번호와 같습니다. 새로운 비밀번호를 입력해주세요."),
+    UPDATE_USER_DIFF_NEWPWD(false, BAD_REQUEST.value(), "새로운 비밀번호가 일치하지 않습니다."),
+
+
     /**
      * 500 : Database, Server 오류
      */
