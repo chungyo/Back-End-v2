@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,16 +19,16 @@ public class Study {
     private Long study_index;
 
     @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<UserStudy> study_userstudies;
+    private List<UserStudy> study_userstudies = new ArrayList<>();
 
     @Column
     @ColumnDefault("null")
     @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Notice> study_notices;
+    private List<Notice> study_notices = new ArrayList<>();
 
     @Column
     @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Promotion> study_promotions;
+    private List<Promotion> study_promotions = new ArrayList<>();
 
 
     @Column
