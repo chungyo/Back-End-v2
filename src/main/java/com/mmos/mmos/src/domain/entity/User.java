@@ -91,4 +91,17 @@ public class User {
     public void adduserStudies(UserStudy userStudy) {
         this.user_userstudies.add(userStudy);
     }
+
+
+    public void updatePwd(String newPwd) {
+        this.user_password = newPwd;
+    }
+
+    public void updateNickname(String nickname) {
+        this.user_nickname = nickname;
+    }
+
+    public void updatePfp(String pfp) {
+        this.user_profile_image = pfp;
+    }
 }
