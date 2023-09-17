@@ -26,10 +26,10 @@ public class UserStudyService {
     }
 
     @Transactional
-    public UserStudy saveUserStudy(Long studyIdx, Long userIdx) {
+    public UserStudy saveUserStudy(boolean isLeader, Long studyIdx, Long userIdx) {
         Study study = findStudy(studyIdx);
         User user = findUser(userIdx);
-        UserStudy userStudy= new UserStudy(true, user,study);
+        UserStudy userStudy= new UserStudy(isLeader, user,study);
         study.addUserStudy(userStudy);
         return userStudyRepository.save(userStudy);
     }
