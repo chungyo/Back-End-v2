@@ -1,5 +1,6 @@
 package com.mmos.mmos.src.domain.dto.user;
 
+import com.mmos.mmos.src.domain.entity.Tier;
 import com.mmos.mmos.src.domain.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,13 +16,14 @@ public class UserSaveRequestDto {
     private Long userStudentId;
 
 
-    public User toEntity() {
+    public User toEntity(Tier tier) {
         return User.builder()
                 .user_id(userId)
                 .user_name(userName)
                 .user_nickname(userNickname)
                 .user_password(userPwd)
                 .user_student_id(userStudentId)
+                .tier(tier)
                 .build();
     }
 }

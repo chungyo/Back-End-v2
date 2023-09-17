@@ -1,6 +1,7 @@
 package com.mmos.mmos.src.controller;
 
 import com.mmos.mmos.config.ResponseApiMessage;
+import com.mmos.mmos.src.domain.dto.tier.TierResponseDto;
 import com.mmos.mmos.src.domain.dto.user.UserNicknameUpdateDto;
 import com.mmos.mmos.src.domain.dto.user.UserPwdUpdateDto;
 import com.mmos.mmos.src.domain.dto.user.UserSaveRequestDto;
@@ -87,6 +88,8 @@ public class UserController extends BaseController {
     @ResponseBody
     @PatchMapping("/{userIdx}/nickname")
     public ResponseEntity<ResponseApiMessage> updateNickname(@RequestBody UserNicknameUpdateDto userNicknameUpdateDto, @PathVariable Long userIdx) {
+        // 기존 닉네임을 불러오는 방식으로 다시 만들기
+
         // 기존 닉네임과 새 닉네임이 다른지 확인
         if(userNicknameUpdateDto.getPrevNickname().equals(userNicknameUpdateDto.getNewNickname()))
             return sendResponseHttpByJson(SUCCESS, "NICKNAME UPDATE FAIL. (PREV_NICKNAME == NEW_NICKNAME)", userNicknameUpdateDto);
@@ -105,9 +108,12 @@ public class UserController extends BaseController {
         return sendResponseHttpByJson(SUCCESS, "UPDATE PFP. USER_IDX=" + userIdx, pfp);
     }
 
-//    // 티어 조회
-//    @ResponseBody
-//    @GetMapping("/tier/{userIdx}")
-//    public ResponseEntity
+    // 티어 조회
+    @ResponseBody
+    @GetMapping("/{userIdx}/tier")
+    public ResponseEntity<ResponseApiMessage> updateTier(@PathVariable Long userIdx) {
+        TierResponseDto tierResponseDto = userService.updateTier(userIdx);
 
+        return sendResponseHttpByJson(SUCCESS, "UPDATE TIER. USER_IDX=" + userIdx, tierResponseDto);
+    }
 }
