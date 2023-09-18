@@ -24,6 +24,11 @@ public class CalendarService {
     @Transactional
     public Calendar saveCalendar(int month, Long userIdx) {
         User user = findUser(userIdx);
+
+        // 막 회원 가입을 한 유저가 아니면서 같은 달의 캘린더가 이미 존재할 때 생성 막기
+        if(!user.getUser_calendars().isEmpty() && user.getUser_calendars().get(user.getUser_calendars().size() - 1).getCalendar_month() == month)
+            return null;
+
         Calendar calendar = new Calendar(month, user);
         // User, Calendar 양방향 매핑
         user.addCalendars(calendar);
