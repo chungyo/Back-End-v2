@@ -16,6 +16,7 @@ public class StudyTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long studytime_index;
+
     @Column
     @ColumnDefault("current_timestamp")
     private Timestamp studytime_start_time;
@@ -25,7 +26,7 @@ public class StudyTime {
     private Timestamp studytime_end_time;
 
     @Column
-    private boolean studytime_status = true;
+    private Boolean studytime_status = true;
 
     @ManyToOne
     @JoinColumn(name = "plan_index")
