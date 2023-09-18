@@ -16,7 +16,7 @@ public class UserResponseDto {
     private Integer userTier;
     private Long userTotalStudyTime;
     private String userPfp;
-    private boolean userStatus;
+    private Boolean userStatus;
 
 }
 

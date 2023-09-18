@@ -8,5 +8,5 @@ public class PostSaveRequestDto {
     private String postTitle;
     private String postContents;
     private String postImage;
-    private boolean isNotice;
+    private Boolean isNotice;
 }

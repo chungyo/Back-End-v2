@@ -19,7 +19,7 @@ public class Notice {
     private Long notice_index;
 
     @Column
-    private boolean notice_status = true;
+    private Boolean notice_status = true;
 
     @ManyToOne
     @JoinColumn(name = "study_index")

@@ -27,7 +27,7 @@ public class UserStudyService {
     }
 
     @Transactional
-    public UserStudy saveUserStudy(boolean isLeader, Long studyIdx, Long userIdx) {
+    public UserStudy saveUserStudy(Boolean isLeader, Long studyIdx, Long userIdx) {
         // 객체 불러오기
         Study study = findStudy(studyIdx);
         User user = findUser(userIdx);

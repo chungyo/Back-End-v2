@@ -13,8 +13,7 @@ public class BadgeResponseDto {
     private String badgeIcon;
     private String badgeInfo;
     private String badgeName;
-    private boolean badgeStatus;
-
+    private Boolean badgeStatus;
 
     @Builder
     public BadgeResponseDto(Badge entity) {
@@ -23,6 +22,6 @@ public class BadgeResponseDto {
         this.badgeIcon = entity.getBadge_icon();
         this.badgeInfo = entity.getBadge_info();
         this.badgeName = entity.getBadge_name();
-        this.badgeStatus = entity.isBadge_status();
+        this.badgeStatus = entity.getBadge_status();
     }
 }

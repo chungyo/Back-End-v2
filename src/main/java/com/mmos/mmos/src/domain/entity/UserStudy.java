@@ -23,9 +23,9 @@ public class UserStudy {
 
 
     @Column
-    private boolean userstudy_is_leader = false;
+    private Boolean userstudy_is_leader = false;
     @Column
-    private boolean userstudy_status = true;
+    private Boolean userstudy_status = true;
 
     @ManyToOne
     @JoinColumn(name = "user_index")
@@ -39,7 +39,7 @@ public class UserStudy {
     private List<Plan> userstudy_plans = new ArrayList<>();
 
     @Builder
-    public UserStudy(boolean userstudy_is_leader, User user, Study study) {
+    public UserStudy(Boolean userstudy_is_leader, User user, Study study) {
         this.userstudy_is_leader = userstudy_is_leader;
         this.user = user;
         this.study = study;

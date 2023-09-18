@@ -39,10 +39,10 @@ public class Planner {
     private Long planner_daily_schedule_num;
 
     @Column
-    private boolean planner_is_public = true;
+    private Boolean planner_is_public = true;
 
     @Column
-    private boolean planner_status = true;
+    private Boolean planner_status = true;
 
     @OneToMany(mappedBy = "planner", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Plan> planner_plans = new ArrayList<>();
@@ -61,5 +61,9 @@ public class Planner {
     public Planner(LocalDate planner_date, Calendar calendar) {
         this.planner_date = planner_date;
         this.calendar = calendar;
+    }
+
+    public void addPlan(Plan plan) {
+        this.planner_plans.add(plan);
     }
 }

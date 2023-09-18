@@ -26,7 +26,7 @@ public class PostController extends BaseController {
     public ResponseEntity<ResponseApiMessage> savePost(@RequestBody PostSaveRequestDto postSaveRequestDto, @PathVariable Long userIdx, @PathVariable Long studyIdx) {
 
         Post post;
-        if(postSaveRequestDto.isNotice()) {
+        if(postSaveRequestDto.getIsNotice()) {
             // 공지글
             Notice notice = noticeService.saveNotice(studyIdx);
             // 글 생성

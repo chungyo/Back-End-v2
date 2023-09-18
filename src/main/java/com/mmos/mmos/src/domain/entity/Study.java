@@ -38,14 +38,15 @@ public class Study {
     private String study_name;
 
     @Column
-    private boolean study_is_visible = true;
+    private Boolean study_is_visible = true;
 
     @Column
-    private boolean study_status = true;
+    private Boolean study_status = true;
 
     public void updateStudy_name(String study_name) {
         this.study_name = study_name;
     }
+
     public void updateStudy_status(){
         this.study_status = false;
     }

@@ -29,9 +29,10 @@ public class Badge {
     private Long badge_exp;
 
     @Column
-    private boolean is_badge_time;
+    private Boolean is_badge_time;
+
     @Column
-    private boolean badge_status = true;
+    private Boolean badge_status = true;
 
     @OneToMany(mappedBy = "badge", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<UserBadge> badge_userbadges = new ArrayList<>();

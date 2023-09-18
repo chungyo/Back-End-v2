@@ -22,10 +22,10 @@ public class UserBadge {
     private Badge badge;
 
     @Column
-    private boolean userbadge_status = true;
+    private Boolean userbadge_status = true;
 
     @Column
-    private boolean userbadge_is_visible = true;
+    private Boolean userbadge_is_visible = true;
 
 
     public Long getUserbadge_index() {

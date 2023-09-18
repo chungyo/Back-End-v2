@@ -18,7 +18,7 @@ public class Promotion {
     private Long promotion_index;
 
     @Column
-    private boolean promotion_status = true;
+    private Boolean promotion_status = true;
 
     @ManyToOne
     @JoinColumn(name = "study_index")

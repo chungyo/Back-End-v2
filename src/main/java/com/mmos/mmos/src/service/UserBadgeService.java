@@ -34,11 +34,11 @@ public class UserBadgeService {
 
         List<UserBadge> newBadges = new ArrayList<>();
         for (Badge badge : badges) {
-            if((badge.is_badge_time() && user.getUser_total_study_time() >= badge.getBadge_exp())
-                    || (!badge.is_badge_time() && user.getUser_total_completed_schedule_num() >= badge.getBadge_exp()))
+            if((badge.getIs_badge_time() && user.getUser_total_study_time() >= badge.getBadge_exp())
+                    || (!badge.getIs_badge_time() && user.getUser_total_completed_schedule_num() >= badge.getBadge_exp()))
             {
                 // 유저가 이미 해당 뱃지를 존재하는 경우 continue
-                boolean isExist = false;
+                Boolean isExist = false;
                 for(UserBadge userOwnBadge : user.getUser_userbadges())
                     if (userOwnBadge.getBadge() == badge) {
                         isExist = true;

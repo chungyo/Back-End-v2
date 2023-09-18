@@ -1,5 +1,6 @@
 package com.mmos.mmos.src.domain.entity;
 
+import com.mmos.mmos.src.domain.dto.plan.PlanSaveRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,19 +23,19 @@ public class Plan {
     private String plan_name;
 
     @Column
-    private boolean plan_is_complete = true;
+    private Boolean plan_is_complete = true;
 
     @Column
-    private boolean plan_is_study = false;
+    private Boolean plan_is_study = false;
 
     @Column
-    private boolean plan_is_visible_on_calendar = false;
+    private Boolean plan_is_visible_on_calendar = false;
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<StudyTime> plan_studytime_times;
 
     @Column
-    private boolean plan_status = true;
+    private Boolean plan_status = true;
 
     @ManyToOne
     @JoinColumn(name = "planner_index")
@@ -44,5 +45,12 @@ public class Plan {
     @JoinColumn(name = "userstudy_index")
     private UserStudy userStudy;
 
-
+    public Plan(PlanSaveRequestDto requestDto, Planner planner, UserStudy userStudy) {
+        this.plan_name = requestDto.getPlanName();
+        this.plan_is_study = requestDto.getIsStudy();
+        System.out.println("requestDto.isStudy() = " + requestDto.getIsStudy());
+        this.plan_is_visible_on_calendar = requestDto.getIsVisible();
+        this.planner = planner;
+        this.userStudy = userStudy;
+    }
 }

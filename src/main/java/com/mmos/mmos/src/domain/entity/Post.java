@@ -27,7 +27,7 @@ public class Post {
     private String post_image;
 
     @Column
-    private boolean post_is_notice = true;
+    private Boolean post_is_notice = true;
 
     @Column
     private String post_writer;
@@ -39,7 +39,7 @@ public class Post {
     private Timestamp post_updated_at;
 
     @Column
-    private boolean post_status = true;
+    private Boolean post_status = true;
 
     @ManyToOne
     @JoinColumn(name = "notice_index")
@@ -53,7 +53,7 @@ public class Post {
         this.post_title = postSaveRequestDto.getPostTitle();
         this.post_contents = postSaveRequestDto.getPostContents();
         this.post_image = postSaveRequestDto.getPostImage();
-        this.post_is_notice = postSaveRequestDto.isNotice();
+        this.post_is_notice = postSaveRequestDto.getIsNotice();
         this.post_writer = userIdx;
         this.notice = notice;
     }
@@ -62,7 +62,7 @@ public class Post {
         this.post_title = postSaveRequestDto.getPostTitle();
         this.post_contents = postSaveRequestDto.getPostContents();
         this.post_image = postSaveRequestDto.getPostImage();
-        this.post_is_notice = postSaveRequestDto.isNotice();
+        this.post_is_notice = postSaveRequestDto.getIsNotice();
         this.post_writer = post_writer;
         this.promotion = promotion;
     }

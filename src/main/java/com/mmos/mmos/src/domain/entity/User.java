@@ -65,7 +65,7 @@ public class User {
     private List<UserStudy> user_userstudies = new ArrayList<>();
 
     @Column
-    private boolean user_status = true;
+    private Boolean user_status = true;
 
     @ManyToOne
     @JoinColumn(name = "university_index")
@@ -82,7 +82,6 @@ public class User {
     }
 
     public void addCalendars(Calendar calendar) {
-        System.out.println("addCalendars = " + calendar.toString());
         this.user_calendars.add(calendar);
     }
 
