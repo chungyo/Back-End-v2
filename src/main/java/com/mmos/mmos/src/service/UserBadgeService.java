@@ -30,7 +30,6 @@ public class UserBadgeService {
 
     public List<UserBadge> saveUserBadge(Long userIdx){
         User user = findUser(userIdx);
-        user.getUser_userbadges().clear();
         List<Badge> badges = findBadges();
 
         List<UserBadge> newBadges = new ArrayList<>();
