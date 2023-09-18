@@ -38,7 +38,16 @@ public enum HttpResponseStatus {
 
 
     // Badge
-    POST_BADGE_INVALID_GET(false, BAD_REQUEST.value(), "받을 뱃지가 없습니다."),
+    POST_BADGE_INVALID_REQUEST(false, BAD_REQUEST.value(), "받을 뱃지가 없습니다."),
+
+
+    // Calendar
+    POST_CALENDAR_INVALID_REQUEST(false, BAD_REQUEST.value(), "한 달이 지나지 않아서 저장할 캘린더가 없습니다."),
+
+    // Planner
+    POST_PLANNER_INVALID_REQUEST(false, BAD_REQUEST.value(), "하루가 지나지 않아서 저장할 플래너가 없습니다."),
+
+
     /**
      * 500 : Database, Server 오류
      */
