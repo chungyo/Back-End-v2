@@ -27,6 +27,6 @@ public class UserBadgeController extends BaseController{
 //        System.out.println("user's uesrbadges = "+user.getUser_userbadges().toString());
         if(userBadge == null)
             return sendResponseHttpByJson(POST_BADGE_INVALID_GET, "User can't get any badge. USER_INDEX =" + userIdx, null);
-        return sendResponseHttpByJson(SUCCESS, "Saved UserBadge.", userBadge);
+        return sendResponseHttpByJson(SUCCESS, "Saved UserBadge.", null);
     }
 }
