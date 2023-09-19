@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*홍보게시판*/
@@ -17,12 +18,20 @@ public class Promotion {
     private Long promotion_index;
 
     @Column
-    private boolean promotion_status = true;
+    private Boolean promotion_status = true;
 
     @ManyToOne
     @JoinColumn(name = "study_index")
     private Study study;
 
     @OneToMany(mappedBy = "promotion")
-    private List<Post> promotion_posts;
+    private List<Post> promotion_posts = new ArrayList<>();
+
+    public Promotion(Study study) {
+        this.study = study;
+    }
+
+    public void addPost(Post post) {
+        this.promotion_posts.add(post);
+    }
 }

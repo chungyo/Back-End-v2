@@ -1,15 +1,19 @@
 package com.mmos.mmos.src.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.DynamicInsert;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@ToString
 @DynamicInsert
 public class UserStudy {
 
@@ -19,9 +23,9 @@ public class UserStudy {
 
 
     @Column
-    private boolean userstudy_is_leader = false;
+    private Boolean userstudy_is_leader = false;
     @Column
-    private boolean userstudy_status = true;
+    private Boolean userstudy_status = true;
 
     @ManyToOne
     @JoinColumn(name = "user_index")
@@ -32,9 +36,10 @@ public class UserStudy {
     private Study study;
 
     @OneToMany(mappedBy = "userStudy", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Plan> userstudy_plans;
+    private List<Plan> userstudy_plans = new ArrayList<>();
 
-    public UserStudy(boolean userstudy_is_leader, User user, Study study) {
+    @Builder
+    public UserStudy(Boolean userstudy_is_leader, User user, Study study) {
         this.userstudy_is_leader = userstudy_is_leader;
         this.user = user;
         this.study = study;

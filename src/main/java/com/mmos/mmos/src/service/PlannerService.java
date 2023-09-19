@@ -26,6 +26,11 @@ public class PlannerService {
     @Transactional
     public Planner savePlanner(LocalDate today, Long calendarIdx) {
         Calendar calendar = findCalendar(calendarIdx);
+
+        // 막 회원 가입을 한 유저가 아니면서 같은 날의 플래너가 이미 존재할 때 생성 막기
+        if(!calendar.getCalendar_planners().isEmpty() && calendar.getCalendar_planners().get(calendar.getCalendar_planners().size() - 1).getPlanner_date().equals(today))
+            return null;
+
         Planner planner = new Planner(today, calendar);
         // Calendar, Planner 양방향 매핑
         calendar.addPlanner(planner);

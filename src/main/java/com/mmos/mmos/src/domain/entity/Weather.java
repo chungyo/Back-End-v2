@@ -21,5 +21,5 @@ public class Weather {
     private String weather_image;
 
     @Column
-    private boolean weather_status = true;
+    private Boolean weather_status = true;
 }

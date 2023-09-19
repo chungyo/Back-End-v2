@@ -37,6 +37,8 @@ public enum HttpResponseStatus {
     UPDATE_USER_DIFF_NEWPWD(false, BAD_REQUEST.value(), "새로운 비밀번호가 일치하지 않습니다."),
 
 
+    // Badge
+    POST_BADGE_INVALID_GET(false, BAD_REQUEST.value(), "받을 뱃지가 없습니다."),
     /**
      * 500 : Database, Server 오류
      */

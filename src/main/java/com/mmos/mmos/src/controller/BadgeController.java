@@ -23,4 +23,5 @@ public class BadgeController extends BaseController {
 
         return sendResponseHttpByJson(SUCCESS, "Load Badge. BADGE_INDEX=" + badgeIdx, responseDto);
     }
+
 }

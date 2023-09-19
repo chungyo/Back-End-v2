@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 @ToString
 @Getter
 @NoArgsConstructor
+@DynamicInsert
 public class User {
 
     @Id
@@ -56,14 +58,14 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @ColumnDefault("null")
-    private List<UserBadge> user_userbadges;
+    private List<UserBadge> user_userbadges = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @ColumnDefault("null")
-    private List<UserStudy> user_userstudies;
+    private List<UserStudy> user_userstudies = new ArrayList<>();
 
     @Column
-    private boolean user_status = true;
+    private Boolean user_status = true;
 
     @ManyToOne
     @JoinColumn(name = "university_index")
@@ -79,9 +81,7 @@ public class User {
         this.tier = tier;
     }
 
-
     public void addCalendars(Calendar calendar) {
-        System.out.println("addCalendars = " + calendar.toString());
         this.user_calendars.add(calendar);
     }
 
