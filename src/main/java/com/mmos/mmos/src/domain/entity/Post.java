@@ -27,7 +27,7 @@ public class Post {
     private String post_image;
 
     @Column
-    private Boolean post_is_notice = true;
+    private boolean post_is_notice = true;
 
     @Column
     private String post_writer;
@@ -39,31 +39,18 @@ public class Post {
     private Timestamp post_updated_at;
 
     @Column
-    private Boolean post_status = true;
+    private boolean post_status = true;
 
     @ManyToOne
-    @JoinColumn(name = "notice_index")
-    private Notice notice;
+    @JoinColumn(name = "study_index")
+    private Study study = null;
 
-    @ManyToOne
-    @JoinColumn(name = "promotion_index")
-    private Promotion promotion;
-
-    public Post(PostSaveRequestDto postSaveRequestDto, Notice notice, String userIdx) {
+    public Post(PostSaveRequestDto postSaveRequestDto,  String userName, Study study) {
+        this.post_is_notice = postSaveRequestDto.getIsNotice();
         this.post_title = postSaveRequestDto.getPostTitle();
         this.post_contents = postSaveRequestDto.getPostContents();
         this.post_image = postSaveRequestDto.getPostImage();
-        this.post_is_notice = postSaveRequestDto.getIsNotice();
-        this.post_writer = userIdx;
-        this.notice = notice;
-    }
-
-    public Post(PostSaveRequestDto postSaveRequestDto, Promotion promotion, String userIdx) {
-        this.post_title = postSaveRequestDto.getPostTitle();
-        this.post_contents = postSaveRequestDto.getPostContents();
-        this.post_image = postSaveRequestDto.getPostImage();
-        this.post_is_notice = postSaveRequestDto.getIsNotice();
-        this.post_writer = post_writer;
-        this.promotion = promotion;
+        this.post_writer = userName;
+        this.study = study;
     }
 }
