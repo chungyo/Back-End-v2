@@ -22,11 +22,15 @@ public class University {
     private String university_name;
 
     @Column
-    private String university_status;
+    private Boolean university_status = true;
 
     @OneToMany(mappedBy = "university", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<User> university_users = new ArrayList<>();
 
     @OneToMany(mappedBy = "university", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Major> university_majors = new ArrayList<>();
+
+    public void addUser(User user){
+        this.university_users.add(user);
+    }
 }
