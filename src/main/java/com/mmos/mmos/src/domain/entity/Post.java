@@ -4,12 +4,14 @@ import com.mmos.mmos.src.domain.dto.post.PostSaveRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.sql.Timestamp;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@DynamicInsert
 public class Post {
 
     @Id
@@ -52,5 +54,18 @@ public class Post {
         this.post_image = postSaveRequestDto.getPostImage();
         this.post_writer = userName;
         this.study = study;
+    }
+
+
+    public void updateTitle(String newTitle) {
+        this.post_title = newTitle;
+    }
+
+    public void updateContents(String newContents){
+        this.post_contents = newContents;
+    }
+
+    public void updateImage(String newImage){
+        this.post_image = newImage;
     }
 }
