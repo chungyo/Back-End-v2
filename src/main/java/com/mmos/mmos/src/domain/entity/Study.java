@@ -24,12 +24,7 @@ public class Study {
     @Column
     @ColumnDefault("null")
     @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Notice> study_notices = new ArrayList<>();
-
-    @Column
-    @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Promotion> study_promotions = new ArrayList<>();
-
+    private List<Post> study_posts = new ArrayList<>();
 
     @Column
     private Integer study_member_limit;
@@ -55,7 +50,9 @@ public class Study {
         this.study_name = study_name;
         this.study_member_limit = study_member_limit;
     }
-
+    public void addPost(Post post){
+        this.study_posts.add(post);
+    }
     public void addUserStudy(UserStudy userStudy){
         this.study_userstudies.add(userStudy);
     }

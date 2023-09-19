@@ -1,11 +1,9 @@
 package com.mmos.mmos.src.service;
 
 import com.mmos.mmos.src.domain.dto.post.PostSaveRequestDto;
-import com.mmos.mmos.src.domain.entity.Notice;
-import com.mmos.mmos.src.domain.entity.Post;
-import com.mmos.mmos.src.domain.entity.Promotion;
-import com.mmos.mmos.src.domain.entity.User;
+import com.mmos.mmos.src.domain.entity.*;
 import com.mmos.mmos.src.repository.PostRepository;
+import com.mmos.mmos.src.repository.StudyRepository;
 import com.mmos.mmos.src.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,31 +15,22 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-
+    private final StudyRepository studyRepository;
     public User findUser(Long userIdx) {
         return userRepository.findById(userIdx)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다. USER_INDEX=" + userIdx));
     }
-
-    @Transactional
-    public Post savePostByNotice(PostSaveRequestDto postSaveRequestDto, Notice notice, Long userIdx) {
-        User user = findUser(userIdx);
-        Post post = new Post(postSaveRequestDto, notice, user.getUser_name());
-
-        // add Notice
-        notice.addPost(post);
-
-        return postRepository.save(post);
+    public Study findStudy(Long studyIdx){
+        return studyRepository.findById(studyIdx)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 스터디입니다. STUDY_INDEX=" + studyIdx));
     }
-
     @Transactional
-    public Post savePostByPromotion(PostSaveRequestDto postSaveRequestDto, Promotion promotion, Long userIdx) {
+    public Post savePost(PostSaveRequestDto postSaveRequestDto, Long userIdx, Long studyIdx) {
         User user = findUser(userIdx);
-        Post post = new Post(postSaveRequestDto, promotion, user.getUser_name());
-
-        // add Notice
-        promotion.addPost(post);
-
+        Study study = findStudy(studyIdx);
+        Post post = new Post(postSaveRequestDto, user.getUser_name(), study);
+        System.out.println("Post =" + post.toString());
+        study.addPost(post);
         return postRepository.save(post);
     }
 }
