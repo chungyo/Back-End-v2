@@ -32,6 +32,13 @@ public class StudyTime {
     @JoinColumn(name = "plan_index")
     private Plan plan;
 
+    public StudyTime(Timestamp studytime_start_time, Timestamp studytime_end_time, Plan plan) {
+        this.studytime_start_time = studytime_start_time;
+        this.studytime_end_time = studytime_end_time;
+        this.plan = plan;
+    }
 
-
+    public void updateEndTime(Timestamp endTime) {
+        this.studytime_end_time = endTime;
+    }
 }
