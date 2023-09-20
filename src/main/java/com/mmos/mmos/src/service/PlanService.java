@@ -1,5 +1,7 @@
 package com.mmos.mmos.src.service;
 
+import com.mmos.mmos.src.domain.dto.plan.PlanNameUpdateRequestDto;
+import com.mmos.mmos.src.domain.dto.plan.PlanResponseDto;
 import com.mmos.mmos.src.domain.dto.plan.PlanSaveRequestDto;
 import com.mmos.mmos.src.domain.entity.Plan;
 import com.mmos.mmos.src.domain.entity.Planner;
@@ -9,6 +11,10 @@ import com.mmos.mmos.src.repository.PlannerRepository;
 import com.mmos.mmos.src.repository.UserStudyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +34,15 @@ public class PlanService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자가 가입된 스터디입니다. USERSTUDY_INDEX=" + userStudyIdx));
     }
 
+    public Plan findPlan(Long planIdx) {
+        return planRepository.findById(planIdx)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 플랜입니다. PLAN_INDEX=" + planIdx));
+    }
+
+    public List<Plan> findPlans() {
+        return planRepository.findAll();
+    }
+
     public void savePlan(PlanSaveRequestDto requestDto, Long plannerIdx) {
         System.out.println("requestDto = " + requestDto.getIsStudy());
         // 플래너 가져오기
@@ -44,5 +59,34 @@ public class PlanService {
         planner.addPlan(plan);
 
         planRepository.save(plan);
+    }
+
+    @Transactional
+    public PlanResponseDto getPlan(Long planIdx) {
+        Plan plan = findPlan(planIdx);
+        PlanResponseDto responseDto = new PlanResponseDto(plan.getPlan_index(), plan.getPlan_name(), plan.getPlan_is_complete(), plan.getPlan_is_study());
+
+        return responseDto;
+    }
+
+    @Transactional
+    public List<PlanResponseDto> getPlans() {
+        List<PlanResponseDto> responseDtoList = new ArrayList<>();
+        List<Plan> plans = findPlans();
+
+        for (Plan plan : plans) {
+            responseDtoList.add(new PlanResponseDto(plan.getPlan_index(), plan.getPlan_name(), plan.getPlan_is_complete(), plan.getPlan_is_study()));
+        }
+
+        return responseDtoList;
+    }
+
+    @Transactional
+    public PlanResponseDto updatePlan(Long planIdx, PlanNameUpdateRequestDto requestDto) {
+        Plan plan = findPlan(planIdx);
+
+        plan.update(requestDto.getPlanName());
+
+        return new PlanResponseDto(plan.getPlan_index(), plan.getPlan_name(), plan.getPlan_is_complete(), plan.getPlan_is_study());
     }
 }

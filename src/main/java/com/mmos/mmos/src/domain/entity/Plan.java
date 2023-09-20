@@ -4,7 +4,6 @@ import com.mmos.mmos.src.domain.dto.plan.PlanSaveRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import java.util.List;
@@ -48,9 +47,17 @@ public class Plan {
     public Plan(PlanSaveRequestDto requestDto, Planner planner, UserStudy userStudy) {
         this.plan_name = requestDto.getPlanName();
         this.plan_is_study = requestDto.getIsStudy();
-        System.out.println("requestDto.isStudy() = " + requestDto.getIsStudy());
         this.plan_is_visible_on_calendar = requestDto.getIsVisible();
         this.planner = planner;
         this.userStudy = userStudy;
+    }
+
+
+    public void update(String planName) {
+        this.plan_name = planName;
+    }
+
+    public void addStudyTime(StudyTime studyTime) {
+        this.getPlan_studytime_times().add(studyTime);
     }
 }
