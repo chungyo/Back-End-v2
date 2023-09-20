@@ -1,7 +1,6 @@
 package com.mmos.mmos.src.controller;
 
 import com.mmos.mmos.config.ResponseApiMessage;
-import com.mmos.mmos.src.domain.dto.tier.TierResponseDto;
 import com.mmos.mmos.src.domain.dto.user.UserNicknameUpdateDto;
 import com.mmos.mmos.src.domain.dto.user.UserPwdUpdateDto;
 import com.mmos.mmos.src.domain.dto.user.UserSaveRequestDto;
@@ -106,14 +105,5 @@ public class UserController extends BaseController {
         userService.updatePfp(pfp, userIdx);
 
         return sendResponseHttpByJson(SUCCESS, "UPDATE PFP. USER_IDX=" + userIdx, pfp);
-    }
-
-    // 티어 조회
-    @ResponseBody
-    @GetMapping("/{userIdx}/tier")
-    public ResponseEntity<ResponseApiMessage> updateTier(@PathVariable Long userIdx) {
-        TierResponseDto tierResponseDto = userService.updateTier(userIdx);
-
-        return sendResponseHttpByJson(SUCCESS, "UPDATE TIER. USER_IDX=" + userIdx, tierResponseDto);
     }
 }
