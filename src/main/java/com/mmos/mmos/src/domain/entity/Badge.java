@@ -34,6 +34,9 @@ public class Badge {
     @Column
     private Boolean badge_status = true;
 
+    @Column
+    private String badge_purpose;
+
     @OneToMany(mappedBy = "badge", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<UserBadge> badge_userbadges = new ArrayList<>();
 
