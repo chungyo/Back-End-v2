@@ -42,12 +42,10 @@ public class User {
     private String userEmail;
 
     @Column
-    @ColumnDefault("0")
-    private Long userTotalStudyTime;
+    private Long userTotalStudyTime = 0L;
 
     @Column
-    @ColumnDefault("0")
-    private Long userTotalCompletedScheduleNum;
+    private Long userTotalCompletedScheduleNum = 0L;
 
     @Column
     private Long userStudentId;
