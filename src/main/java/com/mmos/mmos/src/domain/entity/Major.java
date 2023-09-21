@@ -3,26 +3,26 @@ package com.mmos.mmos.src.domain.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+
+import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@DynamicInsert
 public class Major {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long major_index;
+    private Long majorIndex;
 
     @Column
-    private Long major_name;
+    private Long majorName;
 
-    @Column
-    private Boolean major_status = true;
+    @OneToMany(mappedBy = "major", cascade = CascadeType.REMOVE,orphanRemoval = true)
+    private List<User> majorUsers;
 
-    @ManyToOne
-    @JoinColumn(name = "univ_index")
-    private University university;
+    public void addUser(User user){
+        this.majorUsers.add(user);
+    }
 }

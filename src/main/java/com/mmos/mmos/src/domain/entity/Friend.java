@@ -3,7 +3,6 @@ package com.mmos.mmos.src.domain.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
@@ -12,15 +11,15 @@ public class Friend {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long friend_index;
+    private Long friendIndex;
 
     @Column
-    private Boolean friend_is_fixed = false;
+    private Boolean friendIsFixed = false;
 
     @Column
-    private Boolean friend_status = false;
+    private Boolean friendStatus = false;
 
     @ManyToOne
-    @JoinColumn(name = "user_index")
+    @JoinColumn(name = "userIndex")
     private User user;
 }

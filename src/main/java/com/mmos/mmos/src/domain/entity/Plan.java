@@ -16,48 +16,45 @@ public class Plan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long plan_index;
+    private Long planIndex;
 
     @Column
-    private String plan_name;
+    private String planName;
 
     @Column
-    private Boolean plan_is_complete = true;
+    private Boolean planIsComplete = true;
 
     @Column
-    private Boolean plan_is_study = false;
+    private Boolean planIsStudy = false;
 
     @Column
-    private Boolean plan_is_visible_on_calendar = false;
+    private Boolean planIsVisibleOnCalendar = false;
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<StudyTime> plan_studytime_times;
-
-    @Column
-    private Boolean plan_status = true;
+    private List<StudyTime> planStudytimeTimes;
 
     @ManyToOne
-    @JoinColumn(name = "planner_index")
+    @JoinColumn(name = "plannerIndex")
     private Planner planner;
 
     @ManyToOne
-    @JoinColumn(name = "userstudy_index")
+    @JoinColumn(name = "userstudyIndex")
     private UserStudy userStudy;
 
     public Plan(PlanSaveRequestDto requestDto, Planner planner, UserStudy userStudy) {
-        this.plan_name = requestDto.getPlanName();
-        this.plan_is_study = requestDto.getIsStudy();
-        this.plan_is_visible_on_calendar = requestDto.getIsVisible();
+        this.planName = requestDto.getPlanName();
+        this.planIsStudy = requestDto.getIsStudy();
+        this.planIsVisibleOnCalendar = requestDto.getIsVisible();
         this.planner = planner;
         this.userStudy = userStudy;
     }
 
 
     public void update(String planName) {
-        this.plan_name = planName;
+        this.planName = planName;
     }
 
     public void addStudyTime(StudyTime studyTime) {
-        this.getPlan_studytime_times().add(studyTime);
+        this.planStudytimeTimes.add(studyTime);
     }
 }

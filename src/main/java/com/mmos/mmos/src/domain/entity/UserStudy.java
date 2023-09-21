@@ -19,28 +19,26 @@ public class UserStudy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userstudy_index;
+    private Long userstudyIndex;
 
 
     @Column
-    private Boolean userstudy_is_leader = false;
-    @Column
-    private Boolean userstudy_status = true;
+    private Boolean userstudyIsLeader = false;
 
     @ManyToOne
-    @JoinColumn(name = "user_index")
+    @JoinColumn(name = "userIndex")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "study_index")
+    @JoinColumn(name = "studyIndex")
     private Study study;
 
     @OneToMany(mappedBy = "userStudy", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Plan> userstudy_plans = new ArrayList<>();
+    private List<Plan> userstudyPlans = new ArrayList<>();
 
     @Builder
     public UserStudy(Boolean userstudy_is_leader, User user, Study study) {
-        this.userstudy_is_leader = userstudy_is_leader;
+        this.userstudyIsLeader = userstudy_is_leader;
         this.user = user;
         this.study = study;
     }

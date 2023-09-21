@@ -20,84 +20,93 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long user_index;
+    private Long userIndex;
 
     @Column
-    private String user_id;
+    private String userId;
 
     @Column
-    private String user_password;
+    private String userPassword;
 
     @Column
-    private String user_name;
+    private String userName;
 
     @Column
-    private String user_nickname;
+    private String userNickname;
 
     @Column
     @ColumnDefault("null")  // 추후에 기본 이미지 주소로 변경
-    private String user_profile_image;
+    private String userProfileImage;
+
+    @Column
+    private String userEmail;
 
     @Column
     @ColumnDefault("0")
-    private Long user_total_study_time;
-
-    @Column
-    private Long user_student_id;
+    private Long userTotalStudyTime;
 
     @Column
     @ColumnDefault("0")
-    private Long user_total_completed_schedule_num;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Calendar> user_calendars = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @ColumnDefault("null")
-    private List<UserBadge> user_userbadges = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @ColumnDefault("null")
-    private List<UserStudy> user_userstudies = new ArrayList<>();
+    private Long userTotalCompletedScheduleNum;
 
     @Column
-    private Boolean user_status = true;
+    private Long userStudentId;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Calendar> userCalendars = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @ColumnDefault("null")
+    private List<UserBadge> userUserbadges = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @ColumnDefault("null")
+    private List<UserStudy> userUserstudies = new ArrayList<>();
+
+    @Column
+    private Boolean userStatus = true;
 
     @ManyToOne
-    @JoinColumn(name = "university_index")
+    @JoinColumn(name = "universityIndex")
     private University university;
 
-    @Builder
-    public User(String user_id, String user_password, String user_name, String user_nickname, Long user_student_id) {
-        this.user_id = user_id;
-        this.user_password = user_password;
-        this.user_name = user_name;
-        this.user_nickname = user_nickname;
-        this.user_student_id = user_student_id;
+    @ManyToOne
+    @JoinColumn(name = "majorIndex")
+    private Major major;
+
+    public User(String user_id, String user_password, String user_name, String user_nickname, String user_email, Long user_student_id, University university, Major major) {
+        this.userId = user_id;
+        this.userPassword = user_password;
+        this.userName = user_name;
+        this.userNickname = user_nickname;
+        this.userEmail = user_email;
+        this.userStudentId = user_student_id;
+        this.university = university;
+        this.major = major;
     }
 
     public void addCalendars(Calendar calendar) {
-        this.user_calendars.add(calendar);
+        this.userCalendars.add(calendar);
     }
 
     public void addUserBadges(UserBadge userBadge) {
-        this.user_userbadges.add(userBadge);
+        this.userUserbadges.add(userBadge);
     }
 
     public void adduserStudies(UserStudy userStudy) {
-        this.user_userstudies.add(userStudy);
+        this.userUserstudies.add(userStudy);
     }
 
 
     public void updatePwd(String newPwd) {
-        this.user_password = newPwd;
+        this.userPassword = newPwd;
     }
 
     public void updateNickname(String nickname) {
-        this.user_nickname = nickname;
+        this.userNickname = nickname;
     }
 
     public void updatePfp(String pfp) {
-        this.user_profile_image = pfp;
+        this.userProfileImage = pfp;
     }
 }

@@ -16,44 +16,41 @@ public class Study {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long study_index;
+    private Long studyIndex;
 
     @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<UserStudy> study_userstudies = new ArrayList<>();
+    private List<UserStudy> studyUserstudies = new ArrayList<>();
 
     @Column
     @ColumnDefault("null")
     @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Post> study_posts = new ArrayList<>();
+    private List<Post> studyPosts = new ArrayList<>();
 
     @Column
-    private Integer study_member_limit;
+    private Integer studyMemberLimit;
 
     @Column
-    private String study_name;
+    private String studyName;
 
     @Column
-    private Boolean study_is_visible = true;
+    private Boolean studyIsVisible = true;
 
     @Column
-    private Boolean study_status = true;
+    private Boolean studyIsComplete = false;
 
     public void updateStudy_name(String study_name) {
-        this.study_name = study_name;
+        this.studyName = study_name;
     }
 
-    public void updateStudy_status(){
-        this.study_status = false;
-    }
     @Builder
     public Study(String study_name, Integer study_member_limit) {
-        this.study_name = study_name;
-        this.study_member_limit = study_member_limit;
+        this.studyName = study_name;
+        this.studyMemberLimit = study_member_limit;
     }
     public void addPost(Post post){
-        this.study_posts.add(post);
+        this.studyPosts.add(post);
     }
     public void addUserStudy(UserStudy userStudy){
-        this.study_userstudies.add(userStudy);
+        this.studyUserstudies.add(userStudy);
     }
 }

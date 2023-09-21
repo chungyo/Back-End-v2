@@ -16,21 +16,15 @@ public class University {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long university_index;
+    private Long universityIndex;
 
     @Column
-    private String university_name;
-
-    @Column
-    private Boolean university_status = true;
+    private String universityName;
 
     @OneToMany(mappedBy = "university", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<User> university_users = new ArrayList<>();
-
-    @OneToMany(mappedBy = "university", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Major> university_majors = new ArrayList<>();
+    private List<User> universityUsers = new ArrayList<>();
 
     public void addUser(User user){
-        this.university_users.add(user);
+        this.universityUsers.add(user);
     }
 }

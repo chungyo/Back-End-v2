@@ -16,56 +16,53 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long post_index;
+    private Long postIndex;
 
     @Column
-    private String post_title;
+    private String postTitle;
 
     @Lob
     @Column
-    private String post_contents;
+    private String postContents;
 
     @Column
-    private String post_image;
+    private String postImage;
 
     @Column
-    private boolean post_is_notice = true;
+    private boolean postIsNotice = true;
 
     @Column
-    private String post_writer;
+    private String postWriter;
 
     @Column
-    private Timestamp post_created_at;
+    private Timestamp postCreatedAt;
 
     @Column
-    private Timestamp post_updated_at;
-
-    @Column
-    private boolean post_status = true;
+    private Timestamp postUpdatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "study_index")
+    @JoinColumn(name = "studyIndex")
     private Study study = null;
 
     public Post(PostSaveRequestDto postSaveRequestDto,  String userName, Study study) {
-        this.post_is_notice = postSaveRequestDto.getIsNotice();
-        this.post_title = postSaveRequestDto.getPostTitle();
-        this.post_contents = postSaveRequestDto.getPostContents();
-        this.post_image = postSaveRequestDto.getPostImage();
-        this.post_writer = userName;
+        this.postIsNotice = postSaveRequestDto.getIsNotice();
+        this.postTitle = postSaveRequestDto.getPostTitle();
+        this.postContents = postSaveRequestDto.getPostContents();
+        this.postImage = postSaveRequestDto.getPostImage();
+        this.postWriter = userName;
         this.study = study;
     }
 
 
     public void updateTitle(String newTitle) {
-        this.post_title = newTitle;
+        this.postTitle = newTitle;
     }
 
     public void updateContents(String newContents){
-        this.post_contents = newContents;
+        this.postContents = newContents;
     }
 
     public void updateImage(String newImage){
-        this.post_image = newImage;
+        this.postImage = newImage;
     }
 }

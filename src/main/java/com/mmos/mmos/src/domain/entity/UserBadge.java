@@ -11,26 +11,21 @@ public class UserBadge {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userbadge_index;
+    private Long userbadgeIndex;
 
     @ManyToOne
-    @JoinColumn(name = "user_index")
+    @JoinColumn(name = "userIndex")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "badge_index")
+    @JoinColumn(name = "badgeIndex")
     private Badge badge;
 
     @Column
-    private Boolean userbadge_status = true;
+    private Boolean userbadgeStatus = true;
 
     @Column
-    private Boolean userbadge_is_visible = true;
-
-
-    public Long getUserbadge_index() {
-        return userbadge_index;
-    }
+    private Boolean userbadgeIsVisible = true;
 
     public UserBadge(User user, Badge badge) {
         this.user = user;

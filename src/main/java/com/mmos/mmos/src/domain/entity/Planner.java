@@ -21,49 +21,43 @@ public class Planner {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long planner_index;
+    private Long plannerIndex;
 
     @Column
-    private LocalDate planner_date;
+    private LocalDate plannerDate;
 
     @Column
     @ColumnDefault("null")
-    private String planner_memo;
+    private String plannerMemo;
 
     @Column
     @ColumnDefault("0")
-    private Long planner_daily_study_time;
+    private Long plannerDailyStudyTime;
 
     @Column
     @ColumnDefault("0")
-    private Long planner_daily_schedule_num;
+    private Long plannerDailyScheduleNum;
 
     @Column
-    private Boolean planner_is_public = true;
-
-    @Column
-    private Boolean planner_status = true;
+    private Boolean plannerIsPublic = true;
 
     @OneToMany(mappedBy = "planner", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Plan> planner_plans = new ArrayList<>();
+    private List<Plan> plannerPlans = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "calendar_index")
+    @JoinColumn(name = "calendarIndex")
     private Calendar calendar;
 
-    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Weather weather;
-
     @Column
-    private Long planner_dday;
+    private Long plannerDday;
 
     @Builder
     public Planner(LocalDate planner_date, Calendar calendar) {
-        this.planner_date = planner_date;
+        this.plannerDate = planner_date;
         this.calendar = calendar;
     }
 
     public void addPlan(Plan plan) {
-        this.planner_plans.add(plan);
+        this.plannerPlans.add(plan);
     }
 }

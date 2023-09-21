@@ -20,36 +20,33 @@ public class Calendar {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long calendar_index;
+    private Long calendarIndex;
 
     @Column
-    private int calendar_month;
-
-    @Column
-    private Boolean calendar_status = true;
+    private int calendarMonth;
 
     @Column
     @ColumnDefault("0")
-    private Long calendar_monthly_study_time;
+    private Long calendarMonthlyStudyTime;
 
     @Column
     @ColumnDefault("0")
-    private Long calendar_monthly_completed_plan_num;
+    private Long calendarMonthlyCompletedPlanNum;
 
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Planner> calendar_planners = new ArrayList<>();
+    private List<Planner> calendarPlanners = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "user_index")
+    @JoinColumn(name = "userIndex")
     private User user;
 
     @Builder
     public Calendar(int month, User user) {
-        this.calendar_month = month;
+        this.calendarMonth = month;
         this.user = user;
     }
 
     public void addPlanner(Planner planner) {
-        this.calendar_planners.add(planner);
+        this.calendarPlanners.add(planner);
     }
 }
