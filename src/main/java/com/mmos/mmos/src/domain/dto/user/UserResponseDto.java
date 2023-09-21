@@ -1,22 +1,37 @@
 package com.mmos.mmos.src.domain.dto.user;
 
+import com.mmos.mmos.src.domain.entity.User;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class UserResponseDto {
 
-    private Long userIdx;
-    private String userId;
-    private String userPwd;
-    private String userName;
-    private String userNickname;
-    private Long userStudentId;
-    private Integer userTier;
-    private Long userTotalStudyTime;
-    private String userPfp;
+    private Long idx;
+    private String id;
+    private String pwd;
+    private String name;
+    private String nickname;
+    private String pfp;
+    private String email;
+    private Long totalStudyTime;
+    private Long totalSchedule;
+    private Long studentId;
     private Boolean userStatus;
 
+    public UserResponseDto(User user) {
+        this.idx = user.getUserIndex();
+        this.id = user.getUserId();
+        this.pwd = user.getUserPassword();
+        this.name = user.getUserName();
+        this.nickname = user.getUserNickname();
+        this.pfp = user.getUserProfileImage();
+        this.email = user.getUserEmail();
+        this.totalStudyTime = user.getUserTotalStudyTime();
+        this.totalSchedule = user.getUserTotalCompletedScheduleNum();
+        this.studentId = user.getUserStudentId();
+        this.userStatus = getUserStatus();
+    }
 }
 

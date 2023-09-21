@@ -1,7 +1,7 @@
 package com.mmos.mmos.src.domain.entity;
 
+import com.mmos.mmos.src.domain.dto.user.UserSaveRequestDto;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -74,13 +74,13 @@ public class User {
     @JoinColumn(name = "majorIndex")
     private Major major;
 
-    public User(String user_id, String user_password, String user_name, String user_nickname, String user_email, Long user_student_id, University university, Major major) {
-        this.userId = user_id;
-        this.userPassword = user_password;
-        this.userName = user_name;
-        this.userNickname = user_nickname;
-        this.userEmail = user_email;
-        this.userStudentId = user_student_id;
+    public User(UserSaveRequestDto responseDto, University university, Major major) {
+        this.userId = responseDto.getId();
+        this.userPassword = responseDto.getPwd();
+        this.userName = responseDto.getName();
+        this.userNickname = responseDto.getNickname();
+        this.userEmail = responseDto.getEmail();
+        this.userStudentId = responseDto.getStudentId();
         this.university = university;
         this.major = major;
     }

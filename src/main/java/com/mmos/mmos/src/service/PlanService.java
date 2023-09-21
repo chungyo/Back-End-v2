@@ -64,7 +64,7 @@ public class PlanService {
     @Transactional
     public PlanResponseDto getPlan(Long planIdx) {
         Plan plan = findPlan(planIdx);
-        PlanResponseDto responseDto = new PlanResponseDto(plan.getPlan_index(), plan.getPlan_name(), plan.getPlan_is_complete(), plan.getPlan_is_study());
+        PlanResponseDto responseDto = new PlanResponseDto(plan);
 
         return responseDto;
     }
@@ -75,7 +75,7 @@ public class PlanService {
         List<Plan> plans = findPlans();
 
         for (Plan plan : plans) {
-            responseDtoList.add(new PlanResponseDto(plan.getPlan_index(), plan.getPlan_name(), plan.getPlan_is_complete(), plan.getPlan_is_study()));
+            responseDtoList.add(new PlanResponseDto(plan));
         }
 
         return responseDtoList;
@@ -87,6 +87,6 @@ public class PlanService {
 
         plan.update(requestDto.getPlanName());
 
-        return new PlanResponseDto(plan.getPlan_index(), plan.getPlan_name(), plan.getPlan_is_complete(), plan.getPlan_is_study());
+        return new PlanResponseDto(plan);
     }
 }

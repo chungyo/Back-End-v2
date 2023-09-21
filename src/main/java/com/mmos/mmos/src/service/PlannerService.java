@@ -1,5 +1,6 @@
 package com.mmos.mmos.src.service;
 
+import com.mmos.mmos.src.domain.dto.planner.PlannerResponseDto;
 import com.mmos.mmos.src.domain.entity.Calendar;
 import com.mmos.mmos.src.domain.entity.Planner;
 import com.mmos.mmos.src.repository.CalendarRepository;
@@ -24,18 +25,20 @@ public class PlannerService {
 
     // 플래너 생성
     @Transactional
-    public Planner savePlanner(LocalDate today, Long calendarIdx) {
+    public PlannerResponseDto savePlanner(LocalDate today, Long calendarIdx) {
         Calendar calendar = findCalendar(calendarIdx);
 
         // 막 회원 가입을 한 유저가 아니면서 같은 날의 플래너가 이미 존재할 때 생성 막기
-        if(!calendar.getCalendar_planners().isEmpty() && calendar.getCalendar_planners().get(calendar.getCalendar_planners().size() - 1).getPlanner_date().equals(today))
+        if(!calendar.getCalendarPlanners().isEmpty() && calendar.getCalendarPlanners().get(calendar.getCalendarPlanners().size() - 1).getPlannerDate().equals(today))
             return null;
 
         Planner planner = new Planner(today, calendar);
         // Calendar, Planner 양방향 매핑
         calendar.addPlanner(planner);
 
-        return plannerRepository.save(planner);
+        plannerRepository.save(planner);
+
+        return new PlannerResponseDto(planner);
     }
 
 }

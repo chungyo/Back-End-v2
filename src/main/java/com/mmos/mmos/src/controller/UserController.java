@@ -1,12 +1,12 @@
 package com.mmos.mmos.src.controller;
 
 import com.mmos.mmos.config.ResponseApiMessage;
+import com.mmos.mmos.src.domain.dto.calendar.CalendarResponseDto;
+import com.mmos.mmos.src.domain.dto.planner.PlannerResponseDto;
 import com.mmos.mmos.src.domain.dto.user.UserNicknameUpdateDto;
 import com.mmos.mmos.src.domain.dto.user.UserPwdUpdateDto;
+import com.mmos.mmos.src.domain.dto.user.UserResponseDto;
 import com.mmos.mmos.src.domain.dto.user.UserSaveRequestDto;
-import com.mmos.mmos.src.domain.entity.Calendar;
-import com.mmos.mmos.src.domain.entity.Planner;
-import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.service.CalendarService;
 import com.mmos.mmos.src.service.PlannerService;
 import com.mmos.mmos.src.service.UserService;
@@ -33,38 +33,44 @@ public class UserController extends BaseController {
     public ResponseEntity<ResponseApiMessage> saveUser(@RequestBody UserSaveRequestDto requestDto) {
 
         // null 검사
-        if(requestDto.getUserId() == null) {
+        if(requestDto.getId() == null) {
             return sendResponseHttpByJson(POST_USER_EMPTY_USERID, "EMPTY USER_ID.", requestDto);
         }
-        if(requestDto.getUserName() == null) {
+        if(requestDto.getName() == null) {
             return sendResponseHttpByJson(POST_USER_EMPTY_USERNAME, "EMPTY USER_NAME.", requestDto);
         }
-        if(requestDto.getUserPwd() == null) {
+        if(requestDto.getPwd() == null) {
             return sendResponseHttpByJson(POST_USER_EMPTY_USERPWD, "EMPTY USER_PWD.", requestDto);
         }
-        if(requestDto.getUserStudentId() == null) {
+        if(requestDto.getStudentId() == null) {
             return sendResponseHttpByJson(POST_USER_EMPTY_USERSTUDENTID, "EMPTY USER_STUDENT_ID.", requestDto);
         }
-        if(requestDto.getUserNickname() == null) {
+        if(requestDto.getNickname() == null) {
             return sendResponseHttpByJson(POST_USER_EMPTY_NICKNAME, "EMPTY USER_NICKNAME.", requestDto);
         }
+        if(requestDto.getUniversityIdx() == null) {
+            return sendResponseHttpByJson(POST_USER_EMPTY_NICKNAME, "EMPTY UNIVERSITY_INDEX.", requestDto);
+        }
+        if(requestDto.getMajorIdx() == null) {
+            return sendResponseHttpByJson(POST_USER_EMPTY_NICKNAME, "EMPTY MAJOR_INDEX.", requestDto);
+        }
 
-        // 특수 문자 제거
+        // Regex 검사(학번, 이름, 이메일, 닉네임)
 
 
         // 비밀번호 암호화
 
 
         // User 생성
-        User user = userService.saveUser(requestDto);
+        UserResponseDto userResponseDto = userService.saveUser(requestDto);
 
         // Calendar 생성
-        Calendar calendar = calendarService.saveCalendar(LocalDate.now().getMonthValue(), user.getUser_index());
+        CalendarResponseDto calendarResponseDto = calendarService.saveCalendar(LocalDate.now().getMonthValue(), userResponseDto.getIdx());
 
         // Planner 생성
-        Planner planner = plannerService.savePlanner(LocalDate.now(), calendar.getCalendar_index());
+        PlannerResponseDto plannerResponseDto = plannerService.savePlanner(LocalDate.now(), calendarResponseDto.getIdx());
 
-        return sendResponseHttpByJson(SUCCESS, "SAVE USER. USER_INDEX=" + user.getUser_index(), requestDto);
+        return sendResponseHttpByJson(SUCCESS, "SAVE USER. USER_INDEX=" + userResponseDto.getIdx(), userResponseDto);
     }
 
     // 비밀번호 변경
@@ -78,9 +84,9 @@ public class UserController extends BaseController {
         if(!userPwdUpdateDto.getNewPwd().equals(userPwdUpdateDto.getNewPwdByCheck()))
             return sendResponseHttpByJson(UPDATE_USER_SAME_PWD, "PASSWORD UPDATE FAIL. (NEW PWD != CHECK NEW PWD)", null);
 
-        userService.updatePwd(userPwdUpdateDto, userIdx);
+        UserResponseDto userResponseDto = userService.updatePwd(userPwdUpdateDto, userIdx);
 
-        return sendResponseHttpByJson(SUCCESS, "UPDATE PASSWORD. USER_IDX=" + userIdx, userPwdUpdateDto);
+        return sendResponseHttpByJson(SUCCESS, "UPDATE PASSWORD. USER_IDX=" + userIdx, userResponseDto);
     }
 
     // 닉네임 변경
@@ -93,17 +99,17 @@ public class UserController extends BaseController {
         if(userNicknameUpdateDto.getPrevNickname().equals(userNicknameUpdateDto.getNewNickname()))
             return sendResponseHttpByJson(SUCCESS, "NICKNAME UPDATE FAIL. (PREV_NICKNAME == NEW_NICKNAME)", userNicknameUpdateDto);
 
-        userService.updateNickname(userNicknameUpdateDto, userIdx);
+        UserResponseDto responseDto = userService.updateNickname(userNicknameUpdateDto, userIdx);
 
-        return sendResponseHttpByJson(SUCCESS, "UPDATE NICKNAME. USER_IDX=" + userIdx, userNicknameUpdateDto);
+        return sendResponseHttpByJson(SUCCESS, "UPDATE NICKNAME. USER_IDX=" + userIdx, responseDto);
     }
 
     // 프로필 이미지 변경
     @ResponseBody
     @PatchMapping("/{userIdx}/{pfp}")
     public ResponseEntity<ResponseApiMessage> updatePfp(@PathVariable Long userIdx, @PathVariable String pfp) {
-        userService.updatePfp(pfp, userIdx);
+        UserResponseDto responseDto = userService.updatePfp(pfp, userIdx);
 
-        return sendResponseHttpByJson(SUCCESS, "UPDATE PFP. USER_IDX=" + userIdx, pfp);
+        return sendResponseHttpByJson(SUCCESS, "UPDATE PFP. USER_IDX=" + userIdx, responseDto);
     }
 }

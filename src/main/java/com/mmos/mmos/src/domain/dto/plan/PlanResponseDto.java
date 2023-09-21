@@ -13,10 +13,10 @@ public class PlanResponseDto {
     private Boolean isComplete;
     private Boolean isStudy;
 
-    public PlanResponseDto(Long planIdx, String planName, Boolean isComplete, Boolean isStudy) {
-        this.planIdx = planIdx;
-        this.planName = planName;
-        this.isComplete = isComplete;
-        this.isStudy = isStudy;
+    public PlanResponseDto(Plan plan) {
+        this.planIdx = plan.getPlanIndex();
+        this.planName = plan.getPlanName();
+        this.isComplete = plan.getPlanIsComplete();
+        this.isStudy = plan.getPlanIsStudy();
     }
 }

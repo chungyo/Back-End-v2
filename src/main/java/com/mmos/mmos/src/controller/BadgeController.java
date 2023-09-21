@@ -16,6 +16,7 @@ public class BadgeController extends BaseController {
 
     private final BadgeService badgeService;
 
+    // 전체 조회도 포함해서 만들기
     @ResponseBody
     @GetMapping("/{badgeIdx}")
     public ResponseEntity<ResponseApiMessage> getBadge(@PathVariable Long badgeIdx) {

@@ -15,30 +15,27 @@ public class StudyTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long studytime_index;
+    private Long studytimeIndex;
 
     @Column
     @ColumnDefault("current_timestamp")
-    private Timestamp studytime_start_time;
+    private Timestamp studytimeStartTime;
 
     @Column
     @ColumnDefault("current_timestamp on update current_timestamp")
-    private Timestamp studytime_end_time;
-
-    @Column
-    private Boolean studytime_status = true;
+    private Timestamp studytimeEndTime;
 
     @ManyToOne
-    @JoinColumn(name = "plan_index")
+    @JoinColumn(name = "planIndex")
     private Plan plan;
 
     public StudyTime(Timestamp studytime_start_time, Timestamp studytime_end_time, Plan plan) {
-        this.studytime_start_time = studytime_start_time;
-        this.studytime_end_time = studytime_end_time;
+        this.studytimeStartTime = studytime_start_time;
+        this.studytimeEndTime = studytime_end_time;
         this.plan = plan;
     }
 
     public void updateEndTime(Timestamp endTime) {
-        this.studytime_end_time = endTime;
+        this.studytimeEndTime = endTime;
     }
 }

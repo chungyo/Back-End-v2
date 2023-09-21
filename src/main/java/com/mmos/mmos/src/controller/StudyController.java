@@ -26,9 +26,9 @@ public class StudyController extends BaseController{
         Study study = studyService.saveStudy(requestDto);
 
         // UserStudy 생성 + study -> UserStudy 매핑
-        UserStudy userStudy = userStudyService.saveUserStudy(true,study.getStudy_index(), userIdx);
+        UserStudy userStudy = userStudyService.saveUserStudy(true, study.getStudyIndex(), userIdx);
 
-        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE STUDY. STUDY_INDEX=" + study.getStudy_index(), requestDto);
+        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE STUDY. STUDY_INDEX=" + study.getStudyIndex(), requestDto);
     }
 
     @PatchMapping("/{studyIdx}/{studyName}")
@@ -36,12 +36,5 @@ public class StudyController extends BaseController{
         studyService.updateStudyName(studyIdx,studyName);
 
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE STUDY_NAME. STUDY_INDEX=" + studyIdx, studyName);
-    }
-
-    @PatchMapping("/{studyIdx}")
-    public ResponseEntity<ResponseApiMessage> updateStudyStatus(@PathVariable Long studyIdx) {
-        studyService.updateStudyStatus(studyIdx);
-
-        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE STUDY_STATUS. STUDY_INDEX=" + studyIdx, null);
     }
 }

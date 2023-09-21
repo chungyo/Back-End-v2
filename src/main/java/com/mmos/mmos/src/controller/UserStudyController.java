@@ -19,6 +19,6 @@ public class UserStudyController extends BaseController{
     public ResponseEntity<ResponseApiMessage> saveUserStudy(@PathVariable Long studyIdx, @PathVariable Long userIdx){
         UserStudy userStudy = userStudyService.saveUserStudy(false, userIdx, studyIdx);
 
-        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE USER STUDY. USERSTUDY_INDEX=" + userStudy.getUserstudy_index(), userStudy );
+        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE USER STUDY. USERSTUDY_INDEX=" + userStudy.getUserstudyIndex(), userStudy );
     }
 }

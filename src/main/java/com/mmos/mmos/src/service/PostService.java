@@ -38,8 +38,7 @@ public class PostService {
 
         User user = findUser(userIdx);
         Study study = findStudy(studyIdx);
-        Post post = new Post(postSaveRequestDto, user.getUser_name(), study);
-        System.out.println("Post =" + post.toString());
+        Post post = new Post(postSaveRequestDto, user.getUserName(), study);
         study.addPost(post);
         return postRepository.save(post);
     }

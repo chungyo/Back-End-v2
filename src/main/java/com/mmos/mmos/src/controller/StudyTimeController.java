@@ -1,6 +1,5 @@
 package com.mmos.mmos.src.controller;
 
-import com.mmos.mmos.config.HttpResponseStatus;
 import com.mmos.mmos.config.ResponseApiMessage;
 import com.mmos.mmos.src.domain.dto.studytime.StudyTimeResponseDto;
 import com.mmos.mmos.src.service.StudyTimeService;
@@ -35,6 +34,5 @@ public class StudyTimeController extends BaseController {
         if(responseDto == null)
             return sendResponseHttpByJson(POST_STUDYTIME_INVALID_REQUEST, "Fail Set End Study Time.", planIdx);
         return sendResponseHttpByJson(SUCCESS, "Save Start Study Time.", responseDto);
-
     }
 }

@@ -29,9 +29,4 @@ public class StudyService {
         Study study = findStudy(studyIdx);
         study.updateStudy_name(name);
     }
-    @Transactional
-    public void updateStudyStatus(Long studyIdx) {
-        Study study = findStudy(studyIdx);
-        study.updateStudy_status();
-    }
 }
