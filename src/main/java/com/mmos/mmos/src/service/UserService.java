@@ -84,19 +84,8 @@ public class UserService {
     public UserResponseDto updateNickname(UserNicknameUpdateDto userNicknameUpdateDto, Long userIdx) {
         // 유저 정보 찾기
         User user = findUserByIdx(userIdx);
-        // 유저 비밀번호 변경
+        // 유저 닉네임 변경
         user.updateNickname(userNicknameUpdateDto.getNewNickname());
-
-        return new UserResponseDto(user);
-    }
-
-    // 프로필 이미지 변경: 닉네임과 사유 같음
-    @Transactional
-    public UserResponseDto updatePfp(String pfp, Long userIdx) {
-        // 유저 정보 찾기
-        User user = findUserByIdx(userIdx);
-        // 유저 프로필 이미지 변경
-        user.updatePfp(pfp);
 
         return new UserResponseDto(user);
     }
