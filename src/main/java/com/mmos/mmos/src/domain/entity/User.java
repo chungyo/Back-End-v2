@@ -35,10 +35,6 @@ public class User {
     private String userNickname;
 
     @Column
-    @ColumnDefault("null")  // 추후에 기본 이미지 주소로 변경
-    private String userProfileImage;
-
-    @Column
     private String userEmail;
 
     @Column
@@ -104,7 +100,4 @@ public class User {
         this.userNickname = nickname;
     }
 
-    public void updatePfp(String pfp) {
-        this.userProfileImage = pfp;
-    }
 }
