@@ -1,5 +1,6 @@
 package com.mmos.mmos.src.service;
 
+import com.mmos.mmos.src.domain.dto.userstudy.UserStudyResponseDto;
 import com.mmos.mmos.src.domain.entity.Study;
 import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.domain.entity.UserStudy;
@@ -27,7 +28,7 @@ public class UserStudyService {
     }
 
     @Transactional
-    public UserStudy saveUserStudy(Boolean isLeader, Long studyIdx, Long userIdx) {
+    public UserStudyResponseDto saveUserStudy(Boolean isLeader, Long studyIdx, Long userIdx) {
         // 객체 불러오기
         Study study = findStudy(studyIdx);
         User user = findUser(userIdx);
@@ -37,9 +38,8 @@ public class UserStudyService {
         study.addUserStudy(userStudy);
         user.adduserStudies(userStudy);
 
+        userStudyRepository.save(userStudy);
 
-        return userStudyRepository.save(userStudy);
+        return new UserStudyResponseDto(userStudy);
     }
-
-
 }
