@@ -35,9 +35,11 @@ public class BadgeService {
         return new BadgeResponseDto(badge);
     }
 
-    // 휘장 전체 조회 = 0
-    // 티어 전체 조회 = 1
-    // 프사 전체 조회 = 2
+
+
+    // 휘장 전체 조회 = badge
+    // 티어 전체 조회 = tier
+    // 프사 전체 조회 = pfp
     @Transactional
     public List<BadgeResponseDto> getBadgesByPurpose(String purpose) {
         List<Badge> badgeList = findBadgesByPurpose(purpose);
