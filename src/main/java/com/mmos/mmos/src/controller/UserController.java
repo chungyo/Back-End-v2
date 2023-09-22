@@ -31,7 +31,6 @@ public class UserController extends BaseController {
     @ResponseBody
     @PostMapping("")
     public ResponseEntity<ResponseApiMessage> saveUser(@RequestBody UserSaveRequestDto requestDto) {
-
         // null 검사
         if(requestDto.getId() == null) {
             return sendResponseHttpByJson(POST_USER_EMPTY_USERID, "EMPTY USER_ID.", requestDto);
@@ -77,6 +76,14 @@ public class UserController extends BaseController {
     @ResponseBody
     @PatchMapping("/{userIdx}/password")
     public ResponseEntity<ResponseApiMessage> updatePwd(@RequestBody UserPwdUpdateDto userPwdUpdateDto, @PathVariable Long userIdx) {
+        // null 검사
+        if(userPwdUpdateDto.getPrevPwd() == null)
+            return sendResponseHttpByJson(UPDATE_USER_EMPTY_PREVPWD, "PASSWORD UPDATE FAIL. PREV_PWD == NULL", null);
+        if(userPwdUpdateDto.getNewPwd() == null)
+            return sendResponseHttpByJson(UPDATE_USER_EMPTY_NEWPWD, "PASSWORD UPDATE FAIL. NEW_PWD == NULL", null);
+        if (userPwdUpdateDto.getNewPwdByCheck() == null)
+            return sendResponseHttpByJson(UPDATE_USER_DIFF_NEWPWD, "PASSWORD UPDATE FAIL. NEW_PWD_CHECK == NULL", null);
+
         // 기존 비밀번호와 새로운 비밀번호가 다른지 확인
         if(userPwdUpdateDto.getPrevPwd().equals(userPwdUpdateDto.getNewPwd()))
             return sendResponseHttpByJson(UPDATE_USER_SAME_PWD, "PASSWORD UPDATE FAIL. (PREVIOUS PWD == NEW PWD)", null);
@@ -93,23 +100,12 @@ public class UserController extends BaseController {
     @ResponseBody
     @PatchMapping("/{userIdx}/nickname")
     public ResponseEntity<ResponseApiMessage> updateNickname(@RequestBody UserNicknameUpdateDto userNicknameUpdateDto, @PathVariable Long userIdx) {
-        // 기존 닉네임을 불러오는 방식으로 다시 만들기
-
-        // 기존 닉네임과 새 닉네임이 다른지 확인
-        if(userNicknameUpdateDto.getPrevNickname().equals(userNicknameUpdateDto.getNewNickname()))
-            return sendResponseHttpByJson(SUCCESS, "NICKNAME UPDATE FAIL. (PREV_NICKNAME == NEW_NICKNAME)", userNicknameUpdateDto);
+        // null 검사
+        if(userNicknameUpdateDto.getNewNickname() == null)
+            return sendResponseHttpByJson(UPDATE_USER_EMPTY_NICKNAME, "UPDATE NICKNAME FAIL. USER_IDX=" + userIdx, null);
 
         UserResponseDto responseDto = userService.updateNickname(userNicknameUpdateDto, userIdx);
 
         return sendResponseHttpByJson(SUCCESS, "UPDATE NICKNAME. USER_IDX=" + userIdx, responseDto);
-    }
-
-    // 프로필 이미지 변경
-    @ResponseBody
-    @PatchMapping("/{userIdx}/{pfp}")
-    public ResponseEntity<ResponseApiMessage> updatePfp(@PathVariable Long userIdx, @PathVariable String pfp) {
-        UserResponseDto responseDto = userService.updatePfp(pfp, userIdx);
-
-        return sendResponseHttpByJson(SUCCESS, "UPDATE PFP. USER_IDX=" + userIdx, responseDto);
     }
 }
