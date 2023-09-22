@@ -18,8 +18,8 @@ public class UniversityController extends BaseController {
     private final UniversityService universityService;
 
     @ResponseBody
-    @GetMapping("")
-    public ResponseEntity<ResponseApiMessage> getUniversity(@RequestParam Long universityIdx) {
+    @GetMapping("/{universityIdx}")
+    public ResponseEntity<ResponseApiMessage> getUniversity(@PathVariable Long universityIdx) {
         UniversityResponseDto responseDto = universityService.getUniversity(universityIdx);
 
         return sendResponseHttpByJson(SUCCESS, "GET UNIVERSITY. UNIVERSITY_INDEX = " + universityIdx, responseDto);
