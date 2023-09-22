@@ -64,9 +64,8 @@ public class PlanService {
     @Transactional
     public PlanResponseDto getPlan(Long planIdx) {
         Plan plan = findPlan(planIdx);
-        PlanResponseDto responseDto = new PlanResponseDto(plan);
 
-        return responseDto;
+        return new PlanResponseDto(plan);
     }
 
     @Transactional
