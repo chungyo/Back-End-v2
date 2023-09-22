@@ -8,15 +8,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PlanResponseDto {
 
-    private Long planIdx;
-    private String planName;
+    private Long idx;
+    private String name;
     private Boolean isComplete;
     private Boolean isStudy;
+    private Boolean isVisibleOnCalendar;
 
     public PlanResponseDto(Plan plan) {
-        this.planIdx = plan.getPlanIndex();
-        this.planName = plan.getPlanName();
+        this.idx = plan.getPlanIndex();
+        this.name = plan.getPlanName();
         this.isComplete = plan.getPlanIsComplete();
         this.isStudy = plan.getPlanIsStudy();
+        this.isVisibleOnCalendar = plan.getPlanIsVisibleOnCalendar();
     }
 }
