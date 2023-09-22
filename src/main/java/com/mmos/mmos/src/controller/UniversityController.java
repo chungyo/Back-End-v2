@@ -1,8 +1,7 @@
 package com.mmos.mmos.src.controller;
 
-import com.mmos.mmos.config.HttpResponseStatus;
 import com.mmos.mmos.config.ResponseApiMessage;
-import com.mmos.mmos.src.domain.entity.University;
+import com.mmos.mmos.src.domain.dto.university.UniversityResponseDto;
 import com.mmos.mmos.src.service.UniversityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,25 +9,27 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
+
 @RestController
 @RequestMapping("/api/v1/universities")
 @RequiredArgsConstructor
-public class UniversityController extends BaseController{
+public class UniversityController extends BaseController {
     private final UniversityService universityService;
 
     @ResponseBody
     @GetMapping("")
-    public ResponseEntity<ResponseApiMessage> getUniversities(@RequestParam(required = false) Long universityIdx){
-        System.out.println("universityIdx = " + universityIdx);
-        if(universityIdx == null){
-            List<University> universities = universityService.findUniversities();
+    public ResponseEntity<ResponseApiMessage> getUniversity(@RequestParam Long universityIdx) {
+        UniversityResponseDto responseDto = universityService.getUniversity(universityIdx);
 
-            return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "GET UNIVERSITIES.", universities);
-        }
-        else {
-            University university = universityService.findUniversity(universityIdx);
+        return sendResponseHttpByJson(SUCCESS, "GET UNIVERSITY. UNIVERSITY_INDEX = " + universityIdx, responseDto);
+    }
 
-            return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "GET UNIVERSITY. UNIVERSITY_INDEX = " + universityIdx, university);
-        }
+    @ResponseBody
+    @GetMapping("")
+    public ResponseEntity<ResponseApiMessage> getUniversities() {
+        List<UniversityResponseDto> responseDtoList = universityService.getUniversities();
+
+        return sendResponseHttpByJson(SUCCESS, "GET UNIVERSITIES.", responseDtoList);
     }
 }
