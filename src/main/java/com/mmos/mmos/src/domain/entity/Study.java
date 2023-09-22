@@ -1,5 +1,6 @@
 package com.mmos.mmos.src.domain.entity;
 
+import com.mmos.mmos.src.domain.dto.study.StudySaveRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -43,9 +44,9 @@ public class Study {
     }
 
     @Builder
-    public Study(String study_name, Integer study_member_limit) {
-        this.studyName = study_name;
-        this.studyMemberLimit = study_member_limit;
+    public Study(StudySaveRequestDto requestDto) {
+        this.studyName = requestDto.getName();
+        this.studyMemberLimit = requestDto.getMemberLimit();
     }
     public void addPost(Post post){
         this.studyPosts.add(post);

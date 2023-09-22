@@ -2,6 +2,7 @@ package com.mmos.mmos.src.domain.entity;
 
 import com.mmos.mmos.src.domain.dto.user.UserSaveRequestDto;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -29,6 +30,7 @@ public class User {
     private String userPassword;
 
     @Column
+    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,6}$")
     private String userName;
 
     @Column

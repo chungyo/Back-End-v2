@@ -15,7 +15,7 @@ public class StudyService {
     // 스터디 생성
     @Transactional
     public Study saveStudy(StudySaveRequestDto requestDto){
-        Study study = requestDto.toEntity();
+        Study study = new Study(requestDto);
         
         return studyRepository.save(study);
     }
