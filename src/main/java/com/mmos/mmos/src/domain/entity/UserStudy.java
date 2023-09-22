@@ -25,6 +25,9 @@ public class UserStudy {
     @Column
     private Boolean userstudyIsLeader = false;
 
+    @Column
+    private Boolean userstudyStatus = true;
+
     @ManyToOne
     @JoinColumn(name = "userIndex")
     private User user;

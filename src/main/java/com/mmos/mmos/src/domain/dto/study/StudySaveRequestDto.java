@@ -7,13 +7,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class StudySaveRequestDto {
-    private Integer studyMemberLimit;
-    private String studyName;
+    private Integer memberLimit;
+    private String name;
 
-    public Study toEntity() {
-        return Study.builder()
-                .study_name(studyName)
-                .study_member_limit(studyMemberLimit)
-                .build();
+    public StudySaveRequestDto(Study entity) {
+        this.memberLimit = entity.getStudyMemberLimit();
+        this.name = entity.getStudyName();
     }
 }

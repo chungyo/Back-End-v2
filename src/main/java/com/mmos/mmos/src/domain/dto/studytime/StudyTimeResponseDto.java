@@ -10,12 +10,12 @@ import java.sql.Timestamp;
 @RequiredArgsConstructor
 public class StudyTimeResponseDto {
 
-    private Long studyTimeIdx;
+    private Long idx;
     private Timestamp startTime;
     private Timestamp endTime;
 
     public StudyTimeResponseDto(StudyTime studyTime) {
-        this.studyTimeIdx = studyTime.getStudytimeIndex();
+        this.idx = studyTime.getStudytimeIndex();
         this.startTime = studyTime.getStudytimeStartTime();
         this.endTime = studyTime.getStudytimeEndTime();
     }

@@ -18,7 +18,7 @@ public class StudyTimeService {
     private final StudyTimeRepository studyTimeRepository;
     private final PlanRepository planRepository;
 
-    public Plan findPlan(Long planIdx) {
+    public Plan findPlanByIdx(Long planIdx) {
         return planRepository.findById(planIdx)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계획입니다. PLAN_INDEX=" + planIdx));
     }
@@ -26,7 +26,7 @@ public class StudyTimeService {
     // save
     @Transactional
     public StudyTimeResponseDto setStartTime(Long planIdx) {
-        Plan plan = findPlan(planIdx);
+        Plan plan = findPlanByIdx(planIdx);
 
         // 가장 최근 스터디 리스트에 마감을 하지 않은게 있다면 돌아가지 않도록
         for (Plan plannerPlan : plan.getPlanner().getPlannerPlans()) {
@@ -45,7 +45,7 @@ public class StudyTimeService {
     // update
     @Transactional
     public StudyTimeResponseDto setEndTime(Long planIdx) {
-        Plan plan = findPlan(planIdx);
+        Plan plan = findPlanByIdx(planIdx);
 
         if(plan.getPlanStudytimeTimes().isEmpty() || plan.getPlanStudytimeTimes().get(plan.getPlanStudytimeTimes().size() - 1).getStudytimeEndTime() != null)
             return null;
