@@ -32,8 +32,8 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 대학입니다 UNIVERSITY_INDEX=" + universityIdx));
     }
 
-    public Major findMajorByIdx(Long majorIdx) {
-        return majorRepository.findById(majorIdx)
+    public Major findMajorByIdxAndCollege(Long majorIdx, String majorCollege) {
+        return majorRepository.findByMajorIndexAndMajorCollege(majorIdx, majorCollege)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 학과입니다. UNIVERSITY_INDEX=" + majorIdx));
     }
 
@@ -41,13 +41,17 @@ public class UserService {
     @Transactional
     public UserResponseDto saveUser(UserSaveRequestDto requestDto) {
         University university = findUniversityByIdx(requestDto.getUniversityIdx());
-        Major major = findMajorByIdx(requestDto.getMajorIdx());
+        Major major = findMajorByIdxAndCollege(requestDto.getMajorIdx(), requestDto.getMajorCollege());
 
-        // Validation: 생성하려는 유저의 정보로 이미 가입된 회원이 있는지 확인 (학교 & 학번, 이메일)
+        // Validation: 생성하려는 유저의 정보로 이미 가입된 회원이 있는지 확인 (학교 & 학번, 이메일, 닉네임)
         if(userRepository.findUserByUserEmail(requestDto.getEmail()).isPresent())
             return null;
         if(userRepository.findUserByUserStudentIdAndUniversity(requestDto.getStudentId(), university).isPresent()) {
-            System.out.println("aa");
+            System.out.println("학번&학번 중복");
+            return null;
+        }
+        if(userRepository.findUserByUserNickname(requestDto.getNickname()).isPresent()){
+            System.out.println("중복된 닉네임");
             return null;
         }
 
