@@ -1,6 +1,7 @@
 package com.mmos.mmos.src.domain.entity;
 
 import com.mmos.mmos.src.domain.dto.post.PostSaveRequestDto;
+import com.mmos.mmos.src.domain.dto.post.PostUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +30,7 @@ public class Post {
     private String postImage;
 
     @Column
-    private boolean postIsNotice = true;
+    private Boolean postIsNotice = true;
 
     @Column
     private String postWriter;
@@ -53,16 +54,9 @@ public class Post {
         this.study = study;
     }
 
-
-    public void updateTitle(String newTitle) {
-        this.postTitle = newTitle;
-    }
-
-    public void updateContents(String newContents){
-        this.postContents = newContents;
-    }
-
-    public void updateImage(String newImage){
-        this.postImage = newImage;
+    public void update(PostUpdateRequestDto postUpdateRequestDto) {
+        this.postTitle = postUpdateRequestDto.getTitle();
+        this.postContents = postUpdateRequestDto.getContents();
+        this.postImage = postUpdateRequestDto.getImage();
     }
 }
