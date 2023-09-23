@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.mmos.mmos.config.HttpResponseStatus.POST_PLAN_INVALID_REQUEST;
 import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
 
 @RestController
@@ -24,6 +25,10 @@ public class PlanController extends BaseController {
     @ResponseBody
     @PostMapping("/{plannerIdx}")
     public ResponseEntity<ResponseApiMessage> savePlan(@PathVariable Long plannerIdx, @RequestBody PlanSaveRequestDto requestDto) {
+        // 계획에 내용이 없을 시 발동되는 조건.
+        if(requestDto.getPlanName() == null){
+            return sendResponseHttpByJson(POST_PLAN_INVALID_REQUEST, "EMPTY PLAN_NAME.", requestDto);
+        }
         planService.savePlan(requestDto, plannerIdx);
 
         return sendResponseHttpByJson(SUCCESS, "Saved Plan. PLANNER_INDEX=" + plannerIdx, requestDto);
@@ -31,11 +36,21 @@ public class PlanController extends BaseController {
 
     // 계획 조회 (단일)
     @ResponseBody
-    @GetMapping("")
-    public ResponseEntity<ResponseApiMessage> getPlan(@RequestParam Long planIdx) {
+    @GetMapping("/{planIdx}")
+    public ResponseEntity<ResponseApiMessage> getPlan(@PathVariable Long planIdx) {
         PlanResponseDto responseDto = planService.getPlan(planIdx);
 
-        return sendResponseHttpByJson(SUCCESS, "load Plans.", responseDto);
+        return sendResponseHttpByJson(SUCCESS, "GET PLAN. PLAN_INDEX = " + planIdx, responseDto);
+    }
+
+    // 계획 조회(조건부)
+    // 스터디 관련 계획이면 true, 그렇지 않으면 false
+    @ResponseBody
+    @GetMapping("/all/{planIsStudy}")
+    public ResponseEntity<ResponseApiMessage> getPlansByIsStudy(@PathVariable Boolean planIsStudy){
+        List<PlanResponseDto> responseDtoList = planService.getPlansByPlanIsStudy(planIsStudy);
+
+        return sendResponseHttpByJson(SUCCESS, "Load Plans.", responseDtoList);
     }
 
     // 계획 조회 (전체)
@@ -44,7 +59,7 @@ public class PlanController extends BaseController {
     public ResponseEntity<ResponseApiMessage> getPlans() {
         List<PlanResponseDto> responseDtoList = planService.getPlans();
 
-        return sendResponseHttpByJson(SUCCESS, "load Plans.", responseDtoList);
+        return sendResponseHttpByJson(SUCCESS, "GET PLANS.", responseDtoList);
     }
 
     // 계획 내용 수정

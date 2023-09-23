@@ -24,32 +24,38 @@ public class PlanService {
     private final PlannerRepository plannerRepository;
     private final UserStudyRepository userStudyRepository;
 
-    public Planner findPlanner(Long plannerIdx) {
+    public Planner findPlannerByIdx(Long plannerIdx) {
         return plannerRepository.findById(plannerIdx)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 플래너입니다. PLANNER_INDEX=" + plannerIdx));
     }
 
-    public UserStudy findUserStudy(Long userStudyIdx) {
+    public UserStudy findUserStudyByIdx(Long userStudyIdx) {
         return userStudyRepository.findById(userStudyIdx)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자가 가입된 스터디입니다. USERSTUDY_INDEX=" + userStudyIdx));
     }
 
-    public Plan findPlan(Long planIdx) {
+    public Plan findPlanByIdx(Long planIdx) {
         return planRepository.findById(planIdx)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 플랜입니다. PLAN_INDEX=" + planIdx));
+    }
+
+    public List<Plan> findPlansByIsStudy(Boolean isStudy){
+        return planRepository.findPlansByPlanIsStudy(isStudy)
+                .orElseThrow(() -> new IllegalArgumentException("스터디 계획 == true, 일반 계획 == false 다시 검색해 주세요. 현재 입력 =  " + isStudy));
     }
 
     public List<Plan> findPlans() {
         return planRepository.findAll();
     }
 
-    public void savePlan(PlanSaveRequestDto requestDto, Long plannerIdx) {
+    @Transactional
+    public PlanResponseDto savePlan(PlanSaveRequestDto requestDto, Long plannerIdx) {
         System.out.println("requestDto = " + requestDto.getIsStudy());
         // 플래너 가져오기
-        Planner planner = findPlanner(plannerIdx);
+        Planner planner = findPlannerByIdx(plannerIdx);
         UserStudy userStudy = null;
         if(requestDto.getIsStudy()) {
-            userStudy = findUserStudy(requestDto.getUserStudyIdx());
+            userStudy = findUserStudyByIdx(requestDto.getUserStudyIdx());
         }
 
         // Plan 객체 생성
@@ -59,13 +65,29 @@ public class PlanService {
         planner.addPlan(plan);
 
         planRepository.save(plan);
+
+        return new PlanResponseDto(plan);
     }
 
     @Transactional
     public PlanResponseDto getPlan(Long planIdx) {
-        Plan plan = findPlan(planIdx);
+        Plan plan = findPlanByIdx(planIdx);
 
         return new PlanResponseDto(plan);
+    }
+
+    // 스터디에 포함된 계획 = true
+    // 스터디에 포함되지 않은 계획 = false
+    @Transactional
+    public List<PlanResponseDto> getPlansByPlanIsStudy(Boolean isStudy){
+        List<Plan> planList = findPlansByIsStudy(isStudy);
+        List<PlanResponseDto> responseDtoList = new ArrayList<>();
+
+        for(Plan plan : planList){
+            responseDtoList.add(new PlanResponseDto(plan));
+        }
+
+        return responseDtoList;
     }
 
     @Transactional
@@ -82,7 +104,7 @@ public class PlanService {
 
     @Transactional
     public PlanResponseDto updatePlan(Long planIdx, PlanNameUpdateRequestDto requestDto) {
-        Plan plan = findPlan(planIdx);
+        Plan plan = findPlanByIdx(planIdx);
 
         plan.update(requestDto.getPlanName());
 
