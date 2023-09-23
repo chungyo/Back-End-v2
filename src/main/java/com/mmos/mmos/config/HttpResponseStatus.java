@@ -72,6 +72,8 @@ public enum HttpResponseStatus {
     PASSWORD_ENCRYPTION_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "비밀번호 암호화에 실패하였습니다."),
     PASSWORD_DECRYPTION_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "비밀번호 복호화에 실패하였습니다."),
 
+    // Plan
+    POST_PLAN_INVALID_REQUEST(false, BAD_REQUEST.value(), "계획 내용을 입력해주세요."),
 
     // Post
     POST_POST_EMPTY_TITLE(false, BAD_REQUEST.value(), "글 제목을 입력해주세요."),

@@ -27,6 +27,11 @@ public class UserStudyService {
                 .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 유저입니다. STUDY_INDEX = " + userIdx));
     }
 
+    public UserStudy findUserStudy(Long userStudyIdx){
+        return userStudyRepository.findById(userStudyIdx)
+                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 유저스터디입니다. USERSTUDY_INDEX = " + userStudyIdx));
+    }
+
     @Transactional
     public UserStudyResponseDto saveUserStudy(Boolean isLeader, Long studyIdx, Long userIdx) {
         // 객체 불러오기
@@ -41,5 +46,27 @@ public class UserStudyService {
         userStudyRepository.save(userStudy);
 
         return new UserStudyResponseDto(userStudy);
+    }
+
+    
+    // 리더 위임
+    @Transactional
+    public UserStudyResponseDto updateLeader(Long leaderUserIdx, Long newLeaderUserIdx){
+
+        // 유저스터디
+        UserStudy leader = findUserStudy(leaderUserIdx);
+        UserStudy newLeader = findUserStudy(newLeaderUserIdx);
+
+        // 같은 스터디인지 확인
+        if(!leader.getStudy().equals(newLeader.getStudy())) {
+            System.out.println("같은 스터디 소속이 아닙니다.");
+            return null;
+        }
+
+        // 리더 위임
+        leader.leaderUpdate(false);
+        newLeader.leaderUpdate(true);
+
+        return new UserStudyResponseDto(newLeader);
     }
 }

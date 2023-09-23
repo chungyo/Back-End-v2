@@ -39,9 +39,13 @@ public class UserStudy {
     @OneToMany(mappedBy = "userStudy", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Plan> userstudyPlans = new ArrayList<>();
 
+    public void leaderUpdate(Boolean isLeader){
+        this.userstudyIsLeader = isLeader;
+    }
+
     @Builder
-    public UserStudy(Boolean userstudy_is_leader, User user, Study study) {
-        this.userstudyIsLeader = userstudy_is_leader;
+    public UserStudy(Boolean userstudyIsLeader, User user, Study study) {
+        this.userstudyIsLeader = userstudyIsLeader;
         this.user = user;
         this.study = study;
     }
