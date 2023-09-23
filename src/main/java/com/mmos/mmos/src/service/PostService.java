@@ -1,5 +1,6 @@
 package com.mmos.mmos.src.service;
 
+import com.mmos.mmos.src.domain.dto.post.PostResponseDto;
 import com.mmos.mmos.src.domain.dto.post.PostSaveRequestDto;
 import com.mmos.mmos.src.domain.dto.post.PostUpdateRequestDto;
 import com.mmos.mmos.src.domain.entity.*;
@@ -34,28 +35,31 @@ public class PostService {
     }
 
     @Transactional
-    public Post savePost(PostSaveRequestDto postSaveRequestDto, Long userIdx, Long studyIdx) {
+    public PostResponseDto savePost(PostSaveRequestDto postSaveRequestDto, Long userIdx, Long studyIdx) {
 
+        // User, Study 검색
         User user = findUser(userIdx);
         Study study = findStudy(studyIdx);
+
+        // Post 생성/매핑
         Post post = new Post(postSaveRequestDto, user.getUserName(), study);
         study.addPost(post);
-        return postRepository.save(post);
+        postRepository.save(post);
+
+        return new PostResponseDto(post);
     }
 
     @Transactional
-    public void updatePost(Long postIdx, PostUpdateRequestDto postUpdateRequestDto) {
-        System.out.println("NewTitle = " + postUpdateRequestDto.getPost_title());
+    public PostResponseDto updatePost(Long postIdx, PostUpdateRequestDto postUpdateRequestDto) {
         Post post = findPost(postIdx);
 
-        if(postUpdateRequestDto.getPost_title()!=null){
-            post.updateTitle(postUpdateRequestDto.getPost_title());
-        }
-        if (postUpdateRequestDto.getPost_contents()!=null){
-            post.updateContents(postUpdateRequestDto.getPost_contents());
-        }
-        if(postUpdateRequestDto.getPost_image()!=null){
-            post.updateImage(postUpdateRequestDto.getPost_image());
-        }
+        // Post 내용, 이름 중복 검사
+        if(post.getPostContents().equals(postUpdateRequestDto.getContents())) return null;
+        if(post.getPostTitle().equals(postUpdateRequestDto.getTitle())) return null;
+
+        // Post 업데이트
+        post.update(postUpdateRequestDto);
+
+        return new PostResponseDto(post);
     }
 }

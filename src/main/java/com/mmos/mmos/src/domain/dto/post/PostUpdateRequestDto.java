@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class PostUpdateRequestDto {
-    private String post_title;
-    private String post_contents;
-    private String post_image;
+    private String title;
+    private String contents;
+    private String image;
 }
