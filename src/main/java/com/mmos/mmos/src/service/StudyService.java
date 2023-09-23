@@ -27,6 +27,8 @@ public class StudyService {
         return studyRepository.findById(studyIdx)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 스터디입니다. STUDY_INDEX" + studyIdx));
     }
+    
+    // 스터디 이름 업데이트
     @Transactional
     public StudyResponseDto updateStudyName(Long studyIdx, String newName) {
         Study study = findStudy(studyIdx);
@@ -34,7 +36,21 @@ public class StudyService {
         // 이름 중복 검사
         if(study.getStudyName().equals(newName)) return null;
 
-        study.updateStudy_name(newName);
+        study.updateStudyName(newName);
+        return new StudyResponseDto(study);
+    }
+
+    // 스터디 완수 업데이트
+    @Transactional
+    public StudyResponseDto updateStudyIsComplete(Long studyIdx){
+        Study study = findStudy(studyIdx);
+
+        // 이미 완수된 경우
+        if(study.getStudyIsComplete()) return null;
+        
+        // Study 완료 처리
+        study.updateStudyIsComplete();
+
         return new StudyResponseDto(study);
     }
 }

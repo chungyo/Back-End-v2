@@ -39,9 +39,11 @@ public class Study {
     @Column
     private Boolean studyIsComplete = false;
 
-    public void updateStudy_name(String study_name) {
-        this.studyName = study_name;
+    public void updateStudyName(String studyName) {
+        this.studyName = studyName;
     }
+
+    public void updateStudyIsComplete(){this.studyIsComplete = true;}
 
     @Builder
     public Study(StudySaveRequestDto requestDto) {
