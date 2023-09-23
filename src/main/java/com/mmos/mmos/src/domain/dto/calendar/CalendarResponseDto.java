@@ -7,13 +7,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class CalendarResponseDto {
-    private Long Idx;
+    private Long idx;
     private int month;
     private Long monthlyStudyTime;
     private Long monthlyCompletedPlanNum;
 
     public CalendarResponseDto(Calendar calendar) {
-        Idx = calendar.getCalendarIndex();
+        this.idx = calendar.getCalendarIndex();
         this.month = calendar.getCalendarMonth();
         this.monthlyStudyTime = calendar.getCalendarMonthlyStudyTime();
         this.monthlyCompletedPlanNum = calendar.getCalendarMonthlyCompletedPlanNum();
