@@ -3,7 +3,6 @@ package com.mmos.mmos.src.domain.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicInsert;
 
 import java.util.List;
 
@@ -18,6 +17,9 @@ public class Major {
 
     @Column
     private Long majorName;
+
+    @Column
+    private String majorCollege;
 
     @OneToMany(mappedBy = "major", cascade = CascadeType.REMOVE,orphanRemoval = true)
     private List<User> majorUsers;
