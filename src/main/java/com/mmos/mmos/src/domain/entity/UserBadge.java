@@ -22,9 +22,6 @@ public class UserBadge {
     private Badge badge;
 
     @Column
-    private Boolean userbadgeStatus = true;
-
-    @Column
     private Boolean userbadgeIsVisible = true;
 
     public UserBadge(User user, Badge badge) {

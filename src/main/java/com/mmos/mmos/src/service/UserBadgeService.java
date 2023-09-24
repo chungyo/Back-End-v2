@@ -1,5 +1,6 @@
 package com.mmos.mmos.src.service;
 
+import com.mmos.mmos.src.domain.dto.userbadge.UserBadgeResponseDto;
 import com.mmos.mmos.src.domain.entity.Badge;
 import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.domain.entity.UserBadge;
@@ -24,15 +25,16 @@ public class UserBadgeService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다. USER_INDEX=" + userIdx));
     }
 
-    public List<Badge> findBadges () {
+    public List<Badge> findBadges() {
         return badgeRepository.findAll();
     }
 
-    public List<UserBadge> saveUserBadge(Long userIdx){
+    public List<UserBadgeResponseDto> saveUserBadge(Long userIdx){
         User user = findUser(userIdx);
         List<Badge> badges = findBadges();
 
         List<UserBadge> newBadges = new ArrayList<>();
+        List<UserBadgeResponseDto> responseDtoList = new ArrayList<>();
         for (Badge badge : badges) {
             if((badge.getIsBadgeTime() && user.getUserTotalStudyTime() >= badge.getBadgeExp())
                     || (!badge.getIsBadgeTime() && user.getUserTotalCompletedScheduleNum() >= badge.getBadgeExp()))
@@ -51,9 +53,11 @@ public class UserBadgeService {
                     user.addUserBadges(userBadge);
                     userBadgeRepository.save(userBadge);
                     newBadges.add(userBadge);
+                    responseDtoList.add(new UserBadgeResponseDto(userBadge));
                 }
             }
         }
-        return newBadges;
+
+        return responseDtoList;
     }
 }
