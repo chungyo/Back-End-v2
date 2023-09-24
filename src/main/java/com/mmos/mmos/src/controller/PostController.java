@@ -34,7 +34,7 @@ public class PostController extends BaseController {
         // 글 생성
         PostResponseDto postResponseDto = postService.savePost(postSaveRequestDto, userIdx, studyIdx);
 
-        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE POST. POST_INDEX=" + postResponseDto.getIndex(), postSaveRequestDto);
+        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE POST. POST_INDEX=" + postResponseDto.getIdx(), postSaveRequestDto);
     }
 
     @ResponseBody
