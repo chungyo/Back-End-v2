@@ -16,7 +16,7 @@ public class Major {
     private Long majorIndex;
 
     @Column
-    private Long majorName;
+    private String majorName;
 
     @Column
     private String majorCollege;

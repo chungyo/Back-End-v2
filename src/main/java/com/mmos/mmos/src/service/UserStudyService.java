@@ -11,6 +11,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 public class UserStudyService {
@@ -33,12 +35,12 @@ public class UserStudyService {
     }
 
     @Transactional
-    public UserStudyResponseDto saveUserStudy(Boolean isLeader, Long studyIdx, Long userIdx) {
+    public UserStudyResponseDto saveUserStudy(Integer isMember, Long userIdx, Long studyIdx) {
         // 객체 불러오기
         Study study = findStudy(studyIdx);
         User user = findUser(userIdx);
         // 객체 생성
-        UserStudy userStudy = new UserStudy(isLeader, user, study);
+        UserStudy userStudy = new UserStudy(isMember, user, study);
         // 매핑
         study.addUserStudy(userStudy);
         user.adduserStudies(userStudy);
@@ -64,9 +66,28 @@ public class UserStudyService {
         }
 
         // 리더 위임
-        leader.leaderUpdate(false);
-        newLeader.leaderUpdate(true);
+        leader.updateMemberStatus(3);
+        newLeader.updateMemberStatus(1);
 
         return new UserStudyResponseDto(newLeader);
+    }
+
+    // 멤버 지위 변경
+    @Transactional
+    public UserStudyResponseDto updateMember(Long UserStudyIdx, Integer status){
+
+        // 유저스터디
+        UserStudy userStudy = findUserStudy(UserStudyIdx);
+
+        // 현재 지위 확인
+        if(Objects.equals(userStudy.getUserstudyMemberStatus(), status)) {
+            System.out.println("이미 변경 되었습니다.");
+            return null;
+        }
+
+        // 멤버 상태 업데이트
+        userStudy.updateMemberStatus(status);
+
+        return new UserStudyResponseDto(userStudy);
     }
 }

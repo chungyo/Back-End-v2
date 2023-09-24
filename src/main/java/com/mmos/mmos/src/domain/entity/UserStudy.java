@@ -21,9 +21,9 @@ public class UserStudy {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userstudyIndex;
 
-
+    // Userstudy.isMember : 1 == leader, 2 == manager, 3 == member, 4 == application, 5 == invitee
     @Column
-    private Boolean userstudyIsLeader = false;
+    private Integer userstudyMemberStatus;
 
     @Column
     private Boolean userstudyStatus = true;
@@ -39,13 +39,13 @@ public class UserStudy {
     @OneToMany(mappedBy = "userStudy", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Plan> userstudyPlans = new ArrayList<>();
 
-    public void leaderUpdate(Boolean isLeader){
-        this.userstudyIsLeader = isLeader;
+    public void updateMemberStatus(Integer memberStatus){
+        this.userstudyMemberStatus = memberStatus;
     }
 
     @Builder
-    public UserStudy(Boolean userstudyIsLeader, User user, Study study) {
-        this.userstudyIsLeader = userstudyIsLeader;
+    public UserStudy(Integer userstudyIsMember, User user, Study study) {
+        this.userstudyMemberStatus = userstudyIsMember;
         this.user = user;
         this.study = study;
     }

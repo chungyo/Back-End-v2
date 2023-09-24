@@ -8,13 +8,13 @@ public class UserStudyResponseDto {
 
     private Long index;
 
-    private Boolean isLeader;
+    private Integer memberStatus;
 
     private Boolean status;
 
     public UserStudyResponseDto(UserStudy userStudy) {
         this.index = userStudy.getUserstudyIndex();
-        this.isLeader = userStudy.getUserstudyIsLeader();
+        this.memberStatus = userStudy.getUserstudyMemberStatus();
         this.status = userStudy.getUserstudyStatus();
     }
 }
