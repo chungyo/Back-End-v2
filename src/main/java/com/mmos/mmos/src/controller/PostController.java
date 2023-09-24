@@ -10,8 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static com.mmos.mmos.config.HttpResponseStatus.POST_POST_EMPTY_CONTENTS;
-import static com.mmos.mmos.config.HttpResponseStatus.POST_POST_EMPTY_TITLE;
+import java.util.List;
+
+import static com.mmos.mmos.config.HttpResponseStatus.*;
 
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -53,4 +54,28 @@ public class PostController extends BaseController {
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE POST. POST_INDEX=" + postIdx, postResponseDto);
     }
 
+    // 홍보글 조회(전체)
+    @GetMapping("/promotion/all")
+    public ResponseEntity<ResponseApiMessage> getPromotions() {
+        List<PostResponseDto> responseDtoList = postService.getPosts(false);
+
+        return sendResponseHttpByJson(SUCCESS, "GET PROMOTIONS.", responseDtoList);
+    }
+
+    // 공지글 조회(전체)
+    @GetMapping("/notice/all")
+    public ResponseEntity<ResponseApiMessage> getNotices() {
+        List<PostResponseDto> responseDtoList = postService.getPosts(true);
+
+        return sendResponseHttpByJson(SUCCESS, "GET NOTICES.", responseDtoList);
+    }
+
+    // 게시글 조회(단일)
+    @ResponseBody
+    @GetMapping("/{postIdx}")
+    public ResponseEntity<ResponseApiMessage> getPost(@PathVariable Long postIdx) {
+        PostResponseDto responseDto = postService.getPost(postIdx);
+
+        return sendResponseHttpByJson(SUCCESS, "GET POST. POST_INDEX = " + postIdx, responseDto);
+    }
 }
