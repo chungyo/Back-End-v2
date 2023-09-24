@@ -32,16 +32,22 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 대학입니다 UNIVERSITY_INDEX=" + universityIdx));
     }
 
-    public Major findMajorByIdxAndCollege(Long majorIdx, String majorCollege) {
-        return majorRepository.findByMajorIndexAndMajorCollege(majorIdx, majorCollege)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 학과입니다. UNIVERSITY_INDEX=" + majorIdx));
+    // GET: 학과
+//    public Major findMajorByIdxAndCollege(Long majorIdx, String majorCollege) {
+//        return majorRepository.findByMajorIndexAndMajorCollege(majorIdx, majorCollege)
+//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 학과입니다. UNIVERSITY_INDEX=" + majorIdx));
+//    }
+
+    public Major findMajorByIdx(Long majorIdx) {
+        return majorRepository.findMajorByMajorIndex(majorIdx)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 학과입니다. MAJOR_INDEX=" + majorIdx));
     }
 
     // 유저 생성
     @Transactional
     public UserResponseDto saveUser(UserSaveRequestDto requestDto) {
         University university = findUniversityByIdx(requestDto.getUniversityIdx());
-        Major major = findMajorByIdxAndCollege(requestDto.getMajorIdx(), requestDto.getMajorCollege());
+        Major major = findMajorByIdx(requestDto.getMajorIdx());
 
         // Validation: 생성하려는 유저의 정보로 이미 가입된 회원이 있는지 확인 (학교 & 학번, 이메일, 닉네임)
         if(userRepository.findUserByUserEmail(requestDto.getEmail()).isPresent())
