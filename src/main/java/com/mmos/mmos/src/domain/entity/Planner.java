@@ -60,4 +60,9 @@ public class Planner {
     public void addPlan(Plan plan) {
         this.plannerPlans.add(plan);
     }
+
+    public void setMemo(String plannerMemo) {
+        this.plannerMemo = plannerMemo;
+    }
+
 }
