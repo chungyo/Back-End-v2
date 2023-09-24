@@ -52,6 +52,9 @@ public enum HttpResponseStatus {
     // Badge
     POST_BADGE_INVALID_REQUEST(false, BAD_REQUEST.value(), "받을 뱃지가 없습니다."),
 
+    // UserBadge
+    GET_USERBADGE_EMPTY_LIST(false, BAD_REQUEST.value(), "갖고있는 뱃지가 없습니다."),
+
 
     // Calendar
     POST_CALENDAR_INVALID_REQUEST(false, BAD_REQUEST.value(), "한 달이 지나지 않아서 저장할 캘린더가 없습니다."),

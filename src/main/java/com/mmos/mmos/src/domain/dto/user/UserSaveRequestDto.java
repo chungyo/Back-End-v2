@@ -12,7 +12,6 @@ public class UserSaveRequestDto {
     private String name;
     private String nickname;
     private Long studentId;
-    private Long universityIdx;  // user -> university
     private Long majorIdx;   // user -> university -> major
     private String email;
 

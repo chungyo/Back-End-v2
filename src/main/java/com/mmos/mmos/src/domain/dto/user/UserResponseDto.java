@@ -17,7 +17,6 @@ public class UserResponseDto {
     private Long totalStudyTime;
     private Long totalSchedule;
     private Long studentId;
-    private Boolean Status;
 
     public UserResponseDto(User user) {
         this.idx = user.getUserIndex();
@@ -29,7 +28,6 @@ public class UserResponseDto {
         this.totalStudyTime = user.getUserTotalStudyTime();
         this.totalSchedule = user.getUserTotalCompletedScheduleNum();
         this.studentId = user.getUserStudentId();
-        this.Status = getStatus();
     }
 }
 

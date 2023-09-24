@@ -4,6 +4,7 @@ import com.mmos.mmos.src.domain.dto.plan.PlanSaveRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import java.util.List;
@@ -27,9 +28,6 @@ public class Plan {
     @Column
     private Boolean planIsStudy = false;
 
-    @Column
-    private Boolean planIsVisibleOnCalendar = false;
-
     @OneToMany(mappedBy = "plan", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<StudyTime> planStudytimeTimes;
 
@@ -41,10 +39,13 @@ public class Plan {
     @JoinColumn(name = "userstudyIndex")
     private UserStudy userStudy;
 
+    @Column
+    @ColumnDefault("0")
+    private Long planStudyTime;
+
     public Plan(PlanSaveRequestDto requestDto, Planner planner, UserStudy userStudy) {
         this.planName = requestDto.getPlanName();
         this.planIsStudy = requestDto.getIsStudy();
-        this.planIsVisibleOnCalendar = requestDto.getIsVisible();
         this.planner = planner;
         this.userStudy = userStudy;
     }
@@ -56,5 +57,9 @@ public class Plan {
 
     public void addStudyTime(StudyTime studyTime) {
         this.planStudytimeTimes.add(studyTime);
+    }
+
+    public void addTime(Long time) {
+        this.planStudyTime += time;
     }
 }

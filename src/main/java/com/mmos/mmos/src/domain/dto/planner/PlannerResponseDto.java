@@ -15,7 +15,6 @@ public class PlannerResponseDto {
     private String memo;
     private Long dailyStudyTime;
     private Long dailyScheduleNum;
-    private Boolean isPublic;
     private Long dday;
 
     public PlannerResponseDto(Planner planner) {
@@ -24,7 +23,6 @@ public class PlannerResponseDto {
         this.memo = planner.getPlannerMemo();
         this.dailyStudyTime = planner.getPlannerDailyStudyTime();
         this.dailyScheduleNum = planner.getPlannerDailyScheduleNum();
-        this.isPublic = planner.getPlannerIsPublic();
         this.dday = planner.getPlannerDday();
     }
 }

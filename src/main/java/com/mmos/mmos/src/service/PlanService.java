@@ -10,9 +10,11 @@ import com.mmos.mmos.src.repository.PlanRepository;
 import com.mmos.mmos.src.repository.PlannerRepository;
 import com.mmos.mmos.src.repository.UserStudyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,8 @@ public class PlanService {
     private final PlanRepository planRepository;
     private final PlannerRepository plannerRepository;
     private final UserStudyRepository userStudyRepository;
+
+    private final PlannerService plannerService;
 
     public Planner findPlannerByIdx(Long plannerIdx) {
         return plannerRepository.findById(plannerIdx)
@@ -39,9 +43,14 @@ public class PlanService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 플랜입니다. PLAN_INDEX=" + planIdx));
     }
 
-    public List<Plan> findPlansByIsStudy(Boolean isStudy){
+    public List<Plan> findPlansByIsStudy(Boolean isStudy) {
         return planRepository.findPlansByPlanIsStudy(isStudy)
                 .orElseThrow(() -> new IllegalArgumentException("스터디 계획 == true, 일반 계획 == false 다시 검색해 주세요. 현재 입력 =  " + isStudy));
+    }
+
+    public Planner findPlannerByCalendarIdxAndDate(Long calendarIdx, LocalDate date) {
+        return plannerRepository.findPlannerByCalendar_CalendarIndexAndPlannerDate(calendarIdx, date)
+                .orElse(new Planner(plannerService.savePlanner(date, calendarIdx)));
     }
 
     public List<Plan> findPlans() {
@@ -49,12 +58,11 @@ public class PlanService {
     }
 
     @Transactional
-    public PlanResponseDto savePlan(PlanSaveRequestDto requestDto, Long plannerIdx) {
-        System.out.println("requestDto = " + requestDto.getIsStudy());
-        // 플래너 가져오기
-        Planner planner = findPlannerByIdx(plannerIdx);
+    public PlanResponseDto savePlan(PlanSaveRequestDto requestDto, Long calendarIdx) {
+        Planner planner = findPlannerByCalendarIdxAndDate(calendarIdx, LocalDate.now());
+
         UserStudy userStudy = null;
-        if(requestDto.getIsStudy()) {
+        if (requestDto.getIsStudy()) {
             userStudy = findUserStudyByIdx(requestDto.getUserStudyIdx());
         }
 
@@ -64,9 +72,7 @@ public class PlanService {
         // 역 FK 매핑
         planner.addPlan(plan);
 
-        planRepository.save(plan);
-
-        return new PlanResponseDto(plan);
+        return new PlanResponseDto(planRepository.save(plan));
     }
 
     @Transactional
@@ -79,11 +85,11 @@ public class PlanService {
     // 스터디에 포함된 계획 = true
     // 스터디에 포함되지 않은 계획 = false
     @Transactional
-    public List<PlanResponseDto> getPlansByPlanIsStudy(Boolean isStudy){
+    public List<PlanResponseDto> getPlansByPlanIsStudy(Boolean isStudy) {
         List<Plan> planList = findPlansByIsStudy(isStudy);
         List<PlanResponseDto> responseDtoList = new ArrayList<>();
 
-        for(Plan plan : planList){
+        for (Plan plan : planList) {
             responseDtoList.add(new PlanResponseDto(plan));
         }
 

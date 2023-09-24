@@ -46,22 +46,18 @@ public class UserService {
     // 유저 생성
     @Transactional
     public UserResponseDto saveUser(UserSaveRequestDto requestDto) {
-        University university = findUniversityByIdx(requestDto.getUniversityIdx());
         Major major = findMajorByIdx(requestDto.getMajorIdx());
 
         // Validation: 생성하려는 유저의 정보로 이미 가입된 회원이 있는지 확인 (학교 & 학번, 이메일, 닉네임)
         if(userRepository.findUserByUserEmail(requestDto.getEmail()).isPresent())
             return null;
-        if(userRepository.findUserByUserStudentIdAndUniversity(requestDto.getStudentId(), university).isPresent()) {
-            System.out.println("학교&학번 중복");
-            return null;
-        }
+
         if(userRepository.findUserByUserNickname(requestDto.getNickname()).isPresent()){
             System.out.println("중복된 닉네임");
             return null;
         }
 
-        User user = new User(requestDto, university, major);
+        User user = new User(requestDto, major);
 
 
         userRepository.save(user);

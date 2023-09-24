@@ -12,13 +12,11 @@ public class PlanResponseDto {
     private String name;
     private Boolean isComplete;
     private Boolean isStudy;
-    private Boolean isVisibleOnCalendar;
 
     public PlanResponseDto(Plan plan) {
         this.idx = plan.getPlanIndex();
         this.name = plan.getPlanName();
         this.isComplete = plan.getPlanIsComplete();
         this.isStudy = plan.getPlanIsStudy();
-        this.isVisibleOnCalendar = plan.getPlanIsVisibleOnCalendar();
     }
 }

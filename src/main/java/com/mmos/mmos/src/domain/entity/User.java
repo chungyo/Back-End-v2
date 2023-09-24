@@ -59,25 +59,17 @@ public class User {
     @ColumnDefault("null")
     private List<UserStudy> userUserstudies = new ArrayList<>();
 
-    @Column
-    private Boolean userStatus = true;
-
-    @ManyToOne
-    @JoinColumn(name = "universityIndex")
-    private University university;
-
     @ManyToOne
     @JoinColumn(name = "majorIndex")
     private Major major;
 
-    public User(UserSaveRequestDto responseDto, University university, Major major) {
+    public User(UserSaveRequestDto responseDto, Major major) {
         this.userId = responseDto.getId();
         this.userPassword = responseDto.getPwd();
         this.userName = responseDto.getName();
         this.userNickname = responseDto.getNickname();
         this.userEmail = responseDto.getEmail();
         this.userStudentId = responseDto.getStudentId();
-        this.university = university;
         this.major = major;
     }
 

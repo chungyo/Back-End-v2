@@ -1,5 +1,6 @@
 package com.mmos.mmos.src.domain.entity;
 
+import com.mmos.mmos.src.domain.dto.planner.PlannerResponseDto;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -57,12 +58,25 @@ public class Planner {
         this.calendar = calendar;
     }
 
+    public Planner(PlannerResponseDto responseDto) {
+        this.plannerIndex = responseDto.getIdx();
+        this.plannerDate = responseDto.getDate();
+        this.plannerMemo = responseDto.getMemo();
+        this.plannerDailyStudyTime = responseDto.getDailyStudyTime();
+        this.plannerDailyScheduleNum = responseDto.getDailyScheduleNum();
+        this.plannerDday = responseDto.getDday();
+    }
+
     public void addPlan(Plan plan) {
         this.plannerPlans.add(plan);
     }
 
     public void setMemo(String plannerMemo) {
         this.plannerMemo = plannerMemo;
+    }
+
+    public void addTime(Long time) {
+        this.plannerDailyStudyTime += time;
     }
 
 }

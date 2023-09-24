@@ -14,6 +14,7 @@ public class StudyResponseDto {
     private String name;
     private Boolean isVisible;
     private Boolean isComplete;
+
     public StudyResponseDto(Study study) {
         this.index = study.getStudyIndex();
         this.memberLimit = study.getStudyMemberLimit();

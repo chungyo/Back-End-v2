@@ -32,4 +32,8 @@ public class College {
         this.university = university;
 
     }
+
+    public void addMajor(Major major) {
+        this.collegeMajors.add(major);
+    }
 }

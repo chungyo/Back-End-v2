@@ -47,9 +47,6 @@ public class UserController extends BaseController {
         if(requestDto.getNickname() == null) {
             return sendResponseHttpByJson(POST_USER_EMPTY_NICKNAME, "EMPTY USER_NICKNAME.", requestDto);
         }
-        if(requestDto.getUniversityIdx() == null) {
-            return sendResponseHttpByJson(POST_USER_EMPTY_NICKNAME, "EMPTY UNIVERSITY_INDEX.", requestDto);
-        }
         if(requestDto.getMajorIdx() == null) {
             return sendResponseHttpByJson(POST_USER_EMPTY_NICKNAME, "EMPTY MAJOR_INDEX.", requestDto);
         }

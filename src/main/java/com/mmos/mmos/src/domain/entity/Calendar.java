@@ -49,4 +49,8 @@ public class Calendar {
     public void addPlanner(Planner planner) {
         this.calendarPlanners.add(planner);
     }
+
+    public void addTime(Long time) {
+        this.calendarMonthlyStudyTime += time;
+    }
 }

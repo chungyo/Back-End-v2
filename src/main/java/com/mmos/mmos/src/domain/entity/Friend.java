@@ -16,9 +16,6 @@ public class Friend {
     @Column
     private Boolean friendIsFixed = false;
 
-    @Column
-    private Boolean friendStatus = false;
-
     @ManyToOne
     @JoinColumn(name = "userIndex")
     private User user;

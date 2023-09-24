@@ -37,7 +37,7 @@ public class PlannerService {
         Calendar calendar = findCalendarByIdx(calendarIdx);
 
         // 막 회원 가입을 한 유저가 아니면서 같은 날의 플래너가 이미 존재할 때 생성 막기
-        if(!calendar.getCalendarPlanners().isEmpty() && calendar.getCalendarPlanners().get(calendar.getCalendarPlanners().size() - 1).getPlannerDate().equals(today))
+        if(plannerRepository.findPlannerByCalendar_CalendarIndexAndPlannerDate(calendarIdx, today).isPresent())
             return null;
 
         Planner planner = new Planner(today, calendar);

@@ -20,7 +20,7 @@ public class UserBadgeService {
     private final UserRepository userRepository;
     private final BadgeRepository badgeRepository;
 
-    public User findUser(Long userIdx) {
+    public User findUserByIdx(Long userIdx) {
         return userRepository.findById(userIdx)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다. USER_INDEX=" + userIdx));
     }
@@ -30,7 +30,7 @@ public class UserBadgeService {
     }
 
     public List<UserBadgeResponseDto> saveUserBadge(Long userIdx){
-        User user = findUser(userIdx);
+        User user = findUserByIdx(userIdx);
         List<Badge> badges = findBadges();
 
         List<UserBadge> newBadges = new ArrayList<>();
@@ -59,5 +59,30 @@ public class UserBadgeService {
         }
 
         return responseDtoList;
+    }
+
+    public List<UserBadgeResponseDto> getBadges(Long userIdx) {
+        List<UserBadge> userBadgeList = userBadgeRepository.findUserBadgesByUser_UserIndexAndBadge_BadgePurpose(userIdx, "badge").orElse(null);
+        List<UserBadgeResponseDto> responseDtoList = new ArrayList<>();
+        if(!userBadgeList.isEmpty()) {
+            for (UserBadge userBadge : userBadgeList) {
+                responseDtoList.add(new UserBadgeResponseDto(userBadge));
+            }
+        } else {
+            responseDtoList = null;
+        }
+
+        return responseDtoList;
+    }
+
+    public UserBadgeResponseDto getTier(Long userIdx) {
+        List<UserBadge> userTierList = userBadgeRepository.findUserBadgesByUser_UserIndexAndBadge_BadgePurpose(userIdx, "tier").orElse(null);
+        UserBadge userTier = userTierList.get(0);
+        for (UserBadge tier : userTierList) {
+            if(userTier.getBadge().getBadgeExp() < tier.getBadge().getBadgeExp())
+                userTier = tier;
+        }
+
+        return new UserBadgeResponseDto(userTier);
     }
 }
