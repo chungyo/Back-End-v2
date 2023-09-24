@@ -2,11 +2,16 @@ package com.mmos.mmos.src.service;
 
 import com.mmos.mmos.src.domain.dto.study.StudyResponseDto;
 import com.mmos.mmos.src.domain.dto.study.StudySaveRequestDto;
+import com.mmos.mmos.src.domain.dto.user.UserResponseDto;
 import com.mmos.mmos.src.domain.entity.Study;
+import com.mmos.mmos.src.domain.entity.UserStudy;
 import com.mmos.mmos.src.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +43,21 @@ public class StudyService {
 
         study.updateStudyName(newName);
         return new StudyResponseDto(study);
+    }
+
+    @Transactional
+    public List<UserResponseDto> getStudyApplier(Long studyIdx){
+        Study study = findStudy(studyIdx);
+
+        // UserStudy list에서 지원자 선별
+        List<UserResponseDto> appliersDto = new ArrayList<>();
+        for (UserStudy userStudy : study.getStudyUserstudies()){
+            if(userStudy.getUserstudyMemberStatus() == 4){
+                appliersDto.add(new UserResponseDto(userStudy.getUser()));
+            }
+        }
+
+        return appliersDto;
     }
 
     // 스터디 완수 업데이트

@@ -20,18 +20,19 @@ public class UserStudyService {
     final private UserStudyRepository userStudyRepository;
     final private StudyRepository studyRepository;
 
-    public Study findStudy(Long studyIdx){
+    public Study findStudy(Long studyIdx) {
         return studyRepository.findById(studyIdx)
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 스터디입니다. STUDY_INDEX = " + studyIdx));
-    }
-    public User findUser(Long userIdx){
-        return userRepository.findById(userIdx)
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 유저입니다. STUDY_INDEX = " + userIdx));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 스터디입니다. STUDY_INDEX = " + studyIdx));
     }
 
-    public UserStudy findUserStudy(Long userStudyIdx){
+    public User findUser(Long userIdx) {
+        return userRepository.findById(userIdx)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다. STUDY_INDEX = " + userIdx));
+    }
+
+    public UserStudy findUserStudy(Long userStudyIdx) {
         return userStudyRepository.findById(userStudyIdx)
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 유저스터디입니다. USERSTUDY_INDEX = " + userStudyIdx));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저스터디입니다. USERSTUDY_INDEX = " + userStudyIdx));
     }
 
     @Transactional
@@ -39,6 +40,10 @@ public class UserStudyService {
         // 객체 불러오기
         Study study = findStudy(studyIdx);
         User user = findUser(userIdx);
+
+        // 중복 검사
+        for (UserStudy userStudy : study.getStudyUserstudies()) if (userStudy.getUser().equals(user)) return null;
+
         // 객체 생성
         UserStudy userStudy = new UserStudy(isMember, user, study);
         // 매핑
@@ -50,17 +55,17 @@ public class UserStudyService {
         return new UserStudyResponseDto(userStudy);
     }
 
-    
+
     // 리더 위임
     @Transactional
-    public UserStudyResponseDto updateLeader(Long leaderUserIdx, Long newLeaderUserIdx){
+    public UserStudyResponseDto updateLeader(Long leaderUserIdx, Long newLeaderUserIdx) {
 
         // 유저스터디
         UserStudy leader = findUserStudy(leaderUserIdx);
         UserStudy newLeader = findUserStudy(newLeaderUserIdx);
 
         // 같은 스터디인지 확인
-        if(!leader.getStudy().equals(newLeader.getStudy())) {
+        if (!leader.getStudy().equals(newLeader.getStudy())) {
             System.out.println("같은 스터디 소속이 아닙니다.");
             return null;
         }
@@ -74,13 +79,13 @@ public class UserStudyService {
 
     // 멤버 지위 변경
     @Transactional
-    public UserStudyResponseDto updateMember(Long UserStudyIdx, Integer status){
+    public UserStudyResponseDto updateMember(Long UserStudyIdx, Integer status) {
 
         // 유저스터디
         UserStudy userStudy = findUserStudy(UserStudyIdx);
 
         // 현재 지위 확인
-        if(Objects.equals(userStudy.getUserstudyMemberStatus(), status)) {
+        if (Objects.equals(userStudy.getUserstudyMemberStatus(), status)) {
             System.out.println("이미 변경 되었습니다.");
             return null;
         }

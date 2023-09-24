@@ -5,12 +5,15 @@ import com.mmos.mmos.config.ResponseApiMessage;
 import com.mmos.mmos.src.domain.dto.study.StudyNameUpdateDto;
 import com.mmos.mmos.src.domain.dto.study.StudyResponseDto;
 import com.mmos.mmos.src.domain.dto.study.StudySaveRequestDto;
+import com.mmos.mmos.src.domain.dto.user.UserResponseDto;
 import com.mmos.mmos.src.domain.dto.userstudy.UserStudyResponseDto;
 import com.mmos.mmos.src.service.StudyService;
 import com.mmos.mmos.src.service.UserStudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.mmos.mmos.config.HttpResponseStatus.UPDATE_STUDY_EMPTY_NAME;
 
@@ -23,7 +26,7 @@ public class StudyController extends BaseController {
 
     // Study 방 생성
     @ResponseBody
-    @PostMapping("/save/{userIdx}")
+    @PostMapping("/{userIdx}/save")
     public ResponseEntity<ResponseApiMessage> saveStudy(@RequestBody StudySaveRequestDto requestDto, @PathVariable Long userIdx) {
         // Study 생성
         StudyResponseDto studyResponseDto = studyService.saveStudy(requestDto);
@@ -36,7 +39,7 @@ public class StudyController extends BaseController {
 
     // Study 이름 변경
     @ResponseBody
-    @PatchMapping("/nameUpdate/{studyIdx}")
+    @PatchMapping("/{studyIdx}/nameUpdate")
     public ResponseEntity<ResponseApiMessage> updateStudyName(@RequestBody StudyNameUpdateDto studyNameUpdateDto, @PathVariable Long studyIdx) {
         // null 검사
         if (studyNameUpdateDto.getNewStudyName() == null)
@@ -47,6 +50,17 @@ public class StudyController extends BaseController {
 
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE STUDY_NAME. STUDY_INDEX=" + studyIdx, studyResponseDto);
     }
+
+    // Study 신청자 조회
+    @ResponseBody
+    @GetMapping("/{studyIdx}/applier")
+    public ResponseEntity<ResponseApiMessage> getStudyApplier(@PathVariable Long studyIdx) {
+        // Study 이름 업데이트
+        List<UserResponseDto> userResponseDtoList= studyService.getStudyApplier(studyIdx);
+
+        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "GET APPLIERS.",userResponseDtoList);
+    }
+
 
     // Study 완료 처리
     @ResponseBody
