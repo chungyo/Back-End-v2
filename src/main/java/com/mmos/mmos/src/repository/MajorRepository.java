@@ -7,5 +7,6 @@ import java.util.Optional;
 
 public interface MajorRepository extends JpaRepository<Major, Long> {
 
-    Optional<Major> findByMajorIndexAndMajorCollege(Long idx, String college);
+    //Optional<Major> findByMajorIndexAndMajorCollege(Long idx, String college);
+    Optional<Major> findMajorByMajorIndex(Long idx);
 }
