@@ -78,4 +78,12 @@ public class PostController extends BaseController {
 
         return sendResponseHttpByJson(SUCCESS, "GET POST. POST_INDEX = " + postIdx, responseDto);
     }
+
+    @ResponseBody
+    @DeleteMapping("/{postIdx}")
+    public ResponseEntity<ResponseApiMessage> deletePost(@PathVariable Long postIdx) {
+        postService.deletePost(postIdx);
+        return sendResponseHttpByJson(SUCCESS, "DELETE POST. POST_INDEX = " + postIdx, null);
+    }
+
 }
