@@ -1,18 +1,21 @@
 package com.mmos.mmos.src.service;
 
+import com.mmos.mmos.src.domain.dto.study.StudyResponseDto;
 import com.mmos.mmos.src.domain.dto.user.UserNicknameUpdateDto;
 import com.mmos.mmos.src.domain.dto.user.UserPwdUpdateDto;
 import com.mmos.mmos.src.domain.dto.user.UserResponseDto;
 import com.mmos.mmos.src.domain.dto.user.UserSaveRequestDto;
-import com.mmos.mmos.src.domain.entity.Major;
-import com.mmos.mmos.src.domain.entity.University;
-import com.mmos.mmos.src.domain.entity.User;
+import com.mmos.mmos.src.domain.entity.*;
 import com.mmos.mmos.src.repository.MajorRepository;
+import com.mmos.mmos.src.repository.StudyRepository;
 import com.mmos.mmos.src.repository.UniversityRepository;
 import com.mmos.mmos.src.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +24,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final UniversityRepository universityRepository;
     private final MajorRepository majorRepository;
-
     public User findUserByIdx(Long userIdx) {
         return userRepository.findById(userIdx)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다. USER_INDEX" + userIdx));
@@ -32,6 +34,7 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 대학입니다 UNIVERSITY_INDEX=" + universityIdx));
     }
 
+
     // GET: 학과
 //    public Major findMajorByIdxAndCollege(Long majorIdx, String majorCollege) {
 //        return majorRepository.findByMajorIndexAndMajorCollege(majorIdx, majorCollege)
@@ -41,6 +44,22 @@ public class UserService {
     public Major findMajorByIdx(Long majorIdx) {
         return majorRepository.findMajorByMajorIndex(majorIdx)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 학과입니다. MAJOR_INDEX=" + majorIdx));
+    }
+
+    public List<StudyResponseDto> getStudies(Long userIdx){
+
+        User user = findUserByIdx(userIdx);
+
+        // 유저가 가진 유저스터디 리스트
+        List<UserStudy> userStudyList = user.getUserUserstudies();
+
+        // 유저가 가진 스터디 Dto 리스트 생성
+        List<StudyResponseDto> studyResponseDtoList = new ArrayList<>();
+        for (UserStudy userStudy : userStudyList){
+            studyResponseDtoList.add(new StudyResponseDto(userStudy.getStudy()));
+        }
+
+        return studyResponseDtoList;
     }
 
     // 유저 생성

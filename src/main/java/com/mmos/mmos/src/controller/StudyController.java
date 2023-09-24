@@ -32,7 +32,7 @@ public class StudyController extends BaseController {
         StudyResponseDto studyResponseDto = studyService.saveStudy(requestDto);
 
         // UserStudy 생성 + study -> UserStudy 매핑
-        UserStudyResponseDto userStudyResponseDto = userStudyService.saveUserStudy(1, studyResponseDto.getIndex(), userIdx);
+        UserStudyResponseDto userStudyResponseDto = userStudyService.saveUserStudy(1, userIdx,  studyResponseDto.getIndex());
 
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE STUDY. STUDY_INDEX=" + studyResponseDto.getIndex(), studyResponseDto);
     }

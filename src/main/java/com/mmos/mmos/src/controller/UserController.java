@@ -3,6 +3,7 @@ package com.mmos.mmos.src.controller;
 import com.mmos.mmos.config.ResponseApiMessage;
 import com.mmos.mmos.src.domain.dto.calendar.CalendarResponseDto;
 import com.mmos.mmos.src.domain.dto.planner.PlannerResponseDto;
+import com.mmos.mmos.src.domain.dto.study.StudyResponseDto;
 import com.mmos.mmos.src.domain.dto.user.UserNicknameUpdateDto;
 import com.mmos.mmos.src.domain.dto.user.UserPwdUpdateDto;
 import com.mmos.mmos.src.domain.dto.user.UserResponseDto;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static com.mmos.mmos.config.HttpResponseStatus.*;
 
@@ -71,7 +73,15 @@ public class UserController extends BaseController {
         return sendResponseHttpByJson(SUCCESS, "SAVE USER. USER_INDEX=" + userResponseDto.getIdx(), userResponseDto);
     }
 
-    // 비밀번호 변경
+    @ResponseBody
+    @GetMapping("/{userIdx}/studies")
+    public ResponseEntity<ResponseApiMessage> getStudies(@PathVariable Long userIdx) {
+        List<StudyResponseDto> studyResponseDtoList = userService.getStudies(userIdx);
+
+        return sendResponseHttpByJson(SUCCESS, "GET STUDIES. USER_INDEX=" + userIdx, studyResponseDtoList);
+    }
+
+        // 비밀번호 변경
     @ResponseBody
     @PatchMapping("/{userIdx}/password")
     public ResponseEntity<ResponseApiMessage> updatePwd(@RequestBody UserPwdUpdateDto userPwdUpdateDto, @PathVariable Long userIdx) {
