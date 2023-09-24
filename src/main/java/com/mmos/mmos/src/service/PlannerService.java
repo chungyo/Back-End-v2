@@ -4,6 +4,7 @@ import com.mmos.mmos.src.domain.dto.planner.PlannerResponseDto;
 import com.mmos.mmos.src.domain.entity.Calendar;
 import com.mmos.mmos.src.domain.entity.Planner;
 import com.mmos.mmos.src.repository.CalendarRepository;
+import com.mmos.mmos.src.repository.PlanRepository;
 import com.mmos.mmos.src.repository.PlannerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,13 @@ public class PlannerService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 캘린더입니다. CALENDAR_INDEX=" + calendarIdx));
     }
 
+    public Planner findPlannerByIdx(Long plannerIdx){
+        return plannerRepository.findById(plannerIdx)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 플래너입니다. PLANNER_ID= " + plannerIdx));
+    }
+
+
+
     // 플래너 생성
     @Transactional
     public PlannerResponseDto savePlanner(LocalDate today, Long calendarIdx) {
@@ -39,6 +47,16 @@ public class PlannerService {
         plannerRepository.save(planner);
 
         return new PlannerResponseDto(planner);
+    }
+
+
+    // 플래너 메모
+    @Transactional
+    public PlannerResponseDto setMemo(Long plannerIdx, String plannerMemo) {
+        Planner planner = findPlannerByIdx(plannerIdx);  // 플래너 찾기
+        planner.setMemo(plannerMemo);  // 메모 설정
+        plannerRepository.save(planner);  // 변경 사항 저장
+        return new PlannerResponseDto(planner);  // 변경된 플래너 반환
     }
 
 }
