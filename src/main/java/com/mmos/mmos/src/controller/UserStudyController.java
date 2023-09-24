@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -21,7 +22,7 @@ public class UserStudyController extends BaseController {
     @ResponseBody
     @PostMapping("/{userIdx}/{studyIdx}/save")
     public ResponseEntity<ResponseApiMessage> saveUserStudy(@PathVariable Long userIdx, @PathVariable Long studyIdx) {
-        // 유저스터디 생성
+        // 멤버 생성 (3 == 일반 멤버)
         UserStudyResponseDto userStudyResponseDto = userStudyService.saveUserStudy(3, userIdx, studyIdx);
 
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE USER STUDY. USERSTUDY_INDEX=" + userStudyResponseDto.getIndex(), userStudyResponseDto);
@@ -29,9 +30,9 @@ public class UserStudyController extends BaseController {
 
     // Userstudy.isMember : 1 == leader, 2 == manager, 3 == member, 4 == application, 5 == invitee
     @ResponseBody
-    @PostMapping("/{userIdx}/{studyIdx}/saveApplication")
+    @PostMapping("/{userIdx}/{studyIdx}/saveApplier")
     public ResponseEntity<ResponseApiMessage> saveUserStudyApplication(@PathVariable Long userIdx, @PathVariable Long studyIdx) {
-        // 유저스터디 생성
+        // 지원자 생성 (4 == 지원자)
         UserStudyResponseDto userStudyResponseDto = userStudyService.saveUserStudy(4, userIdx, studyIdx);
 
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE USER STUDY APPLIER. USERSTUDY_INDEX=" + userStudyResponseDto.getIndex(), userStudyResponseDto);
@@ -41,7 +42,7 @@ public class UserStudyController extends BaseController {
     @ResponseBody
     @PostMapping("/{userIdx}/{studyIdx}/saveInvitee")
     public ResponseEntity<ResponseApiMessage> saveUserStudyInvitee(@PathVariable Long userIdx, @PathVariable Long studyIdx) {
-        // 유저스터디 생성
+        // 초대받은 유저 생성 (5 == 초대받은 유저)
         UserStudyResponseDto userStudyResponseDto = userStudyService.saveUserStudy(5, userIdx, studyIdx);
 
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE USER STUDY INVITEE. USERSTUDY_INDEX=" + userStudyResponseDto.getIndex(), userStudyResponseDto);
@@ -64,19 +65,19 @@ public class UserStudyController extends BaseController {
         if (Objects.equals(userStudyIdx, newUserStudyIdx)) return null;
         
         // 리더 업데이트
-        UserStudyResponseDto userStudyResponseDto = userStudyService.updateLeader(userStudyIdx, newUserStudyIdx);
+        List<UserStudyResponseDto> userStudyResponseDtoList = userStudyService.updateLeader(userStudyIdx, newUserStudyIdx);
 
-        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE USER STUDY. USERSTUDY_INDEX=" + userStudyResponseDto.getIndex(), userStudyResponseDto);
+        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE USER STUDY.", userStudyResponseDtoList);
     }
 
     // 멤버 지위 변경
     @ResponseBody
     @PatchMapping("/{userStudyIdx}/statusUpdate")
-    public ResponseEntity<ResponseApiMessage> updateManager(@PathVariable Long userStudyIdx, @RequestBody UserStudyMemberStatusUpdateDto userStudyMemberStatusUpdateDto) {
+    public ResponseEntity<ResponseApiMessage> updateMemberStatus(@PathVariable Long userStudyIdx, @RequestBody UserStudyMemberStatusUpdateDto userStudyMemberStatusUpdateDto) {
 
         // isMember 업데이트
         UserStudyResponseDto userStudyResponseDto = userStudyService.updateMember(userStudyIdx, userStudyMemberStatusUpdateDto.getMemberStatus());
 
-        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE USER STUDY. USERSTUDY_INDEX=" + userStudyResponseDto.getIndex(), userStudyResponseDto);
+        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE USER STUDY. USERSTUDY_INDEX=" + userStudyResponseDto.getIndex(), userStudyResponseDto);
     }
 }

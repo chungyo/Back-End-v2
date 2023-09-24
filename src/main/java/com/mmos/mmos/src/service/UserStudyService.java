@@ -11,6 +11,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -58,11 +60,17 @@ public class UserStudyService {
 
     // 리더 위임
     @Transactional
-    public UserStudyResponseDto updateLeader(Long leaderUserIdx, Long newLeaderUserIdx) {
+    public List<UserStudyResponseDto> updateLeader(Long leaderUserIdx, Long newLeaderUserIdx) {
 
         // 유저스터디
         UserStudy leader = findUserStudy(leaderUserIdx);
         UserStudy newLeader = findUserStudy(newLeaderUserIdx);
+
+        // 리더 확인
+        if(leader.getUserstudyMemberStatus()!=1){
+            System.out.println("리더가 아닙니다.");
+            return null;
+        }
 
         // 같은 스터디인지 확인
         if (!leader.getStudy().equals(newLeader.getStudy())) {
@@ -73,8 +81,11 @@ public class UserStudyService {
         // 리더 위임
         leader.updateMemberStatus(3);
         newLeader.updateMemberStatus(1);
+        List<UserStudyResponseDto> userStudyResponseDtoList = new ArrayList<>();
+        userStudyResponseDtoList.add(new UserStudyResponseDto(leader));
+        userStudyResponseDtoList.add(new UserStudyResponseDto(newLeader));
 
-        return new UserStudyResponseDto(newLeader);
+        return userStudyResponseDtoList;
     }
 
     // 멤버 지위 변경

@@ -64,7 +64,7 @@ public class StudyController extends BaseController {
 
     // Study 완료 처리
     @ResponseBody
-    @PatchMapping("/complete/{studyIdx}")
+    @PatchMapping("/{studyIdx}/complete")
     public ResponseEntity<ResponseApiMessage> updateStudyIsComplete(@PathVariable Long studyIdx){
         // Study 완료 업데이트
         StudyResponseDto studyResponseDto = studyService.updateStudyIsComplete(studyIdx);
