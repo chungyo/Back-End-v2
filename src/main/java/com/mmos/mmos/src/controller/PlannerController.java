@@ -1,6 +1,8 @@
 package com.mmos.mmos.src.controller;
 
+import com.mmos.mmos.config.HttpResponseStatus;
 import com.mmos.mmos.config.ResponseApiMessage;
+import com.mmos.mmos.src.domain.dto.planner.PlannerResponseDto;
 import com.mmos.mmos.src.service.PlannerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,4 +32,15 @@ public class PlannerController extends BaseController {
             return sendResponseHttpByJson(POST_PLANNER_INVALID_REQUEST, "Planner save failed. THIS_Day=" + thisDay, null);
         return sendResponseHttpByJson(SUCCESS, "Saved planner THIS_Day=" + thisDay, null);
     }
+
+    // 플래너 메모 기능
+    @ResponseBody
+    @PatchMapping("/{plannerIdx}")
+    public ResponseEntity<ResponseApiMessage> updatePlannerMemo(@RequestBody PlannerResponseDto plannerResponseDto, @PathVariable Long plannerIdx){
+         plannerResponseDto = plannerService.setMemo(plannerIdx,plannerResponseDto.getMemo());
+
+         return sendResponseHttpByJson(SUCCESS, "UPDATE PLANNER_MEMO_COMPLETE. PLANNER_INDEX=" + plannerIdx, plannerResponseDto);
+
+    }
+
 }
