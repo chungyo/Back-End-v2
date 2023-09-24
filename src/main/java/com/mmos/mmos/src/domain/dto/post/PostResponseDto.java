@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 @Getter
 public class PostResponseDto {
 
-    private Long index;
+    private Long idx;
 
     private String title;
 
@@ -25,7 +25,7 @@ public class PostResponseDto {
     private Timestamp updatedAt;
 
     public PostResponseDto(Post post) {
-        this.index = post.getPostIndex();
+        this.idx = post.getPostIndex();
         this.title = post.getPostTitle();
         this.contents = post.getPostContents();
         this.image = post.getPostImage();
