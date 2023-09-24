@@ -41,9 +41,12 @@ public enum HttpResponseStatus {
     UPDATE_USER_EMPTY_NEWPWD(false, BAD_REQUEST.value(), "새 비밀번호를 입력해주세요."),
     UPDATE_USER_SAME_PWD(false, BAD_REQUEST.value(), "기존 비밀번호와 같습니다. 새로운 비밀번호를 입력해주세요."),
     UPDATE_USER_DIFF_NEWPWD(false, BAD_REQUEST.value(), "새로운 비밀번호가 일치하지 않습니다."),
+    UPDATE_USER_DIFF_PREVPWD(false, BAD_REQUEST.value(), "비밀번호를 잘못 입력하셨습니다."),
+
 
     // updateNickname
     UPDATE_USER_EMPTY_NICKNAME(false, BAD_REQUEST.value(), "닉네임을 입력해주세요."),
+    UPDATE_USER_DUPLICATE_NICKNAME(false, BAD_REQUEST.value(), "이전에 사용하던 닉네임과 같습니다. 새로운 닉네임을 입력해주세요."),
 
 
     // Badge
