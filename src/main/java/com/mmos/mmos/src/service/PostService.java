@@ -101,4 +101,11 @@ public class PostService {
         return responseDtoList;
     }
 
+    // 게시글 삭제
+    @Transactional
+    public void deletePost(Long postIdx) {
+        Post post = findPostByIdx(postIdx);
+        postRepository.delete(post);
+    }
+
 }
