@@ -67,7 +67,6 @@ public class UserService {
         userRepository.save(user);
 
         // 대학, 전공 역 FK 설정
-        university.addUser(user);
         major.addUser(user);
 
         return new UserResponseDto(user);

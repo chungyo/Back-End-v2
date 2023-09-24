@@ -1,6 +1,7 @@
 package com.mmos.mmos.src.service;
 
 import com.mmos.mmos.src.domain.dto.university.UniversityResponseDto;
+import com.mmos.mmos.src.domain.dto.university.UniversitySaveRequestDto;
 import com.mmos.mmos.src.domain.entity.University;
 import com.mmos.mmos.src.repository.UniversityRepository;
 import lombok.RequiredArgsConstructor;
@@ -40,5 +41,12 @@ public class UniversityService {
         }
 
         return responseDtoList;
+    }
+
+    public UniversityResponseDto saveUniversity(UniversitySaveRequestDto requestDto) {
+        University university = new University(requestDto.getName());
+        universityRepository.save(university);
+
+        return new UniversityResponseDto(university);
     }
 }

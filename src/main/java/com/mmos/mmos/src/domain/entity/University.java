@@ -22,9 +22,13 @@ public class University {
     private String universityName;
 
     @OneToMany(mappedBy = "university", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<User> universityUsers = new ArrayList<>();
+    private List<College> universityColleges = new ArrayList<>();
 
-    public void addUser(User user){
-        this.universityUsers.add(user);
+    public University(String universityName) {
+        this.universityName = universityName;
+    }
+
+    public void addCollege(College college){
+        this.universityColleges.add(college);
     }
 }

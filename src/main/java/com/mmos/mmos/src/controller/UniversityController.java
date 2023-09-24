@@ -2,6 +2,7 @@ package com.mmos.mmos.src.controller;
 
 import com.mmos.mmos.config.ResponseApiMessage;
 import com.mmos.mmos.src.domain.dto.university.UniversityResponseDto;
+import com.mmos.mmos.src.domain.dto.university.UniversitySaveRequestDto;
 import com.mmos.mmos.src.service.UniversityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,14 @@ import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
 @RequiredArgsConstructor
 public class UniversityController extends BaseController {
     private final UniversityService universityService;
+
+    @ResponseBody
+    @PostMapping("")
+    public ResponseEntity<ResponseApiMessage> saveUniversity(@RequestBody UniversitySaveRequestDto requestDto) {
+        UniversityResponseDto responseDto = universityService.saveUniversity(requestDto);
+
+        return sendResponseHttpByJson(SUCCESS, "GET UNIVERSITY.", responseDto);
+    }
 
     @ResponseBody
     @GetMapping("/{universityIdx}")
