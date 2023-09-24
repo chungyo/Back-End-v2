@@ -37,6 +37,26 @@ public class StudyController extends BaseController {
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE STUDY. STUDY_INDEX=" + studyResponseDto.getIndex(), studyResponseDto);
     }
 
+    // Study 신청자 조회
+    @ResponseBody
+    @GetMapping("/{studyIdx}/applier")
+    public ResponseEntity<ResponseApiMessage> getStudyApplier(@PathVariable Long studyIdx) {
+        // Study 지원자 리스트
+        List<UserResponseDto> userResponseDtoList= studyService.getStudyAppliers(studyIdx);
+
+        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "GET APPLIERS.",userResponseDtoList);
+    }
+
+    // Study 멤버 조회
+    @ResponseBody
+    @GetMapping("/{studyIdx}/members")
+    public ResponseEntity<ResponseApiMessage> getStudyMembers(@PathVariable Long studyIdx) {
+        // Study 멤버 리스트
+        List<UserResponseDto> userResponseDtoList= studyService.getStudyMembers(studyIdx);
+
+        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "GET APPLIERS.",userResponseDtoList);
+    }
+
     // Study 이름 변경
     @ResponseBody
     @PatchMapping("/{studyIdx}/nameUpdate")
@@ -49,16 +69,6 @@ public class StudyController extends BaseController {
         StudyResponseDto studyResponseDto = studyService.updateStudyName(studyIdx, studyNameUpdateDto.getNewStudyName());
 
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE STUDY_NAME. STUDY_INDEX=" + studyIdx, studyResponseDto);
-    }
-
-    // Study 신청자 조회
-    @ResponseBody
-    @GetMapping("/{studyIdx}/applier")
-    public ResponseEntity<ResponseApiMessage> getStudyApplier(@PathVariable Long studyIdx) {
-        // Study 이름 업데이트
-        List<UserResponseDto> userResponseDtoList= studyService.getStudyApplier(studyIdx);
-
-        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "GET APPLIERS.",userResponseDtoList);
     }
 
     // Study 완료 처리

@@ -54,7 +54,7 @@ public class StudyService {
     }
 
     @Transactional
-    public List<UserResponseDto> getStudyApplier(Long studyIdx){
+    public List<UserResponseDto> getStudyAppliers(Long studyIdx){
         Study study = findStudy(studyIdx);
 
         // UserStudy list에서 지원자 선별
@@ -66,6 +66,21 @@ public class StudyService {
         }
 
         return appliersDto;
+    }
+
+    @Transactional
+    public List<UserResponseDto> getStudyMembers(Long studyIdx){
+        Study study = findStudy(studyIdx);
+
+        // UserStudy list에서 멤버 선별
+        List<UserResponseDto> userResponseDtoList = new ArrayList<>();
+        for (UserStudy userStudy : study.getStudyUserstudies()){
+            if(userStudy.getUserstudyMemberStatus() < 4){
+                userResponseDtoList.add(new UserResponseDto(userStudy.getUser()));
+            }
+        }
+
+        return userResponseDtoList;
     }
 
     // 스터디 완수 업데이트
