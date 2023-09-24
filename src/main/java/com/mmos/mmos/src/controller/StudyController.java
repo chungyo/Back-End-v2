@@ -61,7 +61,6 @@ public class StudyController extends BaseController {
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "GET APPLIERS.",userResponseDtoList);
     }
 
-
     // Study 완료 처리
     @ResponseBody
     @PatchMapping("/{studyIdx}/complete")
@@ -72,4 +71,13 @@ public class StudyController extends BaseController {
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE STUDY_COMPLETE. STUDY_INDEX=" + studyIdx, studyResponseDto);
     }
 
+    // Study 멤버 추방
+    @ResponseBody
+    @DeleteMapping("/{userStudyIdx}/remove")
+    public ResponseEntity<ResponseApiMessage> removeUserStudy(@PathVariable Long userStudyIdx){
+        // Study 완료 업데이트
+        UserResponseDto userResponseDto = studyService.deleteUserFromStudy(userStudyIdx);
+
+        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "DELETE USER_STUDY_COMPLETE. USER_STUDY_INDEX=" + userStudyIdx, userResponseDto);
+    }
 }

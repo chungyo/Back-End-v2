@@ -4,8 +4,10 @@ import com.mmos.mmos.src.domain.dto.study.StudyResponseDto;
 import com.mmos.mmos.src.domain.dto.study.StudySaveRequestDto;
 import com.mmos.mmos.src.domain.dto.user.UserResponseDto;
 import com.mmos.mmos.src.domain.entity.Study;
+import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.domain.entity.UserStudy;
 import com.mmos.mmos.src.repository.StudyRepository;
+import com.mmos.mmos.src.repository.UserStudyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StudyService {
     private final StudyRepository studyRepository;
+    private final UserStudyRepository userStudyRepository;
 
     // 스터디 생성
     @Transactional
@@ -31,6 +34,11 @@ public class StudyService {
     public Study findStudy(Long studyIdx){
         return studyRepository.findById(studyIdx)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 스터디입니다. STUDY_INDEX" + studyIdx));
+    }
+
+    public UserStudy findUserStudy(Long userStudyIdx){
+        return userStudyRepository.findById(userStudyIdx)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 스터디입니다. STUDY_INDEX" + userStudyIdx));
     }
     
     // 스터디 이름 업데이트
@@ -72,5 +80,18 @@ public class StudyService {
         study.updateStudyIsComplete();
 
         return new StudyResponseDto(study);
+    }
+
+    @Transactional
+    public UserResponseDto deleteUserFromStudy(Long userStudyIdx){
+
+        UserStudy userStudy = findUserStudy(userStudyIdx);
+        User user = userStudy.getUser();
+
+        // userStudy 삭제
+        userStudyRepository.deleteById(userStudyIdx);
+
+        // 삭제된 유저 정보 Dto 반환
+        return new UserResponseDto(user);
     }
 }
