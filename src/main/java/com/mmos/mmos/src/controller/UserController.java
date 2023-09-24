@@ -62,6 +62,8 @@ public class UserController extends BaseController {
 
         // User 생성
         UserResponseDto userResponseDto = userService.saveUser(requestDto);
+        if(userResponseDto == null)
+            return sendResponseHttpByJson(SUCCESS, "SAVE USER FAIL. USER_INDEX=", null);
 
         // Calendar 생성
         CalendarResponseDto calendarResponseDto = calendarService.saveCalendar(LocalDate.now().getMonthValue(), userResponseDto.getIdx());
@@ -86,13 +88,15 @@ public class UserController extends BaseController {
 
         // 기존 비밀번호와 새로운 비밀번호가 다른지 확인
         if(userPwdUpdateDto.getPrevPwd().equals(userPwdUpdateDto.getNewPwd()))
-            return sendResponseHttpByJson(UPDATE_USER_SAME_PWD, "PASSWORD UPDATE FAIL. (PREVIOUS PWD == NEW PWD)", null);
+            return sendResponseHttpByJson(UPDATE_USER_SAME_PWD, "PASSWORD UPDATE FAIL. (PREV_PWD == NEW PWD)", null);
         // 새로운 비밀번호와 확인 비밀번호가 같은지 확인
         if(!userPwdUpdateDto.getNewPwd().equals(userPwdUpdateDto.getNewPwdByCheck()))
-            return sendResponseHttpByJson(UPDATE_USER_SAME_PWD, "PASSWORD UPDATE FAIL. (NEW PWD != CHECK NEW PWD)", null);
+            return sendResponseHttpByJson(UPDATE_USER_DIFF_NEWPWD, "PASSWORD UPDATE FAIL. (NEW_PWD != CHECK NEW PWD)", null);
 
         UserResponseDto userResponseDto = userService.updatePwd(userPwdUpdateDto, userIdx);
 
+        if(userResponseDto == null)
+            return sendResponseHttpByJson(UPDATE_USER_DIFF_PREVPWD, "UPDATE PASSWORD FAIL. DB PWD != PREV_PWD", null);
         return sendResponseHttpByJson(SUCCESS, "UPDATE PASSWORD. USER_IDX=" + userIdx, userResponseDto);
     }
 
@@ -102,10 +106,12 @@ public class UserController extends BaseController {
     public ResponseEntity<ResponseApiMessage> updateNickname(@RequestBody UserNicknameUpdateDto userNicknameUpdateDto, @PathVariable Long userIdx) {
         // null 검사
         if(userNicknameUpdateDto.getNewNickname() == null)
-            return sendResponseHttpByJson(UPDATE_USER_EMPTY_NICKNAME, "UPDATE NICKNAME FAIL. USER_IDX=" + userIdx, null);
+            return sendResponseHttpByJson(UPDATE_USER_EMPTY_NICKNAME, "UPDATE NICKNAME FAIL. NICKNAME == NULL" + userIdx, null);
 
         UserResponseDto responseDto = userService.updateNickname(userNicknameUpdateDto, userIdx);
 
+        if(responseDto == null)
+            return sendResponseHttpByJson(UPDATE_USER_DUPLICATE_NICKNAME, "UPDATE NICKNAME FAIL. DUPLICATED NICKNAME" + userIdx, null);
         return sendResponseHttpByJson(SUCCESS, "UPDATE NICKNAME. USER_IDX=" + userIdx, responseDto);
     }
 }
