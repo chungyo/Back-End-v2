@@ -47,7 +47,7 @@ public class UserService {
         if(userRepository.findUserByUserEmail(requestDto.getEmail()).isPresent())
             return null;
         if(userRepository.findUserByUserStudentIdAndUniversity(requestDto.getStudentId(), university).isPresent()) {
-            System.out.println("학번&학번 중복");
+            System.out.println("학교&학번 중복");
             return null;
         }
         if(userRepository.findUserByUserNickname(requestDto.getNickname()).isPresent()){
@@ -88,6 +88,10 @@ public class UserService {
     public UserResponseDto updateNickname(UserNicknameUpdateDto userNicknameUpdateDto, Long userIdx) {
         // 유저 정보 찾기
         User user = findUserByIdx(userIdx);
+
+        if(user.getUserNickname().equals(userNicknameUpdateDto.getNewNickname()))
+            return null;
+
         // 유저 닉네임 변경
         user.updateNickname(userNicknameUpdateDto.getNewNickname());
 

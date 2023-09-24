@@ -18,7 +18,6 @@ public class BadgeController extends BaseController {
 
     private final BadgeService badgeService;
 
-
     // 도전과제, 티어, 프사 나누기
     @ResponseBody
     @GetMapping("/{badgeIdx}")

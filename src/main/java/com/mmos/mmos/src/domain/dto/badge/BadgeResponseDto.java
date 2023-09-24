@@ -14,7 +14,6 @@ public class BadgeResponseDto {
     private String name;
 
 
-
     public BadgeResponseDto(Badge entity) {
         this.idx = entity.getBadgeIndex();
         this.exp = entity.getBadgeExp();
