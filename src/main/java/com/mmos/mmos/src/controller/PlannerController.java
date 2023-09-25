@@ -1,16 +1,13 @@
 package com.mmos.mmos.src.controller;
 
-import com.mmos.mmos.config.HttpResponseStatus;
 import com.mmos.mmos.config.ResponseApiMessage;
 import com.mmos.mmos.src.domain.dto.planner.PlannerResponseDto;
+import com.mmos.mmos.src.domain.dto.planner.PlannerUpdateMemoRequestDto;
 import com.mmos.mmos.src.service.PlannerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-
-import static com.mmos.mmos.config.HttpResponseStatus.POST_PLANNER_INVALID_REQUEST;
 import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
 
 @RestController
@@ -20,26 +17,19 @@ public class PlannerController extends BaseController {
 
     private final PlannerService plannerService;
 
-    // 하루가 지나면 새 플래너 생성되도록 하는 컨트롤러
-//    @ResponseBody
-//    @PostMapping("/{calendarIdx}")
-//    public ResponseEntity<ResponseApiMessage> savePlanner(@PathVariable Long calendarIdx) {
-//        // 오늘이 무슨 날인지 확인
-//        LocalDate thisDay = LocalDate.now();
-//
-//        // 저장
-//        if(plannerService.savePlanner(thisDay, calendarIdx) == null)
-//            return sendResponseHttpByJson(POST_PLANNER_INVALID_REQUEST, "Planner save failed. THIS_Day=" + thisDay, null);
-//        return sendResponseHttpByJson(SUCCESS, "Saved planner THIS_Day=" + thisDay, null);
-//    }
-
+    /**
+     * 플래너 메모 추가 기능 (완료)
+     * @param requestDto
+     *         - String memo: 메모
+     * @param plannerIdx: 플래너 인덱스
+     */
     // 플래너 메모 기능
     @ResponseBody
     @PatchMapping("/{plannerIdx}")
-    public ResponseEntity<ResponseApiMessage> updatePlannerMemo(@RequestBody PlannerResponseDto plannerResponseDto, @PathVariable Long plannerIdx){
-         plannerResponseDto = plannerService.setMemo(plannerIdx,plannerResponseDto.getMemo());
+    public ResponseEntity<ResponseApiMessage> updatePlannerMemo(@RequestBody PlannerUpdateMemoRequestDto requestDto, @PathVariable Long plannerIdx){
+         PlannerResponseDto responseDto = plannerService.setMemo(plannerIdx,requestDto.getMemo());
 
-         return sendResponseHttpByJson(SUCCESS, "UPDATE PLANNER_MEMO_COMPLETE. PLANNER_INDEX=" + plannerIdx, plannerResponseDto);
+         return sendResponseHttpByJson(SUCCESS, "UPDATE PLANNER_MEMO_COMPLETE. PLANNER_INDEX=" + plannerIdx, responseDto);
 
     }
 

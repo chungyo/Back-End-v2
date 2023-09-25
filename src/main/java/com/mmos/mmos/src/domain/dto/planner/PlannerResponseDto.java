@@ -15,7 +15,6 @@ public class PlannerResponseDto {
     private String memo;
     private Long dailyStudyTime;
     private Long dailyScheduleNum;
-    private Long dday;
 
     public PlannerResponseDto(Planner planner) {
         this.idx = planner.getPlannerIndex();
@@ -23,6 +22,5 @@ public class PlannerResponseDto {
         this.memo = planner.getPlannerMemo();
         this.dailyStudyTime = planner.getPlannerDailyStudyTime();
         this.dailyScheduleNum = planner.getPlannerDailyScheduleNum();
-        this.dday = planner.getPlannerDday();
     }
 }

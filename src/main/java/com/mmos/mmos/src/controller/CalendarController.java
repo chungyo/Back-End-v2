@@ -18,6 +18,10 @@ public class CalendarController extends BaseController {
 
     private final CalendarService calendarService;
 
+    /**
+     * 회원가입하거나 한 달이 지나면 새 캘린더가 생성되는 API (완료)
+     * @param userIdx: 유저 인덱스
+     */
     // 한 달이 지나면 새 캘린더가 생성되도록 하는 컨트롤러
     @ResponseBody
     @PostMapping("/{userIdx}")

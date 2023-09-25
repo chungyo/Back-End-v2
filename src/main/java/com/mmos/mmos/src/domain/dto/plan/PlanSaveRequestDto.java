@@ -10,9 +10,10 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class PlanSaveRequestDto {
 
-    String planName;
-    Boolean isStudy;
-    Long userStudyIdx;
+    private String planName;
+    private Boolean isStudy;
+    private Long userStudyIdx;
+    private LocalDate date;
 
     public PlanSaveRequestDto(Plan plan) {
         this.planName = plan.getPlanName();

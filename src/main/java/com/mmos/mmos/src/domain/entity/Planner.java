@@ -46,9 +46,6 @@ public class Planner {
     @JoinColumn(name = "calendarIndex")
     private Calendar calendar;
 
-    @Column
-    private Long plannerDday;
-
     @Builder
     public Planner(LocalDate planner_date, Calendar calendar) {
         this.plannerDate = planner_date;
@@ -60,8 +57,6 @@ public class Planner {
         this.plannerDate = responseDto.getDate();
         this.plannerMemo = responseDto.getMemo();
         this.plannerDailyStudyTime = responseDto.getDailyStudyTime();
-        this.plannerDailyScheduleNum = responseDto.getDailyScheduleNum();
-        this.plannerDday = responseDto.getDday();
     }
 
     public void addPlan(Plan plan) {

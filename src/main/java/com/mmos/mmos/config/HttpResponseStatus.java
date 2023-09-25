@@ -60,7 +60,9 @@ public enum HttpResponseStatus {
     POST_CALENDAR_INVALID_REQUEST(false, BAD_REQUEST.value(), "한 달이 지나지 않아서 저장할 캘린더가 없습니다."),
 
     // plan
-    POST_PLAN_INVALID_REQUEST(false, BAD_REQUEST.value(),"계획 내용이 없습니다."),
+    POST_PLAN_EMPTY_CONTENTS(false, BAD_REQUEST.value(),"계획 내용이 없습니다."),
+    POST_PLAN_INVALID_REQUEST(false, BAD_REQUEST.value(),"스터디 계획이 아닙니다."),
+
 
     // Planner
     POST_PLANNER_INVALID_REQUEST(false, BAD_REQUEST.value(), "하루가 지나지 않아서 저장할 플래너가 없습니다."),

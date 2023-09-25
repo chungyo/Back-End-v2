@@ -21,6 +21,11 @@ public class CalendarService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다. USER_INDEX=" + userIdx));
     }
 
+    public Calendar findCalendarByIdx(Long calendarIdx) {
+        return calendarRepository.findById(calendarIdx)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 캘린더입니다. USER_INDEX=" + calendarIdx));
+    }
+
     // 캘린더 생성
     @Transactional
     public CalendarResponseDto saveCalendar(int month, Long userIdx) {
@@ -38,4 +43,5 @@ public class CalendarService {
 
         return new CalendarResponseDto(calendar);
     }
+
 }

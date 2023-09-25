@@ -1,7 +1,6 @@
 package com.mmos.mmos.src.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -40,7 +39,6 @@ public class Calendar {
     @JoinColumn(name = "userIndex")
     private User user;
 
-    @Builder
     public Calendar(int month, User user) {
         this.calendarMonth = month;
         this.user = user;

@@ -3,14 +3,9 @@ package com.mmos.mmos.src.service;
 import com.mmos.mmos.src.domain.dto.plan.PlanNameUpdateRequestDto;
 import com.mmos.mmos.src.domain.dto.plan.PlanResponseDto;
 import com.mmos.mmos.src.domain.dto.plan.PlanSaveRequestDto;
-import com.mmos.mmos.src.domain.entity.Plan;
-import com.mmos.mmos.src.domain.entity.Planner;
-import com.mmos.mmos.src.domain.entity.UserStudy;
-import com.mmos.mmos.src.repository.PlanRepository;
-import com.mmos.mmos.src.repository.PlannerRepository;
-import com.mmos.mmos.src.repository.UserStudyRepository;
+import com.mmos.mmos.src.domain.entity.*;
+import com.mmos.mmos.src.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +20,11 @@ public class PlanService {
     private final PlanRepository planRepository;
     private final PlannerRepository plannerRepository;
     private final UserStudyRepository userStudyRepository;
+    private final CalendarRepository calendarRepository;
+    private final UserRepository userRepository;
 
     private final PlannerService plannerService;
+    private final CalendarService calendarService;
 
     public Planner findPlannerByIdx(Long plannerIdx) {
         return plannerRepository.findById(plannerIdx)
@@ -50,7 +48,17 @@ public class PlanService {
 
     public Planner findPlannerByCalendarIdxAndDate(Long calendarIdx, LocalDate date) {
         return plannerRepository.findPlannerByCalendar_CalendarIndexAndPlannerDate(calendarIdx, date)
-                .orElse(new Planner(plannerService.savePlanner(date, calendarIdx)));
+                .orElse(null);
+    }
+
+    public User findUserByIdx(Long userIdx) {
+        return userRepository.findById(userIdx)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다. USER_INDEX=" + userIdx));
+    }
+
+    public Calendar findCalendarByUserIdx(Long userIdx, int month) {
+        return calendarRepository.findCalendarByUser_UserIndexAndCalendarMonth(userIdx, month)
+                .orElse(null);
     }
 
     public List<Plan> findPlans() {
@@ -58,21 +66,37 @@ public class PlanService {
     }
 
     @Transactional
-    public PlanResponseDto savePlan(PlanSaveRequestDto requestDto, Long calendarIdx) {
-        Planner planner = findPlannerByCalendarIdxAndDate(calendarIdx, LocalDate.now());
+    public PlanResponseDto savePlan(PlanSaveRequestDto requestDto, Long userIdx) {
+        try {
+            // 저장하려는 월의 캘린더가 존재하는지 확인
+            // 존재한다면 DB에서 가져오고, 존재하지 않는다면 DB에 새로 저장 후, 저장한 값 가져오기
+            Long calendarIdx = findCalendarByUserIdx(userIdx, requestDto.getDate().getMonthValue()).getCalendarIndex();
+            if(calendarIdx == null) {
+                calendarIdx = calendarService.saveCalendar(requestDto.getDate().getMonthValue(), userIdx).getIdx();
+            }
+            // 저장하려는 날의 플래너가 존재하는지 확인
+            // 존재한다면 DB에서 가져오고, 존재하지 않는다면 DB에 새로 저장 후, 저장한 값 가져오기
+            Long plannerIdx = findPlannerByCalendarIdxAndDate(calendarIdx, LocalDate.now()).getPlannerIndex();
+            if(plannerIdx == null)
+                plannerIdx = plannerService.savePlanner(requestDto.getDate(), calendarIdx).getIdx();
 
-        UserStudy userStudy = null;
-        if (requestDto.getIsStudy()) {
-            userStudy = findUserStudyByIdx(requestDto.getUserStudyIdx());
+            UserStudy userStudy = null;
+            if (requestDto.getIsStudy()) {
+                userStudy = findUserStudyByIdx(requestDto.getUserStudyIdx());
+            }
+
+            // Plan 객체 생성
+            Planner planner = findPlannerByIdx(plannerIdx);
+            Plan plan = new Plan(requestDto, planner, userStudy);
+
+            // 역 FK 매핑
+            planner.addPlan(plan);
+
+            return new PlanResponseDto(planRepository.save(plan));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        // Plan 객체 생성
-        Plan plan = new Plan(requestDto, planner, userStudy);
-
-        // 역 FK 매핑
-        planner.addPlan(plan);
-
-        return new PlanResponseDto(planRepository.save(plan));
+        return null;
     }
 
     @Transactional
