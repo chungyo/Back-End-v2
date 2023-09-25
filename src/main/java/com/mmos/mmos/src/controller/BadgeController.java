@@ -18,6 +18,10 @@ public class BadgeController extends BaseController {
 
     private final BadgeService badgeService;
 
+    /**
+     * 도전과제/티어/프사 인덱스로 조회하는 API
+     * @param badgeIdx (도전과제/티어/프사 인덱스)
+     */
     // 도전과제, 티어, 프사 나누기
     @ResponseBody
     @GetMapping("/{badgeIdx}")
@@ -27,6 +31,13 @@ public class BadgeController extends BaseController {
         return sendResponseHttpByJson(SUCCESS, "Load Badge. BADGE_INDEX=" + badgeIdx, responseDto);
     }
 
+    /**
+     * 도전과제/티어/프사 중 한 부문을 리스트로 조회하는 API (완료)
+     * @param purpose
+     *          도전과제 == 'badge'
+     *          티어 == 'tier'
+     *          프사 == 'pfp' 입력
+     */
     @ResponseBody
     @GetMapping("/all/{purpose}")
     public ResponseEntity<ResponseApiMessage> getBadgesByPurpose(@PathVariable String purpose) {

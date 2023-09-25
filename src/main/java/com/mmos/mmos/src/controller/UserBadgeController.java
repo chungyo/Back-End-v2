@@ -17,6 +17,10 @@ import static com.mmos.mmos.config.HttpResponseStatus.*;
 public class UserBadgeController extends BaseController{
     private final UserBadgeService userbadgeService;
 
+    /**
+     * 새로고침할 때마다 티어/도전과제/프사 획득하는 API (완료)
+     * @param userIdx: 유저 인덱스
+     */
     @ResponseBody
     @PostMapping("/{userIdx}")
     // 티어, 도전과제, 프사 획득
@@ -28,6 +32,10 @@ public class UserBadgeController extends BaseController{
         return sendResponseHttpByJson(SUCCESS, "Saved UserBadge.", responseDtoList);
     }
 
+    /**
+     * 내 도전과제 리스트로 조회 API (완료)
+     * @param userIdx: 유저 인덱스
+     */
     // 내 도전과제 보기
     @ResponseBody
     @GetMapping("/all/{userIdx}")
@@ -39,6 +47,10 @@ public class UserBadgeController extends BaseController{
         return sendResponseHttpByJson(SUCCESS, "Load UserBadge.", responseDtoList);
     }
 
+    /**
+     * 현재 내 최고 티어 조회 API (완료)
+     * @param userIdx: 유저 인덱스
+     */
     // 내 티어 보기
     @ResponseBody
     @GetMapping("/{userIdx}")

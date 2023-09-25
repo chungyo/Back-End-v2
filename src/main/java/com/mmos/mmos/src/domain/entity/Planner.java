@@ -39,9 +39,6 @@ public class Planner {
     @ColumnDefault("0")
     private Long plannerDailyScheduleNum;
 
-    @Column
-    private Boolean plannerIsPublic = true;
-
     @OneToMany(mappedBy = "planner", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Plan> plannerPlans = new ArrayList<>();
 

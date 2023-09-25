@@ -5,9 +5,11 @@ import com.mmos.mmos.src.domain.dto.user.UserNicknameUpdateDto;
 import com.mmos.mmos.src.domain.dto.user.UserPwdUpdateDto;
 import com.mmos.mmos.src.domain.dto.user.UserResponseDto;
 import com.mmos.mmos.src.domain.dto.user.UserSaveRequestDto;
-import com.mmos.mmos.src.domain.entity.*;
+import com.mmos.mmos.src.domain.entity.Major;
+import com.mmos.mmos.src.domain.entity.University;
+import com.mmos.mmos.src.domain.entity.User;
+import com.mmos.mmos.src.domain.entity.UserStudy;
 import com.mmos.mmos.src.repository.MajorRepository;
-import com.mmos.mmos.src.repository.StudyRepository;
 import com.mmos.mmos.src.repository.UniversityRepository;
 import com.mmos.mmos.src.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -94,7 +96,7 @@ public class UserService {
         User user = findUserByIdx(userIdx);
 
         // 사용자가 입력한 이전 비밀번호와 DB에 저장된 비밀번호와 같은지 확인
-        if(user.getUserPassword().equals(userPwdUpdateDto.getPrevPwd()))
+        if(!user.getUserPassword().equals(userPwdUpdateDto.getPrevPwd()))
             return null;
 
         // 유저 비밀번호 변경

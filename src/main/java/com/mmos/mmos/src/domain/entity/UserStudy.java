@@ -25,9 +25,6 @@ public class UserStudy {
     @Column
     private Integer userstudyMemberStatus;
 
-    @Column
-    private Boolean userstudyStatus = true;
-
     @ManyToOne
     @JoinColumn(name = "userIndex")
     private User user;

@@ -2,7 +2,6 @@ package com.mmos.mmos.src.controller;
 
 import com.mmos.mmos.config.ResponseApiMessage;
 import com.mmos.mmos.src.domain.dto.calendar.CalendarResponseDto;
-import com.mmos.mmos.src.domain.dto.planner.PlannerResponseDto;
 import com.mmos.mmos.src.domain.dto.study.StudyResponseDto;
 import com.mmos.mmos.src.domain.dto.user.UserNicknameUpdateDto;
 import com.mmos.mmos.src.domain.dto.user.UserPwdUpdateDto;
@@ -29,6 +28,20 @@ public class UserController extends BaseController {
     private final CalendarService calendarService;
     private final PlannerService plannerService;
 
+    /**
+     * 회원가입 API (수정 중)
+     *      1. Regex 검사
+     *      2. 비밀번호 암호화
+     *      3. 이메일 인증
+     * @param requestDto
+     *         - String id: 아이디
+     *         - String pwd: 비밀번호
+     *         - String name: 이름
+     *         - String nickname: 닉네임
+     *         - Long studentId: 학번
+     *         - Long majorIdx: 전공 인덱스
+     *         - String email: 이메일
+     */
     // 회원가입
     @ResponseBody
     @PostMapping("")
@@ -67,12 +80,13 @@ public class UserController extends BaseController {
         // Calendar 생성
         CalendarResponseDto calendarResponseDto = calendarService.saveCalendar(LocalDate.now().getMonthValue(), userResponseDto.getIdx());
 
-        // Planner 생성
-        PlannerResponseDto plannerResponseDto = plannerService.savePlanner(LocalDate.now(), calendarResponseDto.getIdx());
-
         return sendResponseHttpByJson(SUCCESS, "SAVE USER. USER_INDEX=" + userResponseDto.getIdx(), userResponseDto);
     }
 
+    /**
+     * 내가 가입된 스터디 리스트로 조회하는 API (완료)
+     * @param userIdx: 사용자 인덱스
+     */
     @ResponseBody
     @GetMapping("/{userIdx}/studies")
     public ResponseEntity<ResponseApiMessage> getStudies(@PathVariable Long userIdx) {
@@ -81,7 +95,15 @@ public class UserController extends BaseController {
         return sendResponseHttpByJson(SUCCESS, "GET STUDIES. USER_INDEX=" + userIdx, studyResponseDtoList);
     }
 
-        // 비밀번호 변경
+    /**
+     * 비밀번호 변경하는 API (완료)
+     * @param userPwdUpdateDto
+     *          String prevPwd: 이전 비밀번호
+     *          String newPwd: 새 비밀번호
+     *          String newPwdByCheck: 새 비밀번호 확인
+     * @param userIdx: 유저 인덱스
+     */
+    // 비밀번호 변경
     @ResponseBody
     @PatchMapping("/{userIdx}/password")
     public ResponseEntity<ResponseApiMessage> updatePwd(@RequestBody UserPwdUpdateDto userPwdUpdateDto, @PathVariable Long userIdx) {
@@ -107,18 +129,24 @@ public class UserController extends BaseController {
         return sendResponseHttpByJson(SUCCESS, "UPDATE PASSWORD. USER_IDX=" + userIdx, userResponseDto);
     }
 
+    /**
+     * 닉네임 변경하는 API (완료)
+     * @param userNicknameUpdateDto
+     *          String newNickname: 새 닉네임
+     * @param userIdx: 유저 인덱스
+     */
     // 닉네임 변경
     @ResponseBody
     @PatchMapping("/{userIdx}/nickname")
     public ResponseEntity<ResponseApiMessage> updateNickname(@RequestBody UserNicknameUpdateDto userNicknameUpdateDto, @PathVariable Long userIdx) {
         // null 검사
         if(userNicknameUpdateDto.getNewNickname() == null)
-            return sendResponseHttpByJson(UPDATE_USER_EMPTY_NICKNAME, "UPDATE NICKNAME FAIL. NICKNAME == NULL" + userIdx, null);
+            return sendResponseHttpByJson(UPDATE_USER_EMPTY_NICKNAME, "UPDATE NICKNAME FAIL. NICKNAME == NULL", null);
 
         UserResponseDto responseDto = userService.updateNickname(userNicknameUpdateDto, userIdx);
 
         if(responseDto == null)
-            return sendResponseHttpByJson(UPDATE_USER_DUPLICATE_NICKNAME, "UPDATE NICKNAME FAIL. DUPLICATED NICKNAME" + userIdx, null);
+            return sendResponseHttpByJson(UPDATE_USER_DUPLICATE_NICKNAME, "UPDATE NICKNAME FAIL. DUPLICATED NICKNAME", null);
         return sendResponseHttpByJson(SUCCESS, "UPDATE NICKNAME. USER_IDX=" + userIdx, responseDto);
     }
 }

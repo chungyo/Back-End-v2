@@ -10,11 +10,8 @@ public class UserStudyResponseDto {
 
     private Integer memberStatus;
 
-    private Boolean status;
-
     public UserStudyResponseDto(UserStudy userStudy) {
         this.index = userStudy.getUserstudyIndex();
         this.memberStatus = userStudy.getUserstudyMemberStatus();
-        this.status = userStudy.getUserstudyStatus();
     }
 }
