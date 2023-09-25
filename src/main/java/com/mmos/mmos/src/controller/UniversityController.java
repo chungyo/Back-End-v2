@@ -18,6 +18,12 @@ import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
 public class UniversityController extends BaseController {
     private final UniversityService universityService;
 
+    /**
+     * 관리자 전용
+     * University 객체 생성하는 API (완료)
+     * @param requestDto
+     *          - universityName
+     */
     @ResponseBody
     @PostMapping("")
     public ResponseEntity<ResponseApiMessage> saveUniversity(@RequestBody UniversitySaveRequestDto requestDto) {
@@ -26,6 +32,10 @@ public class UniversityController extends BaseController {
         return sendResponseHttpByJson(SUCCESS, "GET UNIVERSITY.", responseDto);
     }
 
+    /**
+     * University 인덱스로 단일 조회하는 API (완료)
+     * @param universityIdx (대학 인덱스)
+     */
     @ResponseBody
     @GetMapping("/{universityIdx}")
     public ResponseEntity<ResponseApiMessage> getUniversity(@PathVariable Long universityIdx) {
@@ -34,6 +44,9 @@ public class UniversityController extends BaseController {
         return sendResponseHttpByJson(SUCCESS, "GET UNIVERSITY. UNIVERSITY_INDEX = " + universityIdx, responseDto);
     }
 
+    /**
+     * 모든 University를 조건 없이 조회하는 API (완료)
+     */
     @ResponseBody
     @GetMapping("")
     public ResponseEntity<ResponseApiMessage> getUniversities() {
