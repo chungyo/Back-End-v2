@@ -20,9 +20,9 @@ public class UniversityController extends BaseController {
 
     /**
      * 관리자 전용
-     * University 객체 생성하는 API (완료)
+     * University 초기 데이터를 저장하는 API (완료)
      * @param requestDto
-     *          - universityName
+     *          - universityName (대학 이름)
      */
     @ResponseBody
     @PostMapping("")

@@ -27,6 +27,7 @@ public class CollegeService {
         University university = findUniversityByIdx(universityIdx);
         College college = new College(requestDto, university);
         collegeRepository.save(college);
+        university.addCollege(college);
 
         return new CollegeResponseDto(college);
     }

@@ -28,6 +28,7 @@ public class MajorService {
         College college = findCollegeByIdx(collegeIdx);
         Major major = new Major(requestDto, college);
         majorRepository.save(major);
+        college.addMajor(major);
 
         return new MajorResponseDto(major);
     }

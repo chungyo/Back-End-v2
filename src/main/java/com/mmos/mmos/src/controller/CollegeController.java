@@ -17,12 +17,18 @@ public class CollegeController extends BaseController {
 
     private final CollegeService collegeService;
 
+    /**
+     * 관리자 전용
+     * College 초기 데이터를 저장하는 API (완료)
+     * @param universityIdx (대학 인덱스)
+     * @param requestDto
+     *          - collegeName (단과대 이름)
+     */
     @ResponseBody
     @PostMapping("/{universityIdx}")
     public ResponseEntity<ResponseApiMessage> saveCollege(@PathVariable Long universityIdx, @RequestBody UniversitySaveRequestDto requestDto) {
         CollegeResponseDto responseDto = collegeService.saveCollege(universityIdx, requestDto);
 
         return sendResponseHttpByJson(SUCCESS, "Saved University", responseDto);
-
     }
 }
