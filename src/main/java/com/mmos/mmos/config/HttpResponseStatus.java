@@ -36,16 +36,12 @@ public enum HttpResponseStatus {
     POST_USER_EMPTY_UNIVERSITYID(false, BAD_REQUEST.value(), "대학을 선택해주세요."),
     POST_USER_EMPTY_MAJORID(false, BAD_REQUEST.value(), "학과(전공)를 선택해주세요."),
     POST_USER_DUPLICATE_SAVE(false, BAD_REQUEST.value(), "이미 존재하는 회원입니다."),
-
-
     // updatePwd
     UPDATE_USER_EMPTY_PREVPWD(false, BAD_REQUEST.value(), "이전 비밀번호를 입력해주세요."),
     UPDATE_USER_EMPTY_NEWPWD(false, BAD_REQUEST.value(), "새 비밀번호를 입력해주세요."),
     UPDATE_USER_SAME_PWD(false, BAD_REQUEST.value(), "기존 비밀번호와 같습니다. 새로운 비밀번호를 입력해주세요."),
     UPDATE_USER_DIFF_NEWPWD(false, BAD_REQUEST.value(), "새로운 비밀번호가 일치하지 않습니다."),
     UPDATE_USER_DIFF_PREVPWD(false, BAD_REQUEST.value(), "비밀번호를 잘못 입력하셨습니다."),
-
-
     // updateNickname
     UPDATE_USER_EMPTY_NICKNAME(false, BAD_REQUEST.value(), "닉네임을 입력해주세요."),
     UPDATE_USER_DUPLICATE_NICKNAME(false, BAD_REQUEST.value(), "이전에 사용하던 닉네임과 같습니다. 새로운 닉네임을 입력해주세요."),
@@ -65,6 +61,11 @@ public enum HttpResponseStatus {
     POST_PLAN_EMPTY_CONTENTS(false, BAD_REQUEST.value(),"계획 내용이 없습니다."),
     POST_PLAN_INVALID_REQUEST(false, BAD_REQUEST.value(),"스터디 계획이 아닙니다."),
 
+    // UserStudy
+    POST_USERSTUDY_DUPLICATE_REQUEST(false, BAD_REQUEST.value(),"이미 초대 요청을 보냈습니다."),
+    POST_USERSTUDY_ALREADY_EXIST(false, BAD_REQUEST.value(),"이미 활동 중인 멤버입니다."),
+    POST_USERSTUDY_INVALID_REQUEST(false, BAD_REQUEST.value(),"권한이 없습니다."),
+    POST_USERSTUDY_COMPLETE_REQUEST(false, BAD_REQUEST.value(),"이미 받은 요청입니다."),
 
     // Planner
     POST_PLANNER_INVALID_REQUEST(false, BAD_REQUEST.value(), "하루가 지나지 않아서 저장할 플래너가 없습니다."),

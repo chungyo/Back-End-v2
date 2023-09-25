@@ -21,7 +21,13 @@ public class UserStudy {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userstudyIndex;
 
-    // Userstudy.isMember : 1 == leader, 2 == manager, 3 == member, 4 == application, 5 == invitee
+    /*
+        1: 운영진
+        2: 부운영진
+        3: 멤버
+        4: 운영진이 초대한 유저 (study -send-> user)
+        5: 참가 요청한 유저 (user -send-> study)
+     */
     @Column
     private Integer userstudyMemberStatus;
 

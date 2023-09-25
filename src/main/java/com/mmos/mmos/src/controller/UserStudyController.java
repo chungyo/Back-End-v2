@@ -1,15 +1,14 @@
 package com.mmos.mmos.src.controller;
 
-import com.mmos.mmos.config.HttpResponseStatus;
 import com.mmos.mmos.config.ResponseApiMessage;
-import com.mmos.mmos.src.domain.dto.userstudy.UserStudyMemberStatusUpdateDto;
+import com.mmos.mmos.src.domain.dto.userstudy.UserStudyInviteDto;
 import com.mmos.mmos.src.domain.dto.userstudy.UserStudyResponseDto;
 import com.mmos.mmos.src.service.UserStudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import static com.mmos.mmos.config.HttpResponseStatus.*;
 
 @RestController
 @RequestMapping("/api/v1/userstudies")
@@ -18,94 +17,88 @@ public class UserStudyController extends BaseController {
     private final UserStudyService userStudyService;
 
     /**
-     * 유저 스터디 생성 (수정 중 - 초대(5), 참가 요청(4)한 유저가 이미 객체로 생성됐다면 patch로 참여한 인원들은 3으로 바꿔주면 될 것 같음)
-     * @param userIdx
-     * @param studyIdx
+     * 스터디원 초대하는 API (완료)
+     *      스터디원 중 운영진 이상만 초대 보낼 수 있음
+     *      파라미터가 userStudyIdx인 이유는 리더가 스터디 페이지 들어가서 초대를 보낼 것이므로 페이지는 리더의 userStudy 정보를 담고있음
+     * @param userStudyIdx: 리더의 userStudy
+     * @param requestDto
+     *          - userIdx: 초대 받은 유저 인덱스
      */
+    // 초대 보내기 (객체 생성 - isMember = 4)
     @ResponseBody
-    @PostMapping("/save/{userIdx}/{studyIdx}")
-    public ResponseEntity<ResponseApiMessage> saveUserStudy(@PathVariable Long userIdx, @PathVariable Long studyIdx) {
-        // 멤버 생성 (3 == 일반 멤버)
-        UserStudyResponseDto userStudyResponseDto = userStudyService.saveUserStudy(3, userIdx, studyIdx);
+    @PostMapping("/{userStudyIdx}")
+    public ResponseEntity<ResponseApiMessage> inviteStudy(@PathVariable Long userStudyIdx, @RequestBody UserStudyInviteDto requestDto) {
+        UserStudyResponseDto userStudyResponseDto = userStudyService.inviteStudy(userStudyIdx, requestDto);
 
-        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE USER STUDY. USERSTUDY_INDEX=" + userStudyResponseDto.getIndex(), userStudyResponseDto);
+        if(userStudyResponseDto == null)
+            return sendResponseHttpByJson(POST_USERSTUDY_DUPLICATE_REQUEST, "이미 보낸 요청입니다.", null);
+        else if(userStudyResponseDto.getMemberStatus() <= 3)
+            return sendResponseHttpByJson(POST_USERSTUDY_ALREADY_EXIST, "이미 존재하는 유저입니다.", null);
+        else if (userStudyResponseDto.getIndex().equals(userStudyIdx))
+            return sendResponseHttpByJson(POST_USERSTUDY_INVALID_REQUEST, "권한이 없습니다.", null);
+        else
+            return sendResponseHttpByJson(SUCCESS, "Invite User.", userStudyResponseDto);
     }
 
     /**
-     * ERD 수정으로 인한 새로운 로직 필요
-     * @param userIdx
-     * @param studyIdx
-     * @return
+     * 초대 받은 유저가 스터디 초대를 승낙하는 API (완료)
+     *      받은 초대 목록 창에서 '수락'을 클릭했을 때 상호작용 할 API
+     * @param studyIdx: 스터디 인덱스
+     * @param userIdx: 초대 받은 유저 인덱스
      */
-    // Userstudy.isMember : 1 == leader, 2 == manager, 3 == member, 4 == application, 5 == invitee
+    // 초대 보내기 -> 수락
     @ResponseBody
-    @PostMapping("/saveApplier/{userIdx}/{studyIdx}")
-    public ResponseEntity<ResponseApiMessage> saveUserStudyApplication(@PathVariable Long userIdx, @PathVariable Long studyIdx) {
-        // 지원자 생성 (4 == 지원자)
-        UserStudyResponseDto userStudyResponseDto = userStudyService.saveUserStudy(4, userIdx, studyIdx);
+    @PatchMapping("/{studyIdx}/{userIdx}")
+    public ResponseEntity<ResponseApiMessage> acceptInvite(@PathVariable Long studyIdx, @PathVariable Long userIdx) {
+        UserStudyResponseDto userStudyResponseDto = userStudyService.acceptInvite(studyIdx, userIdx);
 
-        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE USER STUDY APPLIER. USERSTUDY_INDEX=" + userStudyResponseDto.getIndex(), userStudyResponseDto);
+        if(userStudyResponseDto == null)
+            return sendResponseHttpByJson(POST_USERSTUDY_COMPLETE_REQUEST, "이미 처리된 요청입니다.", null);
+        return sendResponseHttpByJson(SUCCESS, "Accept Invite.", userStudyResponseDto);
     }
 
     /**
-     * ERD 수정으로 인한 새로운 로직 필요
-     * @param userIdx
-     * @param studyIdx
-     * @return
+     * 초대 받은 유저가 스터디 초대를 거절하는 API (완료)
+     *      받은 초대 목록 창에서 '거절'을 클릭했을 때 상호작용 할 API
+     * @param studyIdx: 스터디 인덱스
+     * @param userIdx: 초대 받은 유저 인덱스
      */
-    // Userstudy.isMember : 1 == leader, 2 == manager, 3 == member, 4 == application, 5 == invitee
+    // 초대 보내기 -> 거절
     @ResponseBody
-    @PostMapping("/saveInvitee/{userIdx}/{studyIdx}")
-    public ResponseEntity<ResponseApiMessage> saveUserStudyInvitee(@PathVariable Long userIdx, @PathVariable Long studyIdx) {
-        // 초대받은 유저 생성 (5 == 초대받은 유저)
-        UserStudyResponseDto userStudyResponseDto = userStudyService.saveUserStudy(5, userIdx, studyIdx);
+    @DeleteMapping("/{studyIdx}/{userIdx}")
+    public ResponseEntity<ResponseApiMessage> rejectInvite(@PathVariable Long studyIdx, @PathVariable Long userIdx) {
+        Long userStudyIdx = userStudyService.rejectInvite(studyIdx, userIdx);
 
-        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE USER STUDY INVITEE. USERSTUDY_INDEX=" + userStudyResponseDto.getIndex(), userStudyResponseDto);
-    }
-
-//    @ResponseBody
-//    @GetMapping("/{userIdx}/saveInvitee")
-//    public ResponseEntity<ResponseApiMessage> getUserStudy(@PathVariable Long userIdx, @PathVariable Long studyIdx) {
-//        // 유저스터디 생성
-//        UserStudyResponseDto userStudyResponseDto = userStudyService.saveUserStudy(5, userIdx, studyIdx);
-//
-//        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE USER STUDY INVITEE. USERSTUDY_INDEX=" + userStudyResponseDto.getIndex(), userStudyResponseDto);
-//    }
-
-    /**
-     * 수정 중 - 컨트롤러 단에서 return null은 X
-     * @param userStudyIdx
-     * @param newUserStudyIdx
-     * @return
-     */
-    // 리더 위임
-    @ResponseBody
-    @PatchMapping("/leaderUpdate/{userStudyIdx}/{newUserStudyIdx}")
-    public ResponseEntity<ResponseApiMessage> updateLeader(@PathVariable Long userStudyIdx, @PathVariable Long newUserStudyIdx) {
-        // 동일 인물 확인
-        if (userStudyIdx.equals(newUserStudyIdx))
-            return null;
-        
-        // 리더 업데이트
-        List<UserStudyResponseDto> userStudyResponseDtoList = userStudyService.updateLeader(userStudyIdx, newUserStudyIdx);
-
-        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE USER STUDY.", userStudyResponseDtoList);
+        if(userStudyIdx == null)
+            return sendResponseHttpByJson(POST_USERSTUDY_COMPLETE_REQUEST, "이미 처리된 요청입니다.", null);
+        return sendResponseHttpByJson(SUCCESS, "Reject Invite.", userStudyIdx);
     }
 
     /**
-     * 수정 중 - 수정하려는 주체가 리더인지 확인 X
-     * @param userStudyIdx
-     * @param userStudyMemberStatusUpdateDto
-     * @return
+     * 운영진 이상의 멤버가 유저에게 보낸 초대를 철회하는 API (완료)
+     * @param userStudyIdx: 운영진 userStudyIdx
+     * @param requestDto
+     *          - userIdx: 초대 보낸 유저 인덱스
      */
-    // 멤버 지위 변경
+    // 초대 철회 -> 임원 이상의 직책이 가진
     @ResponseBody
-    @PatchMapping("/statusUpdate/{userStudyIdx}")
-    public ResponseEntity<ResponseApiMessage> updateMemberStatus(@PathVariable Long userStudyIdx, @RequestBody UserStudyMemberStatusUpdateDto userStudyMemberStatusUpdateDto) {
+    @DeleteMapping("/{userStudyIdx}")
+    public ResponseEntity<ResponseApiMessage> cancelInvite(@PathVariable Long userStudyIdx, @RequestBody UserStudyInviteDto requestDto) {
+        Long idx = userStudyService.cancelInvite(userStudyIdx, requestDto);
 
-        // isMember 업데이트
-        UserStudyResponseDto userStudyResponseDto = userStudyService.updateMember(userStudyIdx, userStudyMemberStatusUpdateDto.getMemberStatus());
-
-        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE USER STUDY. USERSTUDY_INDEX=" + userStudyResponseDto.getIndex(), userStudyResponseDto);
+        if(idx == -2L)
+            return sendResponseHttpByJson(POST_USERSTUDY_COMPLETE_REQUEST, "이미 처리된 요청입니다.", null);
+        else if (idx == -1L)
+            return sendResponseHttpByJson(POST_USERSTUDY_INVALID_REQUEST, "권한이 없습니다.", null);
+        else
+            return sendResponseHttpByJson(SUCCESS, "Reject Invite.", userStudyIdx);
     }
+
+    // 참가 요청
+
+    // 참가 요청 -> 수락
+
+    // 참가 요청 -> 거절
+
+
 }
