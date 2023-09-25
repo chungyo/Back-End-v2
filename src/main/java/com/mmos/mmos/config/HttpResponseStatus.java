@@ -35,6 +35,8 @@ public enum HttpResponseStatus {
     POST_USER_EMPTY_NICKNAME(false, BAD_REQUEST.value(), "닉네임을 입력해주세요."),
     POST_USER_EMPTY_UNIVERSITYID(false, BAD_REQUEST.value(), "대학을 선택해주세요."),
     POST_USER_EMPTY_MAJORID(false, BAD_REQUEST.value(), "학과(전공)를 선택해주세요."),
+    POST_USER_DUPLICATE_SAVE(false, BAD_REQUEST.value(), "이미 존재하는 회원입니다."),
+
 
     // updatePwd
     UPDATE_USER_EMPTY_PREVPWD(false, BAD_REQUEST.value(), "이전 비밀번호를 입력해주세요."),
@@ -69,6 +71,8 @@ public enum HttpResponseStatus {
 
     // Study
     UPDATE_STUDY_EMPTY_NAME(false, BAD_REQUEST.value(), "스터디이름을 입력해주세요."),
+    UPDATE_STUDY_DUPLICATE_NAME(false, BAD_REQUEST.value(), "이전 이름과 같습니다. 새로운 이름을 입력해주세요."),
+    UPDATE_STUDY_ALREADY_COMPLETE(false, BAD_REQUEST.value(), "이미 완수한 스터디입니다."),
 
     // StudyTime
     POST_STUDYTIME_DUPLICATE_REQUEST(false, BAD_REQUEST.value(), "이미 진행 중인 계획이 있습니다."),

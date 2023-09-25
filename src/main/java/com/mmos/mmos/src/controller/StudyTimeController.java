@@ -16,6 +16,15 @@ public class StudyTimeController extends BaseController {
 
     private final StudyTimeService studyTimeService;
 
+    /*
+        시작 시간 측정 및 마감 시간 측정은 당일의 일정에만 가능하도록 프론트에서 작업을 해야 할 것 같습니다.
+     */
+
+    /**
+     * 계획 시작 시간 설정하는 API (완료)
+     * 계획 시작 시간 측정 버튼 눌렀을 때 보내질 쿼리
+     * @param planIdx: 계획 인덱스
+     */
     @ResponseBody
     @PostMapping("/{planIdx}")
     public ResponseEntity<ResponseApiMessage> setStartTime(@PathVariable Long planIdx) {
@@ -26,6 +35,12 @@ public class StudyTimeController extends BaseController {
         return sendResponseHttpByJson(SUCCESS, "Save Start Study Time.", responseDto);
     }
 
+    /**
+     * 계획 마감 시간 설정하는 API (수정 중)
+     *      1. 의미없는 공부 시간 객체 삭제 (시작/정지 연타로 만들어진 객체 삭제)
+     * 시간 측정을 일시정지하는 버튼을 눌렀을 때 보내질 쿼리
+     * @param planIdx: 계획 인덱스
+     */
     @ResponseBody
     @PatchMapping("/{planIdx}")
     public ResponseEntity<ResponseApiMessage> setEndTime(@PathVariable Long planIdx) {

@@ -17,6 +17,7 @@ public class StudyTimeService {
 
     private final StudyTimeRepository studyTimeRepository;
     private final PlanRepository planRepository;
+    private final PlanService planService;
 
     public Plan findPlanByIdx(Long planIdx) {
         return planRepository.findById(planIdx)
@@ -43,6 +44,7 @@ public class StudyTimeService {
     }
 
     // update
+    // 하루가 지나면 자동 end
     @Transactional
     public StudyTimeResponseDto setEndTime(Long planIdx) {
         Plan plan = findPlanByIdx(planIdx);
@@ -52,6 +54,18 @@ public class StudyTimeService {
 
         StudyTime studyTime = plan.getPlanStudytimeTimes().get(plan.getPlanStudytimeTimes().size() - 1);
         studyTime.updateEndTime(new Timestamp(System.currentTimeMillis()));
+
+        // 오늘 공부시간 구하기
+        Long todayStudyTime = (studyTime.getStudytimeEndTime().getTime() - studyTime.getStudytimeStartTime().getTime()) / 60000;
+        if(todayStudyTime < 1) {
+            // DB에서 방금 저장한 객체 삭제 메서드 호출
+        }
+        // 계획
+        plan.addTime(todayStudyTime);
+        // 공부시간 저장
+        plan.getPlanner().addTime(todayStudyTime);
+
+        plan.getPlanner().getCalendar().addTime(todayStudyTime);
 
         return new StudyTimeResponseDto(studyTime);
     }

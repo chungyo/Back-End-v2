@@ -75,7 +75,7 @@ public class UserController extends BaseController {
         // User 생성
         UserResponseDto userResponseDto = userService.saveUser(requestDto);
         if(userResponseDto == null)
-            return sendResponseHttpByJson(SUCCESS, "SAVE USER FAIL. USER_INDEX=", null);
+            return sendResponseHttpByJson(POST_USER_DUPLICATE_SAVE, "SAVE USER FAIL.", null);
 
         // Calendar 생성
         CalendarResponseDto calendarResponseDto = calendarService.saveCalendar(LocalDate.now().getMonthValue(), userResponseDto.getIdx());
