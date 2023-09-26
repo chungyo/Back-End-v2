@@ -4,6 +4,8 @@ import com.mmos.mmos.config.ResponseApiMessage;
 import com.mmos.mmos.src.domain.dto.plan.PlanNameUpdateRequestDto;
 import com.mmos.mmos.src.domain.dto.plan.PlanResponseDto;
 import com.mmos.mmos.src.domain.dto.plan.PlanSaveRequestDto;
+import com.mmos.mmos.src.domain.dto.user.UserResponseDto;
+import com.mmos.mmos.src.domain.entity.Planner;
 import com.mmos.mmos.src.service.PlanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -62,29 +64,30 @@ public class PlanController extends BaseController {
     }
 
     /**
-     * 내 계획 중 스터디 관련 계획들 조회하는 API (수정 바람 - 파라미터 및 이 컨트롤러가 왜 필요한지 다시 생각해주세요)
-     * @param planIsStudy
+     * 내 계획 중 스터디 관련 계획들 조회하는 API (완료)
+     * @param : plannerIdx, planIsStudy
      * @return
      */
     // 계획 조회(조건부)
     // 스터디 관련 계획이면 true, 그렇지 않으면 false
     @ResponseBody
-    @GetMapping("/all/{planIsStudy}")
-    public ResponseEntity<ResponseApiMessage> getPlansByIsStudy(@PathVariable Boolean planIsStudy){
-        List<PlanResponseDto> responseDtoList = planService.getPlansByPlanIsStudy(planIsStudy);
+    @GetMapping("/{plannerIdx}/{planIsStudy}")
+    public ResponseEntity<ResponseApiMessage> getPlansByIsStudy(@PathVariable Long plannerIdx, @PathVariable Boolean planIsStudy){
+        List<PlanResponseDto> responseDtoList = planService.getPlansByPlanIsStudy(plannerIdx, planIsStudy);
 
         return sendResponseHttpByJson(SUCCESS, "Load Plans.", responseDtoList);
     }
 
     /**
-     * 내 계획 전체 조회하는 API (수정 바람 - 파라미터 및 이 컨트롤러가 왜 필요한지 다시 생각해주세요)
+     * 내 계획 전체 조회하는 API (완료)
+     * @param : plannerIdx
      * @return
      */
     // 계획 조회 (전체)
     @ResponseBody
-    @GetMapping("/all")
-    public ResponseEntity<ResponseApiMessage> getPlans() {
-        List<PlanResponseDto> responseDtoList = planService.getPlans();
+    @GetMapping("/all/{plannerIdx}")
+    public ResponseEntity<ResponseApiMessage> getPlans(@PathVariable Long plannerIdx) {
+        List<PlanResponseDto> responseDtoList = planService.getPlans(plannerIdx);
 
         return sendResponseHttpByJson(SUCCESS, "GET PLANS.", responseDtoList);
     }
@@ -104,4 +107,19 @@ public class PlanController extends BaseController {
 
         return sendResponseHttpByJson(SUCCESS, "Update Plan. PLAN_INDEX=" + planIdx, responseDto);
     }
+
+    /**
+     * 내 계획 삭제하는 API(완료)
+     * @param planIdx: 계획 인덱스
+     *
+     * @return
+     */
+    @ResponseBody
+    @DeleteMapping("/{planIdx}")
+    public ResponseEntity<ResponseApiMessage> deletePlan(@PathVariable Long planIdx){
+        PlanResponseDto responseDto = planService.deletePlan(planIdx);
+
+        return sendResponseHttpByJson(SUCCESS, "DELETE USER_STUDY_COMPLETE. USER_STUDY_INDEX=" + planIdx, null);
+    }
+
 }
