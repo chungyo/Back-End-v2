@@ -164,7 +164,7 @@ public class PlanService {
 
     // plan 완수 여부 기능
     @Transactional
-    public PlanResponseDto setIsCompletePlan(Long planIdx, PlanIsCompleteRequestDto requestDto){
+    public PlanResponseDto updatePlanIsComplete(Long planIdx, PlanIsCompleteRequestDto requestDto){
         Plan plan = findPlanByIdx(planIdx);
 
         plan.setIsComplete(requestDto.getPlanIsComplete());
