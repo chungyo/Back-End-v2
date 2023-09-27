@@ -26,9 +26,16 @@ public class Project {
     private String projectName;
 
     @Column
-    private Boolean projectIsComplete;
+    private Boolean projectIsComplete = false;
 
     @JsonBackReference
     @ManyToOne
     private User user;
+
+    public Project(LocalDate projectStartTime, LocalDate projectEndTime, String projectName, User user) {
+        this.projectStartTime = projectStartTime;
+        this.projectEndTime = projectEndTime;
+        this.projectName = projectName;
+        this.user = user;
+    }
 }

@@ -69,6 +69,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Friend> userFriends = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Project> userProjects = new ArrayList<>();
+
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "majorIndex")

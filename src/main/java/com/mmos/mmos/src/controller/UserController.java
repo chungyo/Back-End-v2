@@ -78,7 +78,7 @@ public class UserController extends BaseController {
             return sendResponseHttpByJson(POST_USER_DUPLICATE_SAVE, "SAVE USER FAIL.", null);
 
         // Calendar 생성
-        CalendarResponseDto calendarResponseDto = calendarService.saveCalendar(LocalDate.now().getMonthValue(), userResponseDto.getIdx());
+        CalendarResponseDto calendarResponseDto = calendarService.saveCalendar(LocalDate.now().getYear() ,LocalDate.now().getMonthValue(), userResponseDto.getIdx());
 
         return sendResponseHttpByJson(SUCCESS, "SAVE USER. USER_INDEX=" + userResponseDto.getIdx(), userResponseDto);
     }
