@@ -111,15 +111,12 @@ public class PlanController extends BaseController {
 
     /**
      * 내 계획 완수 여부 수정하는 API (완료)
-     * @param planIdx: 계획 인덱스
-     * @param requestDto
-     *           Boolean Iscomplete: 계획 완수 여부
      *
      */
    @ResponseBody
    @PatchMapping("/complete/{planIdx}")
     public ResponseEntity<ResponseApiMessage> updatePlanIsComplete(@PathVariable Long planIdx, @RequestBody PlanIsCompleteRequestDto requestDto) {
-        PlanResponseDto responseDto = planService.setIsCompletePlan(planIdx, requestDto);
+        PlanResponseDto responseDto = planService.updatePlanIsComplete(planIdx, requestDto);
 
         return sendResponseHttpByJson(SUCCESS, "UPDATE IS COMPLETE PLAN. PLAN_INDEX=" + planIdx, responseDto);
     }
