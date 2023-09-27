@@ -1,5 +1,6 @@
 package com.mmos.mmos.src.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,6 +35,7 @@ public class Badge {
     @Column
     private String badgePurpose;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "badge", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<UserBadge> badgeUserbadges = new ArrayList<>();
 

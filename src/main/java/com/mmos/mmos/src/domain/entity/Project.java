@@ -1,5 +1,6 @@
 package com.mmos.mmos.src.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,7 @@ public class Project {
     @Column
     private Boolean projectIsComplete;
 
+    @JsonBackReference
     @ManyToOne
     private User user;
 }

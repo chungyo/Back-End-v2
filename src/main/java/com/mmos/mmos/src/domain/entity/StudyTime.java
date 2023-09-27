@@ -1,5 +1,6 @@
 package com.mmos.mmos.src.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ public class StudyTime {
     @ColumnDefault("current_timestamp on update current_timestamp")
     private Timestamp studytimeEndTime;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "planIndex")
     private Plan plan;

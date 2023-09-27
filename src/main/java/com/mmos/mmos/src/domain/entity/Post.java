@@ -1,5 +1,6 @@
 package com.mmos.mmos.src.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.mmos.mmos.src.domain.dto.post.PostSaveRequestDto;
 import com.mmos.mmos.src.domain.dto.post.PostUpdateRequestDto;
 import jakarta.persistence.*;
@@ -41,6 +42,7 @@ public class Post {
     @Column
     private Timestamp postUpdatedAt;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "studyIndex")
     private Study study = null;

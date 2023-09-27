@@ -1,5 +1,7 @@
 package com.mmos.mmos.src.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mmos.mmos.src.domain.dto.user.UserSaveRequestDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
@@ -48,21 +50,26 @@ public class User {
     @Column
     private Long userStudentId;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Calendar> userCalendars = new ArrayList<>();
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @ColumnDefault("null")
     private List<UserBadge> userUserbadges = new ArrayList<>();
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @ColumnDefault("null")
     private List<UserStudy> userUserstudies = new ArrayList<>();
 
     // 현재 친구 & 나에게 친구 요청을 한 & 내가 친구 요청을 보낸 유저들 리스트 (양방향)
+    @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Friend> userFriends = new ArrayList<>();
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "majorIndex")
     private Major major;

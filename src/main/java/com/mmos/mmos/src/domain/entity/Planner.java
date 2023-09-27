@@ -1,5 +1,7 @@
 package com.mmos.mmos.src.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mmos.mmos.src.domain.dto.planner.PlannerResponseDto;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -39,9 +41,11 @@ public class Planner {
     @ColumnDefault("0")
     private Long plannerDailyScheduleNum;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "planner", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Plan> plannerPlans = new ArrayList<>();
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "calendarIndex")
     private Calendar calendar;

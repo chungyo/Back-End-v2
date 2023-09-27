@@ -1,5 +1,7 @@
 package com.mmos.mmos.src.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mmos.mmos.src.domain.dto.plan.PlanSaveRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -28,13 +30,16 @@ public class Plan {
     @Column
     private Boolean planIsStudy = false;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "plan", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<StudyTime> planStudytimeTimes;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "plannerIndex")
     private Planner planner;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "userstudyIndex")
     private UserStudy userStudy;

@@ -1,5 +1,6 @@
 package com.mmos.mmos.src.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,10 +14,12 @@ public class UserBadge {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userbadgeIndex;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "userIndex")
     private User user;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "badgeIndex")
     private Badge badge;

@@ -1,5 +1,6 @@
 package com.mmos.mmos.src.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ public class Friend {
     @Column
     private int friendStatus;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "userIndex")
     private User user;

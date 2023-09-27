@@ -1,5 +1,6 @@
 package com.mmos.mmos.src.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mmos.mmos.src.domain.dto.study.StudySaveRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,9 +20,11 @@ public class Study {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long studyIndex;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<UserStudy> studyUserstudies = new ArrayList<>();
 
+    @JsonManagedReference
     @Column
     @ColumnDefault("null")
     @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE, orphanRemoval = true)

@@ -1,5 +1,7 @@
 package com.mmos.mmos.src.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,14 +33,17 @@ public class UserStudy {
     @Column
     private Integer userstudyMemberStatus;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "userIndex")
     private User user;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "studyIndex")
     private Study study;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "userStudy", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Plan> userstudyPlans = new ArrayList<>();
 

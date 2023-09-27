@@ -1,5 +1,6 @@
 package com.mmos.mmos.src.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,7 @@ public class University {
     @Column
     private String universityName;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "university", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<College> universityColleges = new ArrayList<>();
 

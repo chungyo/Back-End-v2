@@ -1,5 +1,7 @@
 package com.mmos.mmos.src.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mmos.mmos.src.domain.dto.university.UniversitySaveRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,9 +22,11 @@ public class College {
     @Column
     private String collegeName;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "college", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Major> collegeMajors = new ArrayList<>();
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "universityIndex")
     private University university;
