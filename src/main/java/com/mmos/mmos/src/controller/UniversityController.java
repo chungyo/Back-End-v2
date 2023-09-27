@@ -3,8 +3,13 @@ package com.mmos.mmos.src.controller;
 import com.mmos.mmos.config.ResponseApiMessage;
 import com.mmos.mmos.src.domain.dto.university.UniversityResponseDto;
 import com.mmos.mmos.src.domain.dto.university.UniversitySaveRequestDto;
+import com.mmos.mmos.src.domain.entity.University;
 import com.mmos.mmos.src.service.UniversityService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,7 +43,7 @@ public class UniversityController extends BaseController {
      */
     @ResponseBody
     @GetMapping("/{universityIdx}")
-    public ResponseEntity<ResponseApiMessage> getUniversity(@PathVariable Long universityIdx) {
+    public ResponseEntity<ResponseApiMessage> getUniversity(@PathVariable Long universityIdx, Pageable pageable) {
         UniversityResponseDto responseDto = universityService.getUniversity(universityIdx);
 
         return sendResponseHttpByJson(SUCCESS, "GET UNIVERSITY. UNIVERSITY_INDEX = " + universityIdx, responseDto);
@@ -49,8 +54,8 @@ public class UniversityController extends BaseController {
      */
     @ResponseBody
     @GetMapping("")
-    public ResponseEntity<ResponseApiMessage> getUniversities() {
-        List<UniversityResponseDto> responseDtoList = universityService.getUniversities();
+    public ResponseEntity<ResponseApiMessage> getUniversities(@PageableDefault(page = 0, size = 5, sort = "universityIndex", direction = Sort.Direction.ASC) Pageable pageable) {
+        Page<University> responseDtoList = universityService.getUniversities(pageable);
 
         return sendResponseHttpByJson(SUCCESS, "GET UNIVERSITIES.", responseDtoList);
     }
