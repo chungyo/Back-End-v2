@@ -56,7 +56,7 @@ public enum HttpResponseStatus {
 
     // Calendar
     POST_CALENDAR_INVALID_REQUEST(false, BAD_REQUEST.value(), "한 달이 지나지 않아서 저장할 캘린더가 없습니다."),
-
+    GET_CALENDAR_EMPTY_REQUEST(false, BAD_REQUEST.value(), "날짜가 선택되지 않았습니다."),
     // plan
     POST_PLAN_EMPTY_CONTENTS(false, BAD_REQUEST.value(),"계획 내용이 없습니다."),
     POST_PLAN_INVALID_REQUEST(false, BAD_REQUEST.value(),"스터디 계획이 아닙니다."),
@@ -78,6 +78,11 @@ public enum HttpResponseStatus {
     // StudyTime
     POST_STUDYTIME_DUPLICATE_REQUEST(false, BAD_REQUEST.value(), "이미 진행 중인 계획이 있습니다."),
     POST_STUDYTIME_INVALID_REQUEST(false, BAD_REQUEST.value(), "진행 중인 계획이 없습니다."),
+
+    // Project
+    POST_PROJECT_EMPTY_NAME(false, BAD_REQUEST.value(), "이름을 입력해주세요."),
+    POST_PROJECT_EMPTY_STARTTIME(false,BAD_REQUEST.value(),"시작할 날짜를 입력해주세요."),
+    POST_PROJECT_EMPTY_ENDTIME(false,BAD_REQUEST.value(),"종료 날짜를 입력해주세요."),
 
     /**
      * 500 : Database, Server 오류

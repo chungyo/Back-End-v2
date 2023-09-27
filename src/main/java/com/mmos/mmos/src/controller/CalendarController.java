@@ -2,6 +2,7 @@ package com.mmos.mmos.src.controller;
 
 import com.mmos.mmos.config.ResponseApiMessage;
 import com.mmos.mmos.src.service.CalendarService;
+import com.mmos.mmos.src.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,10 +29,13 @@ public class CalendarController extends BaseController {
     public ResponseEntity<ResponseApiMessage> saveCalendar(@PathVariable Long userIdx) {
         // 오늘이 무슨 달인지 확인
         int thisMonth = LocalDate.now().getMonthValue();
+        int thisYear = LocalDate.now().getYear();
 
         // 저장
-        if(calendarService.saveCalendar(thisMonth, userIdx) == null)
+        if(calendarService.saveCalendar(thisYear, thisMonth, userIdx) == null)
             return sendResponseHttpByJson(POST_CALENDAR_INVALID_REQUEST, "Calendar save failed. THIS_MONTH=" + thisMonth, null);
         return sendResponseHttpByJson(SUCCESS, "Saved calendar THIS_MONTH=" + thisMonth, null);
     }
+
+
 }

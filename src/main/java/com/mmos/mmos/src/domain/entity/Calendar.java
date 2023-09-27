@@ -24,7 +24,10 @@ public class Calendar {
     private Long calendarIndex;
 
     @Column
-    private int calendarMonth;
+    private Integer calendarMonth;
+
+    @Column
+    private Integer calendarYear;
 
     @Column
     @ColumnDefault("0")
@@ -43,7 +46,8 @@ public class Calendar {
     @JoinColumn(name = "userIndex")
     private User user;
 
-    public Calendar(int month, User user) {
+    public Calendar(int year, int month, User user) {
+        this.calendarYear = year;
         this.calendarMonth = month;
         this.user = user;
     }

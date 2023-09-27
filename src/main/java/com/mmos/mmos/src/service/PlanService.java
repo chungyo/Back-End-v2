@@ -57,8 +57,8 @@ public class PlanService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다. USER_INDEX=" + userIdx));
     }
 
-    public Calendar findCalendarByUserIdx(Long userIdx, int month) {
-        return calendarRepository.findCalendarByUser_UserIndexAndCalendarMonth(userIdx, month)
+    public Calendar findCalendarByUserIdx(Long userIdx,int year, int month) {
+        return calendarRepository.findCalendarByUser_UserIndexAndCalendarYearAndCalendarMonth(userIdx,year, month)
                 .orElse(null);
     }
 
@@ -73,9 +73,9 @@ public class PlanService {
             // 저장하려는 월의 캘린더가 존재하는지 확인
             // 존재한다면 DB에서 가져오고, 존재하지 않는다면 DB에 새로 저장 후, 저장한 값 가져오기
             Long calendarIdx;
-            Calendar calendar = findCalendarByUserIdx(userIdx, requestDto.getDate().getMonthValue());
+            Calendar calendar = findCalendarByUserIdx(userIdx,requestDto.getDate().getYear(), requestDto.getDate().getMonthValue());
             if(calendar == null) {
-                calendarIdx = calendarService.saveCalendar(requestDto.getDate().getMonthValue(), userIdx).getIdx();
+                calendarIdx = calendarService.saveCalendar(requestDto.getDate().getYear(),requestDto.getDate().getMonthValue(), userIdx).getIdx();
             } else {
                 calendarIdx = calendar.getCalendarIndex();
             }

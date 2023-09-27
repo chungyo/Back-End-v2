@@ -28,14 +28,14 @@ public class CalendarService {
 
     // 캘린더 생성
     @Transactional
-    public CalendarResponseDto saveCalendar(int month, Long userIdx) {
+    public CalendarResponseDto saveCalendar(int year, int month, Long userIdx) {
         User user = findUserByIdx(userIdx);
 
         // 막 회원 가입을 한 유저가 아니면서 같은 달의 캘린더가 이미 존재할 때 생성 막기
         if(!user.getUserCalendars().isEmpty() && user.getUserCalendars().get(user.getUserCalendars().size() - 1).getCalendarMonth() == month)
             return null;
 
-        Calendar calendar = new Calendar(month, user);
+        Calendar calendar = new Calendar(year,month, user);
         // User, Calendar 양방향 매핑
         user.addCalendars(calendar);
 
