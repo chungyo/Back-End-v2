@@ -30,6 +30,9 @@ public class Plan {
     @Column
     private Boolean planIsStudy = false;
 
+    @Column
+    private Boolean planIsVisible = false;
+
     @JsonManagedReference
     @OneToMany(mappedBy = "plan", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<StudyTime> planStudytimeTimes;
@@ -47,6 +50,7 @@ public class Plan {
     @Column
     @ColumnDefault("0")
     private Long planStudyTime;
+
 
     public Plan(PlanSaveRequestDto requestDto, Planner planner, UserStudy userStudy) {
         this.planName = requestDto.getPlanName();
