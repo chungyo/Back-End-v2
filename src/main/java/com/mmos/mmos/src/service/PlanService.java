@@ -1,5 +1,6 @@
 package com.mmos.mmos.src.service;
 
+import com.mmos.mmos.src.domain.dto.plan.PlanIsCompleteRequestDto;
 import com.mmos.mmos.src.domain.dto.plan.PlanNameUpdateRequestDto;
 import com.mmos.mmos.src.domain.dto.plan.PlanResponseDto;
 import com.mmos.mmos.src.domain.dto.plan.PlanSaveRequestDto;
@@ -159,6 +160,17 @@ public class PlanService {
         PlanResponseDto responseDto = new PlanResponseDto(plan);
 
         return responseDto;
+    }
+
+    // plan 완수 여부 기능
+    @Transactional
+    public PlanResponseDto updatePlanIsComplete(Long planIdx, PlanIsCompleteRequestDto requestDto){
+        Plan plan = findPlanByIdx(planIdx);
+
+        plan.updateIsComplete(requestDto.getPlanIsComplete());
+
+        return new PlanResponseDto(plan);
+
     }
 
 }

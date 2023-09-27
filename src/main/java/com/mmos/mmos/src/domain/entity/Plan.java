@@ -23,7 +23,7 @@ public class Plan {
     private String planName;
 
     @Column
-    private Boolean planIsComplete = true;
+    private Boolean planIsComplete = false;
 
     @Column
     private Boolean planIsStudy = false;
@@ -55,6 +55,10 @@ public class Plan {
         this.planName = planName;
     }
 
+    public void updateIsComplete(Boolean planIsComplete) {
+        this.planIsComplete = planIsComplete;
+    }
+
     public void addStudyTime(StudyTime studyTime) {
         this.planStudytimeTimes.add(studyTime);
     }
@@ -62,4 +66,5 @@ public class Plan {
     public void addTime(Long time) {
         this.planStudyTime += time;
     }
+
 }
