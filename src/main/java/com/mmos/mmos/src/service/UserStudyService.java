@@ -1,5 +1,6 @@
 package com.mmos.mmos.src.service;
 
+import com.mmos.mmos.src.domain.dto.userstudy.UserStudyAttendDto;
 import com.mmos.mmos.src.domain.dto.userstudy.UserStudyInviteDto;
 import com.mmos.mmos.src.domain.dto.userstudy.UserStudyResponseDto;
 import com.mmos.mmos.src.domain.entity.Study;
@@ -39,20 +40,33 @@ public class UserStudyService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저스터디입니다. USER_STUDY_INDEX=" + userStudyIdx));
     }
 
+    // 인원 수 체크
     @Transactional
     public UserStudyResponseDto inviteStudy(Long userStudyIdx, UserStudyInviteDto requestDto) {
         // userStudyIdx가 리더의 것인지 확인
         UserStudy leaderUserStudy = findUserStudyByIdx(userStudyIdx);
-        if(leaderUserStudy.getUserstudyMemberStatus() > 2)
+        if(leaderUserStudy.getUserstudyMemberStatus() > 2) {
+            System.out.println("권한 없음");
             return new UserStudyResponseDto(leaderUserStudy);
+        }
+
+        // 인원 수가 충분한지 체크
+        if(leaderUserStudy.getStudy().getStudyMemberLimit() <= leaderUserStudy.getStudy().getStudyMemberNum()) {
+            System.out.println("정원 가득 참");
+            return null;
+        }
 
         // 이미 멤버인지 혹은 보내거나 받은 요청이 있는지 체크
         UserStudy userStudy = findUserStudyByStudyIdxAndUserIdx(leaderUserStudy.getStudy().getStudyIndex(), requestDto.getUserIdx());
         if(userStudy != null) {
-            if(userStudy.getUserstudyMemberStatus() <= 3)
+            if(userStudy.getUserstudyMemberStatus() <= 3) {
+                System.out.println("이미 회원임");
                 return new UserStudyResponseDto(userStudy);
-            else
+            }
+            else {
+                System.out.println("이미 처리된 요청임");
                 return null;
+            }
         }
 
         // 객체 불러오기
@@ -73,6 +87,10 @@ public class UserStudyService {
         Study study = findStudyByIdx(studyIdx);
         User user = findUserByIdx(userIdx);
 
+        // 인원 수가 충분한지 체크
+        if(study.getStudyMemberLimit() <= study.getStudyMemberNum())
+            return null;
+
         // 중복 검사
         for (UserStudy userStudy : study.getStudyUserstudies())
             if (userStudy.getUser().equals(user))
@@ -83,6 +101,7 @@ public class UserStudyService {
         // 매핑
         study.addUserStudy(userStudy);
         user.adduserStudies(userStudy);
+        study.plusMemberNum();
 
         userStudyRepository.save(userStudy);
 
@@ -92,11 +111,23 @@ public class UserStudyService {
     @Transactional
     public UserStudyResponseDto acceptInvite(Long studyIdx, Long userIdx) {
         UserStudy userStudy = findUserStudyByStudyIdxAndUserIdx(studyIdx, userIdx);
+
         // 받은 요청이 있는지 확인 && 이미 받은 요청인지 확인
-        if(userStudy == null || userStudy.getUserstudyMemberStatus() <= 3)
+        if(userStudy == null || userStudy.getUserstudyMemberStatus() <= 3) {
+            System.out.println("이미 받은 요청임 or 이미 회원임");
             return null;
+        }
+
+        // 스터디원이 가득 찼는지 확인
+        // 인원 수가 충분한지 체크
+        if(userStudy.getStudy().getStudyMemberLimit() <= userStudy.getStudy().getStudyMemberNum()) {
+            System.out.println("정원 가득 참");
+            return null;
+        }
 
         userStudy.updateMemberStatus(3);
+        userStudy.getStudy().plusMemberNum();
+
 
         return new UserStudyResponseDto(userStudy);
     }
@@ -104,77 +135,190 @@ public class UserStudyService {
     @Transactional
     public Long rejectInvite(Long studyIdx, Long userIdx) {
         UserStudy userStudy = findUserStudyByStudyIdxAndUserIdx(studyIdx, userIdx);
-        if(userStudy == null)
+        if(userStudy == null) {
+            System.out.println("이미 처리된 요청");
+            return null;
+        }
+
+        userStudyRepository.delete(userStudy);
+
+        return userStudy.getUserstudyIndex();
+    }
+
+    @Transactional
+    public Long cancelInvite(Long userStudyIdx, UserStudyInviteDto requestDto) {
+        // 취소하려는 userStudyIdx가 임원진인지 확인
+        UserStudy leaderUserStudy = findUserStudyByIdx(userStudyIdx);
+        if(leaderUserStudy.getUserstudyMemberStatus() > 2) {
+            System.out.println("권한 없음");
+            return -1L;
+        }
+
+        // 취소하려는 초대가 유효한지 확인
+        UserStudy userStudy = findUserStudyByStudyIdxAndUserIdx(leaderUserStudy.getStudy().getStudyIndex(), requestDto.getUserIdx());
+        if(userStudy == null || userStudy.getUserstudyMemberStatus() <= 3) {
+            System.out.println("이미 처리된 요청 or 이미 회원");
+            return -2L;
+        }
+
+        userStudyRepository.delete(userStudy);
+        return userStudy.getUserstudyIndex();
+    }
+
+    @Transactional
+    public UserStudyResponseDto attendRequest(Long userIdx, UserStudyAttendDto requestDto) {
+        // 이미 참여중이거나 보낸 요청이 있는지 확인
+        UserStudy userStudy = findUserStudyByStudyIdxAndUserIdx(requestDto.getStudyIdx(), userIdx);
+        if(userStudy != null) {
+            if(userStudy.getUserstudyMemberStatus() <= 3) {
+                System.out.println("이미 회원임");
+                return new UserStudyResponseDto(userStudy);
+            }
+            else {
+                System.out.println("이미 처리된 요청");
+                return null;
+            }
+        }
+
+        // 객체 가져오기
+        User user = findUserByIdx(userIdx);
+        Study study = findStudyByIdx(requestDto.getStudyIdx());
+
+        // 인원 수 체크
+        if(study.getStudyMemberLimit() <= study.getStudyMemberNum()) {
+            System.out.println("정원 가득 참");
+            return null;
+        }
+
+        // 저장
+        userStudy = new UserStudy(5, user, study);
+        user.adduserStudies(userStudy);
+        study.addUserStudy(userStudy);
+
+        return new UserStudyResponseDto(userStudyRepository.save(userStudy));
+    }
+
+    @Transactional
+    public UserStudyResponseDto acceptAttend(Long userStudyIdx1, Long userStudyIdx2) {
+        UserStudy leaderUserStudy = findUserStudyByIdx(userStudyIdx1);
+        // 운영진인지 확인
+        if(leaderUserStudy.getUserstudyMemberStatus() > 2) {
+            System.out.println("권한 없음");
+            return new UserStudyResponseDto(leaderUserStudy);
+        }
+
+
+        // 스터디원이 가득 찼는지 확인
+        if(leaderUserStudy.getStudy().getStudyMemberLimit() <= leaderUserStudy.getStudy().getStudyMemberNum()) {
+            System.out.println("정원 가득 참");
+            return null;
+        }
+
+        UserStudy userStudy = findUserStudyByIdx(userStudyIdx2);
+
+        // 이미 활동 중인 스터디거나 요청이 완료된 상황인지 확인
+        if(userStudy == null || userStudy.getUserstudyMemberStatus() <= 3) {
+            System.out.println("이미 처리된 요청 or 이미 회원");
+            return null;
+        }
+
+        userStudy.updateMemberStatus(3);
+
+        if(userStudy.getStudy().getStudyUserstudies().size() == userStudy.getStudy().getStudyMemberLimit()) {
+            System.out.println(userStudy.getStudy().getStudyUserstudies().size());
+            userStudy.getStudy().plusMemberNum();
+        }
+        return new UserStudyResponseDto(userStudy);
+    }
+
+    @Transactional
+    public Long rejectAttend(Long userStudyIdx1, Long userStudyIdx2) {
+        // 운영진인지 확인
+        UserStudy leaderUserStudy = findUserStudyByIdx(userStudyIdx1);
+        if(leaderUserStudy.getUserstudyMemberStatus() > 2) {
+            System.out.println("권한 없음");
+            return null;
+        }
+
+        // 유효한 신청인지 확인
+        UserStudy userStudy = findUserStudyByIdx(userStudyIdx2);
+        if(userStudy == null || userStudy.getUserstudyMemberStatus() <= 3) {
+            System.out.println("이미 처리된 요청 or 이미 회원");
+            return null;
+        }
+
+        userStudyRepository.delete(userStudy);
+
+        return userStudy.getUserstudyIndex();
+    }
+
+    @Transactional
+    public Long cancelAttend(Long userStudyIdx) {
+        // 처리된 요청인지 아닌지만 확인하면 끝
+        UserStudy userStudy = findUserStudyByIdx(userStudyIdx);
+        if(userStudy == null || userStudy.getUserstudyMemberStatus() <= 3)
             return null;
 
         userStudyRepository.delete(userStudy);
 
-        return userStudy.getUserstudyIndex();
+        return userStudyIdx;
     }
 
-    public Long cancelInvite(Long userStudyIdx, UserStudyInviteDto requestDto) {
-        // 취소하려는 userStudyIdx가 임원진인지 확인
-        UserStudy leaderUserStudy = findUserStudyByIdx(userStudyIdx);
-        if(leaderUserStudy.getUserstudyMemberStatus() > 2)
-            return -1L;
-
-        // 취소하려는 초대가 유효한지 확인
-        UserStudy userStudy = findUserStudyByStudyIdxAndUserIdx(leaderUserStudy.getStudy().getStudyIndex(), requestDto.getUserIdx());
-        if(userStudy == null || userStudy.getUserstudyMemberStatus() <= 3)
-            return -2L;
+    @Transactional
+    public Long leaveStudy(Long userStudyIdx) {
+        // 처리된 요청인지 아닌지만 확인하면 끝
+        UserStudy userStudy = findUserStudyByIdx(userStudyIdx);
+        if(userStudy == null || userStudy.getUserstudyMemberStatus() >= 4 || userStudy.getUserstudyMemberStatus() == 1)
+            return null;
 
         userStudyRepository.delete(userStudy);
+
+        return userStudyIdx;
+    }
+
+    @Transactional
+    public Long kickMember(Long userStudyIdx1, Long userStudyIdx2) {
+        // 운영진인지 확인
+        UserStudy leaderUserStudy = findUserStudyByIdx(userStudyIdx1);
+        if(leaderUserStudy.getUserstudyMemberStatus() != 1) {
+            System.out.println("권한 없음");
+            return null;
+        }
+
+        // 유효한 신청인지 확인
+        UserStudy userStudy = findUserStudyByIdx(userStudyIdx2);
+        if(userStudy == null || userStudy.getUserstudyMemberStatus() >= 4 || userStudy.getUserstudyMemberStatus() == 1) {
+            System.out.println("이미 처리된 요청 or 이미 회원");
+            return null;
+        }
+
+        userStudyRepository.delete(userStudy);
+
         return userStudy.getUserstudyIndex();
     }
 
+    @Transactional
+    public UserStudyResponseDto updatePosition(Long userStudyIdx1, Long userStudyIdx2, Long position) {
+        // 운영진인지 확인
+        UserStudy manager = findUserStudyByIdx(userStudyIdx1);
+        if(manager == null || manager.getUserstudyMemberStatus() > 2) {
+            System.out.println("권한 없음");
+            return null;
+        }
+        UserStudy userStudy = findUserStudyByIdx(userStudyIdx2);
 
-//    // 리더 위임
-//    @Transactional
-//    public List<UserStudyResponseDto> updateLeader(Long leaderUserIdx, Long newLeaderUserIdx) {
-//
-//        // 유저스터디
-//        UserStudy leader = findUserStudy(leaderUserIdx);
-//        UserStudy newLeader = findUserStudy(newLeaderUserIdx);
-//
-//        // 리더 확인
-//        if(leader.getUserstudyMemberStatus()!=1){
-//            System.out.println("리더가 아닙니다.");
-//            return null;
-//        }
-//
-//        // 같은 스터디인지 확인
-//        if (!leader.getStudy().equals(newLeader.getStudy())) {
-//            System.out.println("같은 스터디 소속이 아닙니다.");
-//            return null;
-//        }
-//
-//        // 리더 위임
-//        leader.updateMemberStatus(3);
-//        newLeader.updateMemberStatus(1);
-//        List<UserStudyResponseDto> userStudyResponseDtoList = new ArrayList<>();
-//        userStudyResponseDtoList.add(new UserStudyResponseDto(leader));
-//        userStudyResponseDtoList.add(new UserStudyResponseDto(newLeader));
-//
-//        return userStudyResponseDtoList;
-//    }
-//
-//    // 멤버 지위 변경
-//    @Transactional
-//    public UserStudyResponseDto updateMember(Long UserStudyIdx, Integer status) {
-//
-//        // 유저스터디
-//        UserStudy userStudy = findUserStudy(UserStudyIdx);
-//
-//        // 현재 지위 확인
-//        if (Objects.equals(userStudy.getUserstudyMemberStatus(), status)) {
-//            System.out.println("이미 변경 되었습니다.");
-//            return null;
-//        }
-//
-//        // 멤버 상태 업데이트
-//        userStudy.updateMemberStatus(status);
-//
-//        return new UserStudyResponseDto(userStudy);
-//    }
+        // 멤버 -> 운영진: 운영진, 스터디 장 모두 가능한 권한
+        if(userStudy.getUserstudyMemberStatus() == 3 && position == 2)
+            userStudy.updateMemberStatus(position.intValue());
+        // 그 외 스터디 장만이 가능한 권한
+        if(manager.getUserstudyMemberStatus() == 1 && userStudy.getUserstudyMemberStatus() != 1) {
+            userStudy.updateMemberStatus(position.intValue());
+            // 스터디 장 위임
+            if(position == 1) {
+                manager.updateMemberStatus(2);
+            }
+        }
 
+        return new UserStudyResponseDto(userStudy);
+    }
 }

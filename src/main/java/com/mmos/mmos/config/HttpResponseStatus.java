@@ -62,8 +62,8 @@ public enum HttpResponseStatus {
     POST_PLAN_INVALID_REQUEST(false, BAD_REQUEST.value(),"스터디 계획이 아닙니다."),
 
     // UserStudy
-    POST_USERSTUDY_DUPLICATE_REQUEST(false, BAD_REQUEST.value(),"이미 초대 요청을 보냈습니다."),
-    POST_USERSTUDY_ALREADY_EXIST(false, BAD_REQUEST.value(),"이미 활동 중인 멤버입니다."),
+    POST_USERSTUDY_DUPLICATE_REQUEST(false, BAD_REQUEST.value(),"이미 보낸 요청입니다."),
+    POST_USERSTUDY_ALREADY_EXIST(false, BAD_REQUEST.value(),"이미 활동 중입니다."),
     POST_USERSTUDY_INVALID_REQUEST(false, BAD_REQUEST.value(),"권한이 없습니다."),
     POST_USERSTUDY_COMPLETE_REQUEST(false, BAD_REQUEST.value(),"이미 받은 요청입니다."),
 

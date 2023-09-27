@@ -1,6 +1,7 @@
 package com.mmos.mmos.src.controller;
 
 import com.mmos.mmos.config.ResponseApiMessage;
+import com.mmos.mmos.src.domain.dto.userstudy.UserStudyAttendDto;
 import com.mmos.mmos.src.domain.dto.userstudy.UserStudyInviteDto;
 import com.mmos.mmos.src.domain.dto.userstudy.UserStudyResponseDto;
 import com.mmos.mmos.src.service.UserStudyService;
@@ -26,7 +27,7 @@ public class UserStudyController extends BaseController {
      */
     // 초대 보내기 (객체 생성 - isMember = 4)
     @ResponseBody
-    @PostMapping("/{userStudyIdx}")
+    @PostMapping("/invitation/{userStudyIdx}")
     public ResponseEntity<ResponseApiMessage> inviteStudy(@PathVariable Long userStudyIdx, @RequestBody UserStudyInviteDto requestDto) {
         UserStudyResponseDto userStudyResponseDto = userStudyService.inviteStudy(userStudyIdx, requestDto);
 
@@ -48,7 +49,7 @@ public class UserStudyController extends BaseController {
      */
     // 초대 보내기 -> 수락
     @ResponseBody
-    @PatchMapping("/{studyIdx}/{userIdx}")
+    @PatchMapping("/invitation/{studyIdx}/{userIdx}")
     public ResponseEntity<ResponseApiMessage> acceptInvite(@PathVariable Long studyIdx, @PathVariable Long userIdx) {
         UserStudyResponseDto userStudyResponseDto = userStudyService.acceptInvite(studyIdx, userIdx);
 
@@ -65,7 +66,7 @@ public class UserStudyController extends BaseController {
      */
     // 초대 보내기 -> 거절
     @ResponseBody
-    @DeleteMapping("/{studyIdx}/{userIdx}")
+    @DeleteMapping("/invitation/{studyIdx}/{userIdx}")
     public ResponseEntity<ResponseApiMessage> rejectInvite(@PathVariable Long studyIdx, @PathVariable Long userIdx) {
         Long userStudyIdx = userStudyService.rejectInvite(studyIdx, userIdx);
 
@@ -82,7 +83,7 @@ public class UserStudyController extends BaseController {
      */
     // 초대 철회 -> 임원 이상의 직책이 가진
     @ResponseBody
-    @DeleteMapping("/{userStudyIdx}")
+    @DeleteMapping("/invitation/{userStudyIdx}")
     public ResponseEntity<ResponseApiMessage> cancelInvite(@PathVariable Long userStudyIdx, @RequestBody UserStudyInviteDto requestDto) {
         Long idx = userStudyService.cancelInvite(userStudyIdx, requestDto);
 
@@ -94,11 +95,141 @@ public class UserStudyController extends BaseController {
             return sendResponseHttpByJson(SUCCESS, "Reject Invite.", userStudyIdx);
     }
 
+    /**
+     * 유저가 스터디에 참여 요청을 보내는 API (완료)
+     * @param userIdx: 참가 요청 보낸 유저 인덱스
+     * @param requestDto
+     *          - Long studyIdx: 참여하려는 스터디 인덱스
+     */
     // 참가 요청
+    @ResponseBody
+    @PostMapping("/attendance/{userIdx}")
+    public ResponseEntity<ResponseApiMessage> attendRequest(@PathVariable Long userIdx, @RequestBody UserStudyAttendDto requestDto) {
+        UserStudyResponseDto userStudyResponseDto = userStudyService.attendRequest(userIdx, requestDto);
 
-    // 참가 요청 -> 수락
+        if(userStudyResponseDto == null)
+            return sendResponseHttpByJson(POST_USERSTUDY_DUPLICATE_REQUEST, "이미 보낸 요청입니다.", null);
+        else if(userStudyResponseDto.getMemberStatus() <= 3)
+            return sendResponseHttpByJson(POST_USERSTUDY_ALREADY_EXIST, "이미 참가한 스터디입니다.", null);
+        return sendResponseHttpByJson(SUCCESS, "참가 요청 완료", userStudyResponseDto);
+    }
 
-    // 참가 요청 -> 거절
+    /**
+     * 받은 스터디 참여 요청을 수락하는 API (완료)
+     * @param userStudyIdx1: 운영진 userStudyIdx
+     * @param userStudyIdx2: 스터디 참여 요청을 보낸 userStudyIdx
+     */
+    // 참가 요청 -> 수락(임원만 가능)
+    @ResponseBody
+    @PatchMapping("/attendance/{userStudyIdx1}/{userStudyIdx2}")
+    public ResponseEntity<ResponseApiMessage> acceptAttend(@PathVariable Long userStudyIdx1, @PathVariable Long userStudyIdx2) {
+        UserStudyResponseDto userStudyResponseDto = userStudyService.acceptAttend(userStudyIdx1, userStudyIdx2);
+
+        if(userStudyResponseDto == null)
+            return sendResponseHttpByJson(POST_USERSTUDY_COMPLETE_REQUEST, "이미 처리된 요청입니다.", null);
+        else if(userStudyResponseDto.getIndex().equals(userStudyIdx1))
+            return sendResponseHttpByJson(POST_USERSTUDY_INVALID_REQUEST, "권한이 없습니다.", null);
+        else
+            return sendResponseHttpByJson(SUCCESS, "참가 요청 수락", userStudyResponseDto);
+    }
+
+    /**
+     * 받은 스터디 참가 요청을 운영진이 거절하는 API (완료)
+     * @param userStudyIdx1: 운영진 userStudyIdx
+     * @param userStudyIdx2: 참가 요청을 보낸 userStudyIdx
+     */
+    // 참가 요청 -> 거절(임원만 가능)
+    @ResponseBody
+    @DeleteMapping("/attendance/{userStudyIdx1}/{userStudyIdx2}")
+    public ResponseEntity<ResponseApiMessage> rejectAttend(@PathVariable Long userStudyIdx1, @PathVariable Long userStudyIdx2) {
+        Long userStudyIdx = userStudyService.rejectAttend(userStudyIdx1, userStudyIdx2);
+
+        if(userStudyIdx == null)
+            return sendResponseHttpByJson(POST_USERSTUDY_COMPLETE_REQUEST, "XXX", null);
+        return sendResponseHttpByJson(SUCCESS, "참가 요청 거절 완료", userStudyIdx);
+
+    }
+
+    // 참가 철회
+    @ResponseBody
+    @DeleteMapping("/attendance/{userStudyIdx}")
+    ResponseEntity<ResponseApiMessage> cancelAttend(@PathVariable Long userStudyIdx) {
+        Long idx = userStudyService.cancelAttend(userStudyIdx);
+
+        if(idx == null)
+            return sendResponseHttpByJson(POST_USERSTUDY_COMPLETE_REQUEST, "XXX", null);
+        return sendResponseHttpByJson(SUCCESS, "참가 요청 철회 완료", idx);
+    }
+
+    // 탈퇴
+
+    /**
+     * 스터디 탈퇴하는 API (완료)
+     * 스터디 장은 탈퇴가 불가능 하도록,
+     * 만약 스터디 장이 탈퇴하려고 하면 팝업창으로 스터디 장 위임 후 진행해달라고 하고 금지
+     * @param userStudyIdx: 탈퇴하려는 userStudyIdx
+     */
+    @ResponseBody
+    @DeleteMapping("/leave/{userStudyIdx}")
+    ResponseEntity<ResponseApiMessage> leaveStudy(@PathVariable Long userStudyIdx) {
+        Long idx = userStudyService.leaveStudy(userStudyIdx);
+
+        if(idx == null)
+            return sendResponseHttpByJson(POST_USERSTUDY_COMPLETE_REQUEST, "XXX", null);
+        return sendResponseHttpByJson(SUCCESS, "스터디 탈퇴 완료", idx);
+    }
+
+    /**
+     * 스터디 장이 일반 멤버 또는 운영진을 추방하는 API (완료)
+     *      스터디 장만이 추방할 수 있음
+     *              스터디 운영진이 가능한 권한
+     *                  1. 홍보게시글 업로드, 수정, 삭제
+     *                  2. 공지게시글 업로드, 수정, 삭제
+     *                  3. 참가 요청 수락, 거절
+     *                  4. 스터디 초대
+     * @param userStudyIdx1: 스터디 장 userStudyIdx
+     * @param userStudyIdx2: 추방하려는 멤버 userStudyIdx
+     */
+    // 추방
+    @ResponseBody
+    @DeleteMapping("/kick/{userStudyIdx1}/{userStudyIdx2}")
+    ResponseEntity<ResponseApiMessage> kickMember(@PathVariable Long userStudyIdx1, @PathVariable Long userStudyIdx2) {
+        Long idx = userStudyService.kickMember(userStudyIdx1, userStudyIdx2);
+
+        if(idx == null)
+            return sendResponseHttpByJson(POST_USERSTUDY_COMPLETE_REQUEST, "XXX", null);
+        return sendResponseHttpByJson(SUCCESS, "스터디 추방 완료", idx);
+    }
+
+    /**
+     * 직책 변경 API
+     *      직책 변경은 스터디원 목록 옆에 '변경' 버튼을 누른 다음
+     *      원하는 직책 중 하나를 선택하고 '변경하기' 버튼을 누르고 '정말 변경하시겠습니까?' 문구를 확인버튼 누르면 변경
+     * 운영진
+     *      멤버 -> 운영진 변경 가능
+     * 스터디 장
+     *      멤버 -> 운영진
+     *      운영진 or 멤버 -> 스터디 장
+     *      운영진 -> 멤버 변경 가능
+     *
+     * @param userStudyIdx1: 운영진 userStudyIdx
+     * @param userStudyIdx2: 권한을 수정하려는 userStudyIdx
+     */
+    // 운영진 직책 변경 (운영진만이 가능, but 스터디 장 위임은 스터디 장만 가능)
+    @ResponseBody
+    @PatchMapping("/{userStudyIdx1}/{userStudyIdx2}")
+    ResponseEntity<ResponseApiMessage> updatePosition(@PathVariable Long userStudyIdx1, @PathVariable Long userStudyIdx2, @RequestParam Long position) {
+        UserStudyResponseDto responseDto = userStudyService.updatePosition(userStudyIdx1, userStudyIdx2, position);
+
+        if(responseDto == null)
+            return sendResponseHttpByJson(POST_USERSTUDY_COMPLETE_REQUEST, "XXX", null);
+        return sendResponseHttpByJson(SUCCESS, "스터디 추방 완료", responseDto);
+    }
+
+    // 스터디 신청한 유저 목록 조회
 
 
+    // 스터디 원 목록 조회
+
+    // 내 스터디 조회
 }

@@ -31,6 +31,9 @@ public class Study {
     private Integer studyMemberLimit;
 
     @Column
+    private Integer studyMemberNum = 0;
+
+    @Column
     private String studyName;
 
     @Column
@@ -55,5 +58,9 @@ public class Study {
     }
     public void addUserStudy(UserStudy userStudy){
         this.studyUserstudies.add(userStudy);
+    }
+
+    public void plusMemberNum() {
+        this.studyMemberNum++;
     }
 }
