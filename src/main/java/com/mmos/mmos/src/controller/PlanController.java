@@ -1,6 +1,7 @@
 package com.mmos.mmos.src.controller;
 
 import com.mmos.mmos.config.ResponseApiMessage;
+import com.mmos.mmos.src.domain.dto.plan.PlanIsCompleteRequestDto;
 import com.mmos.mmos.src.domain.dto.plan.PlanNameUpdateRequestDto;
 import com.mmos.mmos.src.domain.dto.plan.PlanResponseDto;
 import com.mmos.mmos.src.domain.dto.plan.PlanSaveRequestDto;
@@ -101,11 +102,26 @@ public class PlanController extends BaseController {
      */
     // 계획 내용 수정
     @ResponseBody
-    @PatchMapping("/{planIdx}")
+    @PatchMapping("/nameupdate/{planIdx}")
     public ResponseEntity<ResponseApiMessage> updatePlan(@PathVariable Long planIdx, @RequestBody PlanNameUpdateRequestDto requestDto) {
         PlanResponseDto responseDto = planService.updatePlan(planIdx, requestDto);
 
         return sendResponseHttpByJson(SUCCESS, "Update Plan. PLAN_INDEX=" + planIdx, responseDto);
+    }
+
+    /**
+     * 내 계획 완수 여부 수정하는 API (완료)
+     * @param planIdx: 계획 인덱스
+     * @param requestDto
+     *           Boolean Iscomplete: 계획 완수 여부
+     *
+     */
+   @ResponseBody
+   @PatchMapping("/complete/{planIdx}")
+    public ResponseEntity<ResponseApiMessage> updatePlanIsComplete(@PathVariable Long planIdx, @RequestBody PlanIsCompleteRequestDto requestDto) {
+        PlanResponseDto responseDto = planService.setIsCompletePlan(planIdx, requestDto);
+
+        return sendResponseHttpByJson(SUCCESS, "UPDATE IS COMPLETE PLAN. PLAN_INDEX=" + planIdx, responseDto);
     }
 
     /**
@@ -121,5 +137,9 @@ public class PlanController extends BaseController {
 
         return sendResponseHttpByJson(SUCCESS, "DELETE USER_STUDY_COMPLETE. USER_STUDY_INDEX=" + planIdx, null);
     }
+
+
+
+
 
 }
