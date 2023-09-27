@@ -55,7 +55,7 @@ public class Plan {
         this.planName = planName;
     }
 
-    public void setIsComplete(Boolean planIsComplete) {
+    public void updateIsComplete(Boolean planIsComplete) {
         this.planIsComplete = planIsComplete;
     }
 

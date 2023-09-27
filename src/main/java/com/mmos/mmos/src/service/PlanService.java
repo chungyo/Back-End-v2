@@ -167,7 +167,7 @@ public class PlanService {
     public PlanResponseDto updatePlanIsComplete(Long planIdx, PlanIsCompleteRequestDto requestDto){
         Plan plan = findPlanByIdx(planIdx);
 
-        plan.setIsComplete(requestDto.getPlanIsComplete());
+        plan.updateIsComplete(requestDto.getPlanIsComplete());
 
         return new PlanResponseDto(plan);
 
