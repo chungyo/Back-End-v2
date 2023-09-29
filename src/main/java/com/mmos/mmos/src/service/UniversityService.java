@@ -10,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -34,14 +33,15 @@ public class UniversityService {
     }
 
     @Transactional
-    public Page<University> getUniversities(Pageable pageable) {
+    public Page<UniversityResponseDto> getUniversities(Pageable pageable) {
 //        List<University> universityList = findUniversities();
 //        Page<UniversityResponseDto> responseDtoList = new ArrayList<>();
 //
 //        for (University university : universityList) {
 //            responseDtoList.add(new UniversityResponseDto(university));
 //        }
-        Page<University> responseDtoList = universityRepository.findAll(pageable);
+        Page<University> universityPage = universityRepository.findAll(pageable);
+        Page<UniversityResponseDto> responseDtoList = universityPage.map(UniversityResponseDto::new);
 
         return responseDtoList;
     }
