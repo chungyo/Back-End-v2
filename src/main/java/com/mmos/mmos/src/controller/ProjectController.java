@@ -52,4 +52,15 @@ public class ProjectController extends BaseController{
         }
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE PROJECT NAME. PROJECT IDX=" + projectIdx, projectResponseDto);
     }
+
+    @DeleteMapping("/delete/{userIdx}/{projectIdx}")
+    @ResponseBody
+    public ResponseEntity<ResponseApiMessage> deleteProject(@PathVariable Long userIdx, @PathVariable Long projectIdx){
+
+        Long deleteProjectIdx = projectService.deleteProject(userIdx,projectIdx);
+        if(deleteProjectIdx == null){
+            return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER,"프로젝트를 소유한 유저가 아닙니다.", null);
+        }
+        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "DELETE PROJECT. PROJECT IDX= " + deleteProjectIdx, null);
+    }
 }
