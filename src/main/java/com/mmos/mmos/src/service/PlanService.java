@@ -181,6 +181,6 @@ public class PlanService {
 
         plan.updateIsVisible(requestDto.getPlanIsVisible());
 
-        return new PlanResponseDto(plan);
+        return new PlanResponseDto(plan, HttpResponseStatus.SUCCESS);
     }
 }
