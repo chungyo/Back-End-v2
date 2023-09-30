@@ -1,9 +1,6 @@
 package com.mmos.mmos.src.service;
 
-import com.mmos.mmos.src.domain.dto.plan.PlanIsCompleteRequestDto;
-import com.mmos.mmos.src.domain.dto.plan.PlanNameUpdateRequestDto;
-import com.mmos.mmos.src.domain.dto.plan.PlanResponseDto;
-import com.mmos.mmos.src.domain.dto.plan.PlanSaveRequestDto;
+import com.mmos.mmos.src.domain.dto.plan.*;
 import com.mmos.mmos.src.domain.entity.*;
 import com.mmos.mmos.src.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +48,7 @@ public class PlanService {
         return plannerRepository.findPlannerByCalendar_CalendarIndexAndPlannerDate(calendarIdx, date)
                 .orElse(null);
     }
+
 
     public User findUserByIdx(Long userIdx) {
         return userRepository.findById(userIdx)
@@ -173,4 +171,13 @@ public class PlanService {
 
     }
 
+    // 플랜이 캘린더에 표시되는 것
+    @Transactional
+    public PlanResponseDto updatePlanIsVisible(Long planIdx, PlanIsVisibleRequestDto requestDto) {
+        Plan plan = findPlanByIdx(planIdx);
+
+        plan.updateIsVisible(requestDto.getPlanIsVisible());
+
+        return new PlanResponseDto(plan);
+    }
 }
