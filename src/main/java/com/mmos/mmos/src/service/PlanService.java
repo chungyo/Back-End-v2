@@ -1,5 +1,10 @@
 package com.mmos.mmos.src.service;
 
+import com.mmos.mmos.config.HttpResponseStatus;
+import com.mmos.mmos.src.domain.dto.plan.PlanIsCompleteRequestDto;
+import com.mmos.mmos.src.domain.dto.plan.PlanNameUpdateRequestDto;
+import com.mmos.mmos.src.domain.dto.plan.PlanResponseDto;
+import com.mmos.mmos.src.domain.dto.plan.PlanSaveRequestDto;
 import com.mmos.mmos.src.domain.dto.plan.*;
 import com.mmos.mmos.src.domain.entity.*;
 import com.mmos.mmos.src.repository.*;
@@ -98,7 +103,7 @@ public class PlanService {
             // 역 FK 매핑
             planner.addPlan(plan);
 
-            return new PlanResponseDto(planRepository.save(plan));
+            return new PlanResponseDto(planRepository.save(plan), HttpResponseStatus.SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -109,7 +114,7 @@ public class PlanService {
     public PlanResponseDto getPlan(Long planIdx) {
         Plan plan = findPlanByIdx(planIdx);
 
-        return new PlanResponseDto(plan);
+        return new PlanResponseDto(plan,HttpResponseStatus.SUCCESS);
     }
 
     // 스터디에 포함된 계획 = true
@@ -121,7 +126,7 @@ public class PlanService {
 
         List<PlanResponseDto> responseDtoList = new ArrayList<>();
         for (Plan plan : planList) {
-            responseDtoList.add(new PlanResponseDto(plan));
+            responseDtoList.add(new PlanResponseDto(plan,HttpResponseStatus.SUCCESS));
         }
 
         return responseDtoList;
@@ -134,7 +139,7 @@ public class PlanService {
 
         List<PlanResponseDto> responseDtoList = new ArrayList<>();
         for (Plan plan : plans) {
-            responseDtoList.add(new PlanResponseDto(plan));
+            responseDtoList.add(new PlanResponseDto(plan,HttpResponseStatus.SUCCESS));
         }
 
         return responseDtoList;
@@ -146,7 +151,7 @@ public class PlanService {
 
         plan.update(requestDto.getPlanName());
 
-        return new PlanResponseDto(plan);
+        return new PlanResponseDto(plan,HttpResponseStatus.SUCCESS);
     }
 
     @Transactional
@@ -155,9 +160,7 @@ public class PlanService {
 
         planRepository.delete(plan);
 
-        PlanResponseDto responseDto = new PlanResponseDto(plan);
-
-        return responseDto;
+        return new PlanResponseDto(plan,HttpResponseStatus.SUCCESS);
     }
 
     // plan 완수 여부 기능
@@ -167,7 +170,7 @@ public class PlanService {
 
         plan.updateIsComplete(requestDto.getPlanIsComplete());
 
-        return new PlanResponseDto(plan);
+        return new PlanResponseDto(plan,HttpResponseStatus.SUCCESS);
 
     }
 
