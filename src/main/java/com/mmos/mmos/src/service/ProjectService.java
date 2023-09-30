@@ -1,6 +1,6 @@
 package com.mmos.mmos.src.service;
 
-import com.mmos.mmos.src.domain.dto.calendar.CalendarGetProjectRequestDto;
+import com.mmos.mmos.src.domain.dto.calendar.CalendarGetRequestDto;
 import com.mmos.mmos.src.domain.dto.project.ProjectResponseDto;
 import com.mmos.mmos.src.domain.dto.project.ProjectSaveRequestDto;
 import com.mmos.mmos.src.domain.entity.Calendar;
@@ -57,24 +57,5 @@ public class ProjectService {
         user.getUserProjects().add(project);
 
         return new ProjectResponseDto(projectRepository.save(project));
-    }
-
-
-    // return 값 보류 (미완성)
-    @Transactional
-    public List<ProjectResponseDto> getProjects(Long userIdx, CalendarGetProjectRequestDto calendarGetProjectRequestDto){
-
-
-        User user = findUser(userIdx);
-
-
-        List<Project> projects = projectRepository.findAllByUser(user);
-
-        // for로 날짜 비교
-
-        List<ProjectResponseDto> projectResponseDtoList = new ArrayList<>();
-
-
-        return projectResponseDtoList;
     }
 }

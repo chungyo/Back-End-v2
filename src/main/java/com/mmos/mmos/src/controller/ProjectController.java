@@ -2,18 +2,12 @@ package com.mmos.mmos.src.controller;
 
 import com.mmos.mmos.config.HttpResponseStatus;
 import com.mmos.mmos.config.ResponseApiMessage;
-import com.mmos.mmos.src.domain.dto.calendar.CalendarGetProjectRequestDto;
 import com.mmos.mmos.src.domain.dto.project.ProjectResponseDto;
 import com.mmos.mmos.src.domain.dto.project.ProjectSaveRequestDto;
 import com.mmos.mmos.src.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-import static com.mmos.mmos.config.HttpResponseStatus.GET_CALENDAR_EMPTY_REQUEST;
-import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
 
 @RestController
 @RequestMapping("/api/v1/projects")
@@ -53,15 +47,5 @@ public class ProjectController extends BaseController{
         ProjectResponseDto projectResponseDto = projectService.saveProject(userIdx,projectSaveRequestDto);
 
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE PROJECT. PROJECT IDX=" + projectResponseDto.getProjectIndex(), projectResponseDto);
-    }
-
-    /**
-     * 다 갈아야함
-     */
-    @ResponseBody
-    @GetMapping("getByDate/{userIdx}")
-    public ResponseEntity<ResponseApiMessage> getProjects(@PathVariable Long userIdx, @RequestBody CalendarGetProjectRequestDto calendarGetProjectRequestDto){
-        // null 검사
-        return null;
     }
 }
