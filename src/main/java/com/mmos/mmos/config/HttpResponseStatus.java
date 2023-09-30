@@ -87,6 +87,8 @@ public enum HttpResponseStatus {
     POST_PROJECT_EMPTY_NAME(false, BAD_REQUEST.value(), "이름을 입력해주세요."),
     POST_PROJECT_EMPTY_STARTTIME(false,BAD_REQUEST.value(),"시작할 날짜를 입력해주세요."),
     POST_PROJECT_EMPTY_ENDTIME(false,BAD_REQUEST.value(),"종료 날짜를 입력해주세요."),
+    UPDATE_PROJECT_NOT_OWNER(false,BAD_REQUEST.value(),"프로젝트를 소유한 유저가 아닙니다."),
+
 
     /**
      * 500 : Database, Server 오류

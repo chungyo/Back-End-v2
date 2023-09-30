@@ -2,6 +2,7 @@ package com.mmos.mmos.src.controller;
 
 import com.mmos.mmos.config.HttpResponseStatus;
 import com.mmos.mmos.config.ResponseApiMessage;
+import com.mmos.mmos.src.domain.dto.project.ProjectNameUpdateDto;
 import com.mmos.mmos.src.domain.dto.project.ProjectResponseDto;
 import com.mmos.mmos.src.domain.dto.project.ProjectSaveRequestDto;
 import com.mmos.mmos.src.service.ProjectService;
@@ -36,16 +37,19 @@ public class ProjectController extends BaseController{
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE PROJECT. PROJECT IDX=" + projectResponseDto.getProjectIndex(), projectResponseDto);
     }
 
-    @PatchMapping("/updateName/{userIdx}")
+    @PatchMapping("/updateName/{userIdx}/{projectIdx}")
     @ResponseBody
-    public ResponseEntity<ResponseApiMessage> updateProjectName(@PathVariable Long userIdx,@PathVariable Long projectIdx, @RequestBody ProjectSaveRequestDto projectSaveRequestDto){
+    public ResponseEntity<ResponseApiMessage> updateProjectName(@PathVariable Long userIdx,@PathVariable Long projectIdx, @RequestBody ProjectNameUpdateDto projectNameUpdateDto){
         // null 검사
-        if(projectSaveRequestDto.getName()==null) {
+        if(projectNameUpdateDto.getNewName()==null) {
             return sendResponseHttpByJson(HttpResponseStatus.POST_PROJECT_EMPTY_NAME,"EMPTY_NAME.",null);
         }
 
-        ProjectResponseDto projectResponseDto = projectService.saveProject(userIdx,projectSaveRequestDto);
+        ProjectResponseDto projectResponseDto = projectService.updateProjectName(userIdx,projectIdx,projectNameUpdateDto);
 
-        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE PROJECT. PROJECT IDX=" + projectResponseDto.getProjectIndex(), projectResponseDto);
+        if(projectResponseDto.getStatus().equals(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER)){
+            return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER,"프로젝트를 소유한 유저가 아닙니다.", null);
+        }
+        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE PROJECT NAME. PROJECT IDX=" + projectIdx, projectResponseDto);
     }
 }

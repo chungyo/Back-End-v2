@@ -32,6 +32,10 @@ public class Project {
     @ManyToOne
     private User user;
 
+    public void updateProjectName(String newName){
+        this.projectName = newName;
+    }
+
     public Project(LocalDate projectStartTime, LocalDate projectEndTime, String projectName, User user) {
         this.projectStartTime = projectStartTime;
         this.projectEndTime = projectEndTime;
