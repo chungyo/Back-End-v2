@@ -46,7 +46,9 @@ public class CalendarController extends BaseController {
             return sendResponseHttpByJson(GET_CALENDAR_EMPTY_REQUEST, "No Date Selected", null);
 
         CalendarResponseDto calendarResponseDto = calendarService.getCalendar(userIdx,calendarGetRequestDto);
-
+        if(calendarResponseDto.getStatus().equals(GET_CALENDAR_EMPTY_REQUEST)){
+            return sendResponseHttpByJson(GET_CALENDAR_EMPTY_REQUEST,"캘린더 날짜를 입력해주세요.", null);
+        }
         return sendResponseHttpByJson(SUCCESS, "Got calendar THIS_YEAR=" + calendarGetRequestDto.getYear() + " THIS_MONTH=" + calendarGetRequestDto.getMonth(), calendarResponseDto);
     }
 }
