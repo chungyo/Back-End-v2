@@ -55,7 +55,7 @@ public enum HttpResponseStatus {
 
 
     // Calendar
-    POST_CALENDAR_INVALID_REQUEST(false, BAD_REQUEST.value(), "한 달이 지나지 않아서 저장할 캘린더가 없습니다."),
+    POST_CALENDAR_INVALID_REQUEST(false, BAD_REQUEST.value(), "캘린더가 이미 존재합니다."),
     GET_CALENDAR_EMPTY_REQUEST(false, BAD_REQUEST.value(), "날짜가 선택되지 않았습니다."),
     // plan
     POST_PLAN_EMPTY_CONTENTS(false, BAD_REQUEST.value(),"계획 내용이 없습니다."),
@@ -79,6 +79,10 @@ public enum HttpResponseStatus {
     POST_STUDYTIME_DUPLICATE_REQUEST(false, BAD_REQUEST.value(), "이미 진행 중인 계획이 있습니다."),
     POST_STUDYTIME_INVALID_REQUEST(false, BAD_REQUEST.value(), "진행 중인 계획이 없습니다."),
 
+    // Post
+    POST_POST_EMPTY_TITLE(false, BAD_REQUEST.value(), "글 제목을 입력해주세요."),
+    POST_POST_EMPTY_CONTENTS(false, BAD_REQUEST.value(), "글 내용을 입력해주세요."),
+
     // Project
     POST_PROJECT_EMPTY_NAME(false, BAD_REQUEST.value(), "이름을 입력해주세요."),
     POST_PROJECT_EMPTY_STARTTIME(false,BAD_REQUEST.value(),"시작할 날짜를 입력해주세요."),
@@ -91,11 +95,10 @@ public enum HttpResponseStatus {
     SERVER_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버와의 연결에 실패하였습니다."),
 
     PASSWORD_ENCRYPTION_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "비밀번호 암호화에 실패하였습니다."),
-    PASSWORD_DECRYPTION_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "비밀번호 복호화에 실패하였습니다."),
+    PASSWORD_DECRYPTION_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "비밀번호 복호화에 실패하였습니다.");
 
-    // Post
-    POST_POST_EMPTY_TITLE(false, BAD_REQUEST.value(), "글 제목을 입력해주세요."),
-    POST_POST_EMPTY_CONTENTS(false, BAD_REQUEST.value(), "글 내용을 입력해주세요.");
+
+
 
     private final boolean isSuccess;
     private final int code;

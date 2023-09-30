@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface CalendarRepository extends JpaRepository<Calendar, Long> {
 
-    Optional<Calendar> findCalendarByUser_UserIndexAndCalendarYearAndCalendarMonth(Long userIdx,int year, int month);
+    Optional<Calendar> findCalendarByUser_UserIndexAndCalendarYearAndCalendarMonth(Long userIdx,int year, Integer month);
 }
