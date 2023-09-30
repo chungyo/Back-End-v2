@@ -77,4 +77,17 @@ public class ProjectService {
 
         return new ProjectResponseDto(project,HttpResponseStatus.SUCCESS);
     }
+    @Transactional
+    public Long deleteProject(Long userIdx, Long projectIdx){
+        // 프로젝트를 소유한 유저인지 확인
+        Project project = findProject(projectIdx);
+        User user = findUser(userIdx);
+        if(!user.getUserProjects().contains(project)){
+            return null;
+        }
+
+        projectRepository.delete(project);
+
+        return projectIdx;
+    }
 }
