@@ -68,6 +68,10 @@ public class Plan {
         this.planIsComplete = planIsComplete;
     }
 
+    public void updateIsVisible(Boolean planIsVisible) {
+        this.planIsVisible = planIsVisible;
+    }
+
     public void addStudyTime(StudyTime studyTime) {
         this.planStudytimeTimes.add(studyTime);
     }
@@ -75,5 +79,7 @@ public class Plan {
     public void addTime(Long time) {
         this.planStudyTime += time;
     }
+
+
 
 }
