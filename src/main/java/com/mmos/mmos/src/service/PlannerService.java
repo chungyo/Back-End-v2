@@ -4,8 +4,8 @@ import com.mmos.mmos.src.domain.dto.planner.PlannerResponseDto;
 import com.mmos.mmos.src.domain.entity.Calendar;
 import com.mmos.mmos.src.domain.entity.Planner;
 import com.mmos.mmos.src.repository.CalendarRepository;
-import com.mmos.mmos.src.repository.PlanRepository;
 import com.mmos.mmos.src.repository.PlannerRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +57,20 @@ public class PlannerService {
         planner.setMemo(plannerMemo);  // 메모 설정
         plannerRepository.save(planner);  // 변경 사항 저장
         return new PlannerResponseDto(planner);  // 변경된 플래너 반환
+    }
+
+    @Transactional
+    public PlannerResponseDto getPlanner(Long plannerIdx) {
+        Planner planner = findPlannerByIdx(plannerIdx);
+
+        // null검사
+        if (planner == null) {
+            throw new EntityNotFoundException("플래너를 찾을 수 없습니다. PLANNER_INDEX= " + plannerIdx);
+        }
+
+        PlannerResponseDto responseDto = new PlannerResponseDto(planner);
+
+        return responseDto;
     }
 
 }
