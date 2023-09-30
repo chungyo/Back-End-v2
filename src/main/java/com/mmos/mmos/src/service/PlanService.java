@@ -179,7 +179,7 @@ public class PlanService {
     public PlanResponseDto updatePlanIsVisible(Long planIdx, PlanIsVisibleRequestDto requestDto) {
         Plan plan = findPlanByIdx(planIdx);
 
-        plan.updateIsVisible(requestDto.getPlanIsVisible());
+        plan.updateIsVisible(requestDto.getIsVisible());
 
         return new PlanResponseDto(plan, HttpResponseStatus.SUCCESS);
     }

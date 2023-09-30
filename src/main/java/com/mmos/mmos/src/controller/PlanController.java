@@ -2,8 +2,6 @@ package com.mmos.mmos.src.controller;
 
 import com.mmos.mmos.config.ResponseApiMessage;
 import com.mmos.mmos.src.domain.dto.plan.*;
-import com.mmos.mmos.src.domain.dto.user.UserResponseDto;
-import com.mmos.mmos.src.domain.entity.Planner;
 import com.mmos.mmos.src.service.PlanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -125,7 +123,7 @@ public class PlanController extends BaseController {
      */
     @ResponseBody
     @PatchMapping("/isvisible/{planIdx}")
-    public ResponseEntity<ResponseApiMessage> updatePlanIsComplete(@PathVariable Long planIdx, @RequestBody PlanIsVisibleRequestDto requestDto) {
+    public ResponseEntity<ResponseApiMessage> updatePlanIsVisible(@PathVariable Long planIdx, @RequestBody PlanIsVisibleRequestDto requestDto) {
         PlanResponseDto responseDto = planService.updatePlanIsVisible(planIdx, requestDto);
 
         return sendResponseHttpByJson(SUCCESS, "UPDATE IS VISIBLE PLAN. PLAN_INDEX=" + planIdx, responseDto);
