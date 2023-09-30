@@ -1,10 +1,7 @@
 package com.mmos.mmos.src.controller;
 
 import com.mmos.mmos.config.ResponseApiMessage;
-import com.mmos.mmos.src.domain.dto.plan.PlanIsCompleteRequestDto;
-import com.mmos.mmos.src.domain.dto.plan.PlanNameUpdateRequestDto;
-import com.mmos.mmos.src.domain.dto.plan.PlanResponseDto;
-import com.mmos.mmos.src.domain.dto.plan.PlanSaveRequestDto;
+import com.mmos.mmos.src.domain.dto.plan.*;
 import com.mmos.mmos.src.domain.dto.user.UserResponseDto;
 import com.mmos.mmos.src.domain.entity.Planner;
 import com.mmos.mmos.src.service.PlanService;
@@ -121,6 +118,20 @@ public class PlanController extends BaseController {
         return sendResponseHttpByJson(SUCCESS, "UPDATE IS COMPLETE PLAN. PLAN_INDEX=" + planIdx, responseDto);
     }
 
+
+    /**
+     * 내 계획 캘린더에 표시 여부 수정하는 API (완료)
+     *
+     */
+    @ResponseBody
+    @PatchMapping("/isvisible/{planIdx}")
+    public ResponseEntity<ResponseApiMessage> updatePlanIsComplete(@PathVariable Long planIdx, @RequestBody PlanIsVisibleRequestDto requestDto) {
+        PlanResponseDto responseDto = planService.updatePlanIsVisible(planIdx, requestDto);
+
+        return sendResponseHttpByJson(SUCCESS, "UPDATE IS VISIBLE PLAN. PLAN_INDEX=" + planIdx, responseDto);
+    }
+
+
     /**
      * 내 계획 삭제하는 API(완료)
      * @param planIdx: 계획 인덱스
@@ -134,6 +145,8 @@ public class PlanController extends BaseController {
 
         return sendResponseHttpByJson(SUCCESS, "DELETE USER_STUDY_COMPLETE. USER_STUDY_INDEX=" + planIdx, null);
     }
+
+
 
 
 
