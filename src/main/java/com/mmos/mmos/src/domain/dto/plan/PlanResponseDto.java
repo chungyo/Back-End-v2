@@ -12,6 +12,7 @@ public class PlanResponseDto {
     private String name;
     private Boolean isComplete;
     private Boolean isStudy;
+    private Boolean isVisible;
     private Long studyTime;
 
     public PlanResponseDto(Plan plan) {
@@ -19,6 +20,7 @@ public class PlanResponseDto {
         this.name = plan.getPlanName();
         this.isComplete = plan.getPlanIsComplete();
         this.isStudy = plan.getPlanIsStudy();
+        this.isVisible = plan.getPlanIsVisible();
         this.studyTime = plan.getPlanStudyTime();
     }
 }
