@@ -3,6 +3,7 @@ package com.mmos.mmos.src.service;
 import com.mmos.mmos.src.domain.dto.project.ProjectNameUpdateDto;
 import com.mmos.mmos.src.domain.dto.project.ProjectResponseDto;
 import com.mmos.mmos.src.domain.dto.project.ProjectSaveRequestDto;
+import com.mmos.mmos.src.domain.dto.project.ProjectTimeUpdateDto;
 import com.mmos.mmos.src.domain.entity.Calendar;
 import com.mmos.mmos.src.domain.entity.Project;
 import com.mmos.mmos.src.domain.entity.User;
@@ -66,6 +67,20 @@ public class ProjectService {
         return new ProjectResponseDto(projectRepository.save(project), SUCCESS);
     }
 
+    @Transactional
+    public ProjectResponseDto updateProjectTime(Long userIdx, Long projectIdx, ProjectTimeUpdateDto projectTimeUpdateDto) {
+        // 프로젝트를 소유한 유저인지 확인
+        Project project = findProject(projectIdx);
+        User user = findUser(userIdx);
+        if(!user.getUserProjects().contains(project)){
+            return new ProjectResponseDto(UPDATE_PROJECT_NOT_OWNER);
+        }
+
+        project.updateProjectStartTime(projectTimeUpdateDto.getNewStartTime());
+        project.updateProjectEndTime(projectTimeUpdateDto.getNewEndTime());
+
+        return new ProjectResponseDto(project, SUCCESS);
+    }
     @Transactional
     public ProjectResponseDto updateProjectName(Long userIdx, Long projectIdx, ProjectNameUpdateDto projectNameUpdateDto) {
         // 프로젝트를 소유한 유저인지 확인

@@ -5,6 +5,7 @@ import com.mmos.mmos.config.ResponseApiMessage;
 import com.mmos.mmos.src.domain.dto.project.ProjectNameUpdateDto;
 import com.mmos.mmos.src.domain.dto.project.ProjectResponseDto;
 import com.mmos.mmos.src.domain.dto.project.ProjectSaveRequestDto;
+import com.mmos.mmos.src.domain.dto.project.ProjectTimeUpdateDto;
 import com.mmos.mmos.src.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,12 +30,37 @@ public class ProjectController extends BaseController{
     public ResponseEntity<ResponseApiMessage> saveProject(@PathVariable Long userIdx, @RequestBody ProjectSaveRequestDto projectSaveRequestDto){
         // null 검사
         if(projectSaveRequestDto.getName()==null) {
-            return sendResponseHttpByJson(HttpResponseStatus.POST_PROJECT_EMPTY_NAME,"EMPTY_NAME.",null);
+            return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_EMPTY_NAME,"EMPTY_NAME.",null);
         }
 
         ProjectResponseDto projectResponseDto = projectService.saveProject(userIdx,projectSaveRequestDto);
 
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE PROJECT. PROJECT IDX=" + projectResponseDto.getProjectIndex(), projectResponseDto);
+    }
+
+
+    /**
+     * 프로젝트의 기간을 바꾸는 API(완료)
+     * @param userIdx : 기간을 바꾸려는 프로젝트를 소유한 유저의 인덱스
+     * @param projectIdx : 기간을 바꾸려는 프로젝트의 인덱스
+     * @param projectTimeUpdateDto :
+     *              LocalDate newStartTime: 변경 후 프로젝트의 시작시각
+     *              LocalDate newEndTime: 변경 후 프로젝트의 종료시각
+     */
+    @PatchMapping("/updateTime/{userIdx}/{projectIdx}")
+    @ResponseBody
+    public ResponseEntity<ResponseApiMessage> updateProjectTime(@PathVariable Long userIdx,@PathVariable Long projectIdx, @RequestBody ProjectTimeUpdateDto projectTimeUpdateDto){
+        // null 검사
+        if(projectTimeUpdateDto.getNewStartTime()==null||projectTimeUpdateDto.getNewEndTime()==null) {
+            return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_EMPTY_TIME,"EMPTY_TIME.",null);
+        }
+
+        ProjectResponseDto projectResponseDto = projectService.updateProjectTime(userIdx,projectIdx,projectTimeUpdateDto);
+
+        if(projectResponseDto.getStatus().equals(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER)){
+            return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER,"프로젝트를 소유한 유저가 아닙니다.", null);
+        }
+        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE PROJECT NAME. PROJECT IDX=" + projectIdx, projectResponseDto);
     }
 
     /**
@@ -59,7 +85,6 @@ public class ProjectController extends BaseController{
         }
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE PROJECT NAME. PROJECT IDX=" + projectIdx, projectResponseDto);
     }
-
 
     /**
      * 프로젝트를 삭제하는 API (완료)
