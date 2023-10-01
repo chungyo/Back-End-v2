@@ -5,11 +5,10 @@ import com.mmos.mmos.src.domain.dto.university.UniversitySaveRequestDto;
 import com.mmos.mmos.src.domain.entity.University;
 import com.mmos.mmos.src.repository.UniversityRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,15 +32,14 @@ public class UniversityService {
     }
 
     @Transactional
-    public Page<UniversityResponseDto> getUniversities(Pageable pageable) {
-//        List<University> universityList = findUniversities();
-//        Page<UniversityResponseDto> responseDtoList = new ArrayList<>();
-//
-//        for (University university : universityList) {
-//            responseDtoList.add(new UniversityResponseDto(university));
-//        }
-        Page<University> universityPage = universityRepository.findAll(pageable);
-        Page<UniversityResponseDto> responseDtoList = universityPage.map(UniversityResponseDto::new);
+    public List<UniversityResponseDto> getUniversities() {
+        List<University> universityList = findUniversities();
+        List<UniversityResponseDto> responseDtoList = new ArrayList<>();
+
+        for (University university : universityList) {
+            responseDtoList.add(new UniversityResponseDto(university));
+        }
+
 
         return responseDtoList;
     }
