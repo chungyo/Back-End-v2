@@ -264,6 +264,7 @@ public class UserStudyService {
         if(userStudy == null || userStudy.getUserstudyMemberStatus() >= 4 || userStudy.getUserstudyMemberStatus() == 1)
             return null;
 
+        userStudy.getStudy().minusMemberNum();
         userStudyRepository.delete(userStudy);
 
         return userStudyIdx;
@@ -283,6 +284,7 @@ public class UserStudyService {
             return -2L;
         }
 
+        userStudy.getStudy().minusMemberNum();
         userStudyRepository.delete(userStudy);
 
         return userStudy.getUserstudyIndex();
