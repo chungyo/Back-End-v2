@@ -60,12 +60,12 @@ public class PlanService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다. USER_INDEX=" + userIdx));
     }
 
-    public Calendar findCalendarByUserIdx(Long userIdx,int year, int month) {
-        return calendarRepository.findCalendarByUser_UserIndexAndCalendarYearAndCalendarMonth(userIdx,year, month)
+    public Calendar findCalendarByUserIdx(Long userIdx, int year, int month) {
+        return calendarRepository.findCalendarByUser_UserIndexAndCalendarYearAndCalendarMonth(userIdx, year, month)
                 .orElse(null);
     }
 
-    public List<Plan> findPlansByPlanner(Planner planner){
+    public List<Plan> findPlansByPlanner(Planner planner) {
         return planRepository.findPlansByPlanner(planner)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 플래너입니다. PLANNER_INDEX=" + planner.getPlannerIndex()));
     }
@@ -76,9 +76,9 @@ public class PlanService {
             // 저장하려는 월의 캘린더가 존재하는지 확인
             // 존재한다면 DB에서 가져오고, 존재하지 않는다면 DB에 새로 저장 후, 저장한 값 가져오기
             Long calendarIdx;
-            Calendar calendar = findCalendarByUserIdx(userIdx,requestDto.getDate().getYear(), requestDto.getDate().getMonthValue());
-            if(calendar == null) {
-                calendarIdx = calendarService.saveCalendar(requestDto.getDate().getYear(),requestDto.getDate().getMonthValue(), userIdx).getIdx();
+            Calendar calendar = findCalendarByUserIdx(userIdx, requestDto.getDate().getYear(), requestDto.getDate().getMonthValue());
+            if (calendar == null) {
+                calendarIdx = calendarService.saveCalendar(requestDto.getDate().getYear(), requestDto.getDate().getMonthValue(), userIdx).getIdx();
             } else {
                 calendarIdx = calendar.getCalendarIndex();
             }
@@ -86,7 +86,7 @@ public class PlanService {
             // 존재한다면 DB에서 가져오고, 존재하지 않는다면 DB에 새로 저장 후, 저장한 값 가져오기
             Long plannerIdx;
             Planner planner = findPlannerByCalendarIdxAndDate(calendarIdx, requestDto.getDate());
-            if(planner == null) {
+            if (planner == null) {
                 plannerIdx = plannerService.savePlanner(requestDto.getDate(), calendarIdx).getIdx();
             } else {
                 plannerIdx = planner.getPlannerIndex();
@@ -114,7 +114,7 @@ public class PlanService {
     public PlanResponseDto getPlan(Long planIdx) {
         Plan plan = findPlanByIdx(planIdx);
 
-        return new PlanResponseDto(plan,HttpResponseStatus.SUCCESS);
+        return new PlanResponseDto(plan, HttpResponseStatus.SUCCESS);
     }
 
     // 스터디에 포함된 계획 = true
@@ -126,7 +126,7 @@ public class PlanService {
 
         List<PlanResponseDto> responseDtoList = new ArrayList<>();
         for (Plan plan : planList) {
-            responseDtoList.add(new PlanResponseDto(plan,HttpResponseStatus.SUCCESS));
+            responseDtoList.add(new PlanResponseDto(plan, HttpResponseStatus.SUCCESS));
         }
 
         return responseDtoList;
@@ -139,7 +139,7 @@ public class PlanService {
 
         List<PlanResponseDto> responseDtoList = new ArrayList<>();
         for (Plan plan : plans) {
-            responseDtoList.add(new PlanResponseDto(plan,HttpResponseStatus.SUCCESS));
+            responseDtoList.add(new PlanResponseDto(plan, HttpResponseStatus.SUCCESS));
         }
 
         return responseDtoList;
@@ -151,7 +151,7 @@ public class PlanService {
 
         plan.update(requestDto.getPlanName());
 
-        return new PlanResponseDto(plan,HttpResponseStatus.SUCCESS);
+        return new PlanResponseDto(plan, HttpResponseStatus.SUCCESS);
     }
 
     @Transactional
@@ -160,17 +160,30 @@ public class PlanService {
 
         planRepository.delete(plan);
 
-        return new PlanResponseDto(plan,HttpResponseStatus.SUCCESS);
+        return new PlanResponseDto(plan, HttpResponseStatus.SUCCESS);
     }
 
     // plan 완수 여부 기능
     @Transactional
-    public PlanResponseDto updatePlanIsComplete(Long planIdx, PlanIsCompleteRequestDto requestDto){
+    public PlanResponseDto updatePlanIsComplete(Long planIdx, PlanIsCompleteRequestDto requestDto) {
         Plan plan = findPlanByIdx(planIdx);
+        // 같은 경우 제외
+        if(plan.getPlanIsComplete() == requestDto.getIsComplete()){
+            return new PlanResponseDto(HttpResponseStatus.UPDATE_PLAN_REDUNDANT_REQUEST);
+        }
 
-        plan.updateIsComplete(requestDto.getPlanIsComplete());
+        plan.updateIsComplete(requestDto.getIsComplete());
+        Planner planner = plan.getPlanner();
+        Calendar calendar = planner.getCalendar();
 
-        return new PlanResponseDto(plan,HttpResponseStatus.SUCCESS);
+
+        // 일별/월별 완료한 플랜 갯수 조정 (0보다 작은데 decrease 하는 case 방지)
+        if (planner.getPlannerDailyScheduleNum() >= 0 && calendar.getCalendarMonthlyCompletedPlanNum() >= 0) {
+            planner.updateDailyScheduleNum(requestDto.getIsComplete());
+            calendar.updateMonthlyPlanNum(requestDto.getIsComplete());
+        }
+
+        return new PlanResponseDto(plan, HttpResponseStatus.SUCCESS);
 
     }
 

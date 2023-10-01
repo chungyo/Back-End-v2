@@ -73,4 +73,12 @@ public class Planner {
         this.plannerDailyStudyTime += time;
     }
 
+    public void updateDailyScheduleNum(Boolean status){
+        if(status){
+            this.plannerDailyScheduleNum++;
+        }
+        else{
+            this.plannerDailyScheduleNum--;
+        }
+    }
 }

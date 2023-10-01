@@ -7,6 +7,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PlanIsCompleteRequestDto {
 
-    private Boolean planIsComplete;
+    private Boolean isComplete;
 
 }

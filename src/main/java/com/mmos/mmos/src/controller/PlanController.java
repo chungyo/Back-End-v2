@@ -112,6 +112,9 @@ public class PlanController extends BaseController {
    @PatchMapping("/complete/{planIdx}")
     public ResponseEntity<ResponseApiMessage> updatePlanIsComplete(@PathVariable Long planIdx, @RequestBody PlanIsCompleteRequestDto requestDto) {
         PlanResponseDto responseDto = planService.updatePlanIsComplete(planIdx, requestDto);
+        if(responseDto.getStatus().equals(UPDATE_PLAN_REDUNDANT_REQUEST)){
+            return sendResponseHttpByJson(UPDATE_PLAN_REDUNDANT_REQUEST, "중복된 요청입니다. (이미"+ requestDto.getIsComplete() +")",requestDto);
+        }
 
         return sendResponseHttpByJson(SUCCESS, "UPDATE IS COMPLETE PLAN. PLAN_INDEX=" + planIdx, responseDto);
     }
