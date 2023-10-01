@@ -13,7 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 public class CalendarResponseDto {
     private Long idx;
-    private int month;
+    private Integer year;
+    private Integer month;
     private Long monthlyStudyTime;
     private Long monthlyCompletedPlanNum;
     private HttpResponseStatus status = null;
@@ -22,11 +23,23 @@ public class CalendarResponseDto {
 
     public CalendarResponseDto(Calendar calendar, HttpResponseStatus status, List<Project> projects, List<Plan> plans) {
         this.idx = calendar.getCalendarIndex();
+        this.year = calendar.getCalendarYear();
         this.month = calendar.getCalendarMonth();
         this.monthlyStudyTime = calendar.getCalendarMonthlyStudyTime();
         this.monthlyCompletedPlanNum = calendar.getCalendarMonthlyCompletedPlanNum();
         this.projects = projects;
         this.status = status;
         this.plans = plans;
+    }
+
+    public CalendarResponseDto(HttpResponseStatus status) {
+        this.idx = null;
+        this.year = null;
+        this.month = null;
+        this.monthlyStudyTime = null;
+        this.monthlyCompletedPlanNum = null;
+        this.projects = null;
+        this.status = status;
+        this.plans = null;
     }
 }

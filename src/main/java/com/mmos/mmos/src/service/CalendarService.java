@@ -49,7 +49,7 @@ public class CalendarService {
 
         // 막 회원 가입을 한 유저가 아니면서 같은 달의 캘린더가 이미 존재할 때 생성 막기
         if (!user.getUserCalendars().isEmpty() && findCalendarByMonthAndYear(userIdx,year,month) != null)
-            return new CalendarResponseDto(new Calendar(), POST_CALENDAR_INVALID_REQUEST, null, null);
+            return new CalendarResponseDto(POST_CALENDAR_INVALID_REQUEST);
 
         System.out.println("year = " + year + "month = " + month + "will be added");
 
