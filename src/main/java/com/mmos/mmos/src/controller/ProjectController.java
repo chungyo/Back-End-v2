@@ -83,7 +83,14 @@ public class ProjectController extends BaseController{
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE PROJECT NAME. PROJECT IDX=" + projectIdx, projectResponseDto);
     }
 
-    @PatchMapping("/updateName/{userIdx}/{projectIdx}")
+    /**
+     * 프로젝트 완수 변경하는 API(완료)
+     * @param userIdx: 완수시킬 프로젝트를 소유한 유저 인덱스
+     * @param projectIdx: 완수시킬 프로젝트의 인덱스
+     * @param projectCompleteUpdateDto:
+     *                  Boolean isComplete
+     */
+    @PatchMapping("/updateIsComplete/{userIdx}/{projectIdx}")
     @ResponseBody
     public ResponseEntity<ResponseApiMessage> updateProjectIsComplete(@PathVariable Long userIdx,@PathVariable Long projectIdx, @RequestBody ProjectCompleteUpdateDto projectCompleteUpdateDto){
         // null 검사

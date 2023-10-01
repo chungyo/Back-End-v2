@@ -17,6 +17,7 @@ public class ProjectResponseDto {
     private String projectName;
 
     private Boolean projectIsComplete;
+    private Boolean projectIsVisible;
     private HttpResponseStatus status;
 
     public ProjectResponseDto(Project Entity, HttpResponseStatus status) {
@@ -25,14 +26,17 @@ public class ProjectResponseDto {
         this.projectEndTime = Entity.getProjectEndTime();
         this.projectName = Entity.getProjectName();
         this.projectIsComplete = Entity.getProjectIsComplete();
+        this.projectIsVisible = Entity.getProjectIsVisible();
         this.status = status;
     }
-    public ProjectResponseDto(HttpResponseStatus status){
+
+    public ProjectResponseDto(HttpResponseStatus status) {
         this.projectIndex = null;
         this.projectStartTime = null;
         this.projectEndTime = null;
         this.projectName = null;
         this.projectIsComplete = null;
+        this.projectIsVisible = null;
         this.status = status;
     }
 }
