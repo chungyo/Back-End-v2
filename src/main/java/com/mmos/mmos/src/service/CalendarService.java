@@ -1,8 +1,8 @@
 package com.mmos.mmos.src.service;
 
-import com.mmos.mmos.config.HttpResponseStatus;
 import com.mmos.mmos.src.domain.dto.calendar.CalendarGetRequestDto;
 import com.mmos.mmos.src.domain.dto.calendar.CalendarResponseDto;
+import com.mmos.mmos.src.domain.dto.plan.PlanResponseDto;
 import com.mmos.mmos.src.domain.entity.Calendar;
 import com.mmos.mmos.src.domain.entity.Plan;
 import com.mmos.mmos.src.domain.entity.Project;
@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.mmos.mmos.config.HttpResponseStatus.POST_CALENDAR_INVALID_REQUEST;
+import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
 
 @Service
 @RequiredArgsConstructor
@@ -62,7 +63,7 @@ public class CalendarService {
 
         calendarRepository.save(calendar);
 
-        return new CalendarResponseDto(calendar, HttpResponseStatus.SUCCESS, null, null);
+        return new CalendarResponseDto(calendar, SUCCESS, null, null);
     }
 
     @Transactional
@@ -75,13 +76,16 @@ public class CalendarService {
         // 해당 달을 포함하는 Project 찾기
         List<Project> calendarProjectList = new ArrayList<>();
         for (Project project : userProjectList){
-            if(project.getProjectStartTime().getMonthValue()<= calendarGetRequestDto.getMonth() && project.getProjectEndTime().getYear()>=calendarGetRequestDto.getYear())
+            if(project.getProjectStartTime().getMonthValue() <= calendarGetRequestDto.getMonth() && project.getProjectEndTime().getYear()>=calendarGetRequestDto.getYear())
                 calendarProjectList.add(project);
         }
 
         // 해당 달에서 planIsVisible == true인 plan들을 리스트로 가져오기
         List<Plan> planList = findPlansIsVisible(calendar);
-
-         return new CalendarResponseDto(calendar, HttpResponseStatus.SUCCESS, calendarProjectList, planList);
+        List<PlanResponseDto> planResponseDtoList= new ArrayList<>();
+        for(Plan plan : planList){
+            planResponseDtoList.add(new PlanResponseDto(plan, plan.getPlanner().getPlannerDate()));
+        }
+         return new CalendarResponseDto(calendar, SUCCESS, calendarProjectList, planResponseDtoList);
     }
 }

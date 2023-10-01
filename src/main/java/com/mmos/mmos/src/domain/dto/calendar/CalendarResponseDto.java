@@ -1,8 +1,8 @@
 package com.mmos.mmos.src.domain.dto.calendar;
 
 import com.mmos.mmos.config.HttpResponseStatus;
+import com.mmos.mmos.src.domain.dto.plan.PlanResponseDto;
 import com.mmos.mmos.src.domain.entity.Calendar;
-import com.mmos.mmos.src.domain.entity.Plan;
 import com.mmos.mmos.src.domain.entity.Project;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,9 +19,9 @@ public class CalendarResponseDto {
     private Long monthlyCompletedPlanNum;
     private HttpResponseStatus status = null;
     private List<Project> projects;
-    private List<Plan> plans;
+    private List<PlanResponseDto> plans;
 
-    public CalendarResponseDto(Calendar calendar, HttpResponseStatus status, List<Project> projects, List<Plan> plans) {
+    public CalendarResponseDto(Calendar calendar, HttpResponseStatus status, List<Project> projects, List<PlanResponseDto> plans) {
         this.idx = calendar.getCalendarIndex();
         this.year = calendar.getCalendarYear();
         this.month = calendar.getCalendarMonth();
