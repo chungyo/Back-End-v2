@@ -40,9 +40,9 @@ public class PlannerController extends BaseController {
      * @param plannerIdx: 플래너 인덱스
      */
     @ResponseBody
-    @GetMapping("/all/{plannerIdx}")
-    public ResponseEntity<ResponseApiMessage> getPlanner(@PathVariable Long plannerIdx) {
-        PlannerResponseDto responseDtoList = plannerService.getPlanner(plannerIdx);
+    @GetMapping("/all/{userIdx}/{plannerIdx}")
+    public ResponseEntity<ResponseApiMessage> getPlanner(@PathVariable Long userIdx, @PathVariable Long plannerIdx) {
+        PlannerResponseDto responseDtoList = plannerService.getPlanner(plannerIdx, userIdx);
         return sendResponseHttpByJson(SUCCESS, "GET PLANNER COMPLETE. PLANNER_INDEX=" + plannerIdx, responseDtoList);
     }
 
