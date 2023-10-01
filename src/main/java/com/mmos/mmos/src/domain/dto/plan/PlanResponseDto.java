@@ -37,4 +37,7 @@ public class PlanResponseDto {
         this.studyTime = plan.getPlanStudyTime();
         this.date = date;
     }
+    public PlanResponseDto(HttpResponseStatus status) {
+        this.status = status;
+    }
 }

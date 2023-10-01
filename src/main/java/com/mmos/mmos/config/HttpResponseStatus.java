@@ -63,6 +63,7 @@ public enum HttpResponseStatus {
     // plan
     POST_PLAN_EMPTY_CONTENTS(false, BAD_REQUEST.value(),"계획 내용이 없습니다."),
     POST_PLAN_INVALID_REQUEST(false, BAD_REQUEST.value(),"스터디 계획이 아닙니다."),
+    UPDATE_PLAN_REDUNDANT_REQUEST(false, BAD_REQUEST.value(),"이미 변경되었습니다."),
 
     // College
     GET_COLLEGE_EMPTY_RETURN(false, BAD_REQUEST.value(), "해당 대학교에 단과대학이 존재하지 않습니다."),
