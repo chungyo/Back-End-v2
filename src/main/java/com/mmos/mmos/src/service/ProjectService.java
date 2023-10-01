@@ -1,6 +1,5 @@
 package com.mmos.mmos.src.service;
 
-import com.mmos.mmos.config.HttpResponseStatus;
 import com.mmos.mmos.src.domain.dto.project.ProjectNameUpdateDto;
 import com.mmos.mmos.src.domain.dto.project.ProjectResponseDto;
 import com.mmos.mmos.src.domain.dto.project.ProjectSaveRequestDto;
@@ -15,6 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+
+import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
+import static com.mmos.mmos.config.HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER;
 
 @Service
 @RequiredArgsConstructor
@@ -42,8 +44,8 @@ public class ProjectService {
     @Transactional
     public ProjectResponseDto saveProject(Long userIdx, ProjectSaveRequestDto projectSaveRequestDto) {
         // user 찾기
-
         User user = findUser(userIdx);
+
         // 프로젝트 시작시각부터 종료시각까지 필요한 달 체크. 없으면 생성.
         LocalDate startTime = projectSaveRequestDto.getStartTime();
         LocalDate endTime = projectSaveRequestDto.getEndTime();
@@ -61,7 +63,7 @@ public class ProjectService {
         // User에 프로젝트 저장
         user.getUserProjects().add(project);
 
-        return new ProjectResponseDto(projectRepository.save(project), HttpResponseStatus.SUCCESS);
+        return new ProjectResponseDto(projectRepository.save(project), SUCCESS);
     }
 
     @Transactional
@@ -70,12 +72,12 @@ public class ProjectService {
         Project project = findProject(projectIdx);
         User user = findUser(userIdx);
         if(!user.getUserProjects().contains(project)){
-            return new ProjectResponseDto(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER);
+            return new ProjectResponseDto(UPDATE_PROJECT_NOT_OWNER);
         }
 
         project.updateProjectName(projectNameUpdateDto.getNewName());
 
-        return new ProjectResponseDto(project,HttpResponseStatus.SUCCESS);
+        return new ProjectResponseDto(project, SUCCESS);
     }
     @Transactional
     public Long deleteProject(Long userIdx, Long projectIdx){

@@ -37,6 +37,13 @@ public class ProjectController extends BaseController{
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE PROJECT. PROJECT IDX=" + projectResponseDto.getProjectIndex(), projectResponseDto);
     }
 
+    /**
+     * 프로젝트의 이름을 바꾸는 API(완료)
+     * @param userIdx : 이름을 바꾸려는 프로젝트를 소유한 유저의 인덱스
+     * @param projectIdx : 이름을 바꾸려는 프로젝트의 인덱스
+     * @param projectNameUpdateDto :
+     *              String newName: 변경 후 프로젝트의 이름
+     */
     @PatchMapping("/updateName/{userIdx}/{projectIdx}")
     @ResponseBody
     public ResponseEntity<ResponseApiMessage> updateProjectName(@PathVariable Long userIdx,@PathVariable Long projectIdx, @RequestBody ProjectNameUpdateDto projectNameUpdateDto){
@@ -53,6 +60,13 @@ public class ProjectController extends BaseController{
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE PROJECT NAME. PROJECT IDX=" + projectIdx, projectResponseDto);
     }
 
+
+    /**
+     * 프로젝트를 삭제하는 API (완료)
+     * @param userIdx : 삭제하려는 프로젝트를 소유한 유저의 인덱스
+     * @param projectIdx : 삭제하려는 프로젝트의 인덱스
+     * @return deleteProjectIdx : 삭제 완료한 프로젝트의 인덱스 (성공시 위의 projectIdx와 동일한 값)
+     */
     @DeleteMapping("/delete/{userIdx}/{projectIdx}")
     @ResponseBody
     public ResponseEntity<ResponseApiMessage> deleteProject(@PathVariable Long userIdx, @PathVariable Long projectIdx){

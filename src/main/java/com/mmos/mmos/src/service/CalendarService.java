@@ -9,7 +9,6 @@ import com.mmos.mmos.src.domain.entity.Project;
 import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.repository.CalendarRepository;
 import com.mmos.mmos.src.repository.PlanRepository;
-import com.mmos.mmos.src.repository.ProjectRepository;
 import com.mmos.mmos.src.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.mmos.mmos.config.HttpResponseStatus.POST_CALENDAR_INVALID_REQUEST;
 
 @Service
 @RequiredArgsConstructor
@@ -48,7 +49,7 @@ public class CalendarService {
 
         // 막 회원 가입을 한 유저가 아니면서 같은 달의 캘린더가 이미 존재할 때 생성 막기
         if (!user.getUserCalendars().isEmpty() && findCalendarByMonthAndYear(userIdx,year,month) != null)
-            return new CalendarResponseDto(new Calendar(), HttpResponseStatus.POST_CALENDAR_INVALID_REQUEST, null, null);
+            return new CalendarResponseDto(new Calendar(), POST_CALENDAR_INVALID_REQUEST, null, null);
 
         System.out.println("year = " + year + "month = " + month + "will be added");
 
@@ -66,20 +67,19 @@ public class CalendarService {
 
     @Transactional
     public CalendarResponseDto getCalendar(Long userIdx, CalendarGetRequestDto calendarGetRequestDto){
-
+        // user, calendar, List<Project> 객체 가져오기
         User user = findUserByIdx(userIdx);
         Calendar calendar = findCalendarByMonthAndYear(userIdx,calendarGetRequestDto.getYear(), calendarGetRequestDto.getMonth());
         List<Project> userProjectList = user.getUserProjects();
-        List<Project> calendarProjectList = new ArrayList<>();
 
         // 해당 달을 포함하는 Project 찾기
+        List<Project> calendarProjectList = new ArrayList<>();
         for (Project project : userProjectList){
             if(project.getProjectStartTime().getMonthValue()<= calendarGetRequestDto.getMonth() && project.getProjectEndTime().getYear()>=calendarGetRequestDto.getYear())
                 calendarProjectList.add(project);
         }
-        System.out.println("userProjectList = " + userProjectList);
-        System.out.println("calendarProjectList = " + calendarProjectList);
 
+        // 해당 달에서 planIsVisible == true인 plan들을 리스트로 가져오기
         List<Plan> planList = findPlansIsVisible(calendar);
 
          return new CalendarResponseDto(calendar, HttpResponseStatus.SUCCESS, calendarProjectList, planList);
