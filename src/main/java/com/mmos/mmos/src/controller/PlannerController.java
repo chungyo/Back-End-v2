@@ -36,8 +36,9 @@ public class PlannerController extends BaseController {
     }
 
     /**
-     * 플래너와 관련된 모든 것 가져오는 기능 (계획들, 프로젝트(추가 예정), 메모, 날짜, 총 공부시간, 총 공부량)
-     * @param plannerIdx: 플래너 인덱스
+     * 플래너와 관련된 모든 것 가져오는 기능 (계획들, 프로젝트, 메모, 날짜, 총 공부 시간, 총 공부량)
+     * @param userIdx: 프로젝트 찾기 위한 유저 인덱스
+     * @param plannerIdx: 플래너와 관련된 모든 것들 받아오기 위한 플래너 인덱스
      */
     @ResponseBody
     @GetMapping("/all/{userIdx}/{plannerIdx}")
