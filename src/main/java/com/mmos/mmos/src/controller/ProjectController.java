@@ -92,9 +92,9 @@ public class ProjectController extends BaseController{
      */
     @PatchMapping("/updateIsComplete/{userIdx}/{projectIdx}")
     @ResponseBody
-    public ResponseEntity<ResponseApiMessage> updateProjectIsComplete(@PathVariable Long userIdx,@PathVariable Long projectIdx, @RequestBody ProjectCompleteUpdateDto projectCompleteUpdateDto){
+    public ResponseEntity<ResponseApiMessage> updateProjectIsComplete(@PathVariable Long userIdx,@PathVariable Long projectIdx, @RequestBody ProjectStatusUpdateDto projectCompleteUpdateDto){
         // null 검사
-        if(projectCompleteUpdateDto.getIsComplete()==null) {
+        if(projectCompleteUpdateDto.getStatus()==null) {
             return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_EMPTY_STATUS,"EMPTY_STATUS.",null);
         }
 
@@ -102,6 +102,32 @@ public class ProjectController extends BaseController{
 
         if(projectResponseDto.getStatus().equals(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER)){
             return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER,"프로젝트를 소유한 유저가 아닙니다.", null);
+        }
+        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE PROJECT_IS_COMPLETE. PROJECT IDX=" + projectIdx, projectResponseDto);
+    }
+
+    /**
+     * 프로젝트를 달력에서 보이게 하는 API(완료)
+     * @param userIdx: 유저 인덱스
+     * @param projectIdx: 달력에 표시할 프로젝트 인덱스
+     * @param projectStatusUpdateDto:
+     *                      Boolean Status: 표시 상태(true == 표시, false == 미표시)
+     */
+    @PatchMapping("/updateIsVisible/{userIdx}/{projectIdx}")
+    @ResponseBody
+    public ResponseEntity<ResponseApiMessage> updateProjectIsVisible(@PathVariable Long userIdx,@PathVariable Long projectIdx, @RequestBody ProjectStatusUpdateDto projectStatusUpdateDto){
+        // null 검사
+        if(projectStatusUpdateDto.getStatus()==null) {
+            return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_EMPTY_STATUS,"EMPTY_STATUS.",null);
+        }
+
+        ProjectResponseDto projectResponseDto = projectService.updateProjectIsVisible(userIdx,projectIdx,projectStatusUpdateDto);
+
+        if(projectResponseDto.getStatus().equals(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER)){
+            return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER,"프로젝트를 소유한 유저가 아닙니다.", null);
+        }
+        if(projectResponseDto.getStatus().equals(HttpResponseStatus.UPDATE_PROJECT_FULL_VISIBLE)){
+            return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_FULL_VISIBLE,"더 이상 추가할 수 없습니다.", null);
         }
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE PROJECT_IS_COMPLETE. PROJECT IDX=" + projectIdx, projectResponseDto);
     }
