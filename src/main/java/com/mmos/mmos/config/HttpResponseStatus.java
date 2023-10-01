@@ -64,6 +64,12 @@ public enum HttpResponseStatus {
     POST_PLAN_EMPTY_CONTENTS(false, BAD_REQUEST.value(),"계획 내용이 없습니다."),
     POST_PLAN_INVALID_REQUEST(false, BAD_REQUEST.value(),"스터디 계획이 아닙니다."),
 
+    // College
+    GET_COLLEGE_EMPTY_RETURN(false, BAD_REQUEST.value(), "해당 대학교에 단과대학이 존재하지 않습니다."),
+
+    // Major
+    GET_MAJOR_EMPTY_RETURN(false, BAD_REQUEST.value(), "해당 단과대학에 학과가 존재하지 않습니다."),
+
     // UserStudy
     USERSTUDY_ALREADY_EXIST(false, BAD_REQUEST.value(),"이미 활동 중입니다."),
     USERSTUDY_INVALID_REQUEST(false, BAD_REQUEST.value(),"권한이 없습니다."),

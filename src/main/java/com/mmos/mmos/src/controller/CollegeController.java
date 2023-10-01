@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+import static com.mmos.mmos.config.HttpResponseStatus.GET_COLLEGE_EMPTY_RETURN;
 import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
 
 @RestController
@@ -20,9 +23,9 @@ public class CollegeController extends BaseController {
     /**
      * 관리자 전용
      * College 초기 데이터를 저장하는 API (완료)
-     * @param universityIdx (대학 인덱스)
+     * @param universityIdx: 대학 인덱스
      * @param requestDto
-     *          - collegeName (단과대 이름)
+     *          - collegeName: 단과대 이름
      */
     @ResponseBody
     @PostMapping("/{universityIdx}")
@@ -30,5 +33,20 @@ public class CollegeController extends BaseController {
         CollegeResponseDto responseDto = collegeService.saveCollege(universityIdx, requestDto);
 
         return sendResponseHttpByJson(SUCCESS, "Saved University", responseDto);
+    }
+
+    /**
+     * 해당 대학교에 존재하는 모든 단과대학을 조회하는 API (완료)
+     * @param universityIdx: 조회할 대학교의 인덱스
+     */
+    @ResponseBody
+    @GetMapping("get/{universityIdx}")
+    public  ResponseEntity<ResponseApiMessage> getColleges(@PathVariable Long universityIdx){
+        List<CollegeResponseDto> collegeResponseDtoList = collegeService.getColleges(universityIdx);
+
+        if(collegeResponseDtoList.isEmpty()){
+            return sendResponseHttpByJson(GET_COLLEGE_EMPTY_RETURN, "해당 대학교에 단과대학이 존재하지 않습니다.", null);
+        }
+        return sendResponseHttpByJson(SUCCESS, "Got Colleges", collegeResponseDtoList);
     }
 }
