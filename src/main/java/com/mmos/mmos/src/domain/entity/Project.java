@@ -35,6 +35,12 @@ public class Project {
     public void updateProjectName(String newName){
         this.projectName = newName;
     }
+    public void updateProjectStartTime(LocalDate newStartTime){
+        this.projectStartTime = newStartTime;
+    }
+    public void updateProjectEndTime(LocalDate newEndTime){
+        this.projectEndTime= newEndTime;
+    }
 
     public Project(LocalDate projectStartTime, LocalDate projectEndTime, String projectName, User user) {
         this.projectStartTime = projectStartTime;
