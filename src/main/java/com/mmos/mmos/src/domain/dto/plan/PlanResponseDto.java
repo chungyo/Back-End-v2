@@ -33,6 +33,7 @@ public class PlanResponseDto {
         this.idx = plan.getPlanIndex();
         this.name = plan.getPlanName();
         this.isComplete = plan.getPlanIsComplete();
+        this.isVisible = plan.getPlanIsVisible();
         this.isStudy = plan.getPlanIsStudy();
         this.studyTime = plan.getPlanStudyTime();
         this.date = date;
@@ -40,4 +41,5 @@ public class PlanResponseDto {
     public PlanResponseDto(HttpResponseStatus status) {
         this.status = status;
     }
+
 }
