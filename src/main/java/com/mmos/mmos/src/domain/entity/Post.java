@@ -2,7 +2,6 @@ package com.mmos.mmos.src.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.mmos.mmos.src.domain.dto.post.PostSaveRequestDto;
-import com.mmos.mmos.src.domain.dto.post.PostUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,7 +33,10 @@ public class Post {
     private Boolean postIsNotice = true;
 
     @Column
-    private String postWriter;
+    private String postWriterName;
+
+    @Column
+    private Long postWriterIndex;
 
     @Column
     private Timestamp postCreatedAt;
@@ -47,18 +49,27 @@ public class Post {
     @JoinColumn(name = "studyIndex")
     private Study study = null;
 
-    public Post(PostSaveRequestDto postSaveRequestDto,  String userName, Study study) {
+    public Post(PostSaveRequestDto postSaveRequestDto, User user, Study study) {
         this.postIsNotice = postSaveRequestDto.getIsNotice();
         this.postTitle = postSaveRequestDto.getPostTitle();
         this.postContents = postSaveRequestDto.getPostContents();
         this.postImage = postSaveRequestDto.getPostImage();
-        this.postWriter = userName;
+        this.postWriterIndex = user.getUserIndex();
+        this.postWriterName = user.getUserName();
         this.study = study;
     }
 
-    public void update(PostUpdateRequestDto postUpdateRequestDto) {
-        this.postTitle = postUpdateRequestDto.getTitle();
-        this.postContents = postUpdateRequestDto.getContents();
-        this.postImage = postUpdateRequestDto.getImage();
+
+
+    public void updateTitle(String title) {
+        this.postTitle = title;
+    }
+
+    public void updateContents(String contents) {
+        this.postContents = contents;
+    }
+
+    public void updateImage(String image) {
+        this.postImage = image;
     }
 }

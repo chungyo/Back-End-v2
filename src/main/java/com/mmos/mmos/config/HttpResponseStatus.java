@@ -76,6 +76,7 @@ public enum HttpResponseStatus {
     USERSTUDY_MEMBER_LIMIT_FULL(false, BAD_REQUEST.value(),"가득 찬 스터디입니다."),
     USERSTUDY_COMPLETE_REQUEST(false, BAD_REQUEST.value(),"이미 처리된 요청입니다."),
     USERSTUDY_MEMBER_ALREADY_EXIST(false, BAD_REQUEST.value(),"이미 활동 중입니다."),
+    USERSTUDY_NOT_EXIST_USERSTUDY(false, BAD_REQUEST.value(),"참여 중인 스터디가 아닙니다."),
 
 
     // Planner
@@ -93,6 +94,8 @@ public enum HttpResponseStatus {
     // Post
     POST_POST_EMPTY_TITLE(false, BAD_REQUEST.value(), "글 제목을 입력해주세요."),
     POST_POST_EMPTY_CONTENTS(false, BAD_REQUEST.value(), "글 내용을 입력해주세요."),
+    POST_NOT_AUTHORIZED(false, BAD_REQUEST.value(), "권한이 없습니다."),
+
 
     // Project
     POST_PROJECT_EMPTY_NAME(false, BAD_REQUEST.value(), "이름을 입력해주세요."),
