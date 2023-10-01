@@ -65,4 +65,7 @@ public class Study {
     public void plusMemberNum() {
         this.studyMemberNum++;
     }
+    public void minusMemberNum() {
+        this.studyMemberNum--;
+    }
 }
