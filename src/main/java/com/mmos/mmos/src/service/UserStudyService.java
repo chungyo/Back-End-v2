@@ -11,7 +11,15 @@ import com.mmos.mmos.src.repository.UserRepository;
 import com.mmos.mmos.src.repository.UserStudyRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.mmos.mmos.config.HttpResponseStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -40,32 +48,34 @@ public class UserStudyService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저스터디입니다. USER_STUDY_INDEX=" + userStudyIdx));
     }
 
+    public List<UserStudy> findUserStudiesByStudyIdxAndStatus(Long studyIdx, Integer status) {
+        return userStudyRepository.findUserStudiesByStudy_StudyIndexAndUserstudyMemberStatus(studyIdx, status)
+                .orElse(null);
+    }
+
     // 인원 수 체크
     @Transactional
     public UserStudyResponseDto inviteStudy(Long userStudyIdx, UserStudyInviteDto requestDto) {
         // userStudyIdx가 리더의 것인지 확인
         UserStudy leaderUserStudy = findUserStudyByIdx(userStudyIdx);
         if(leaderUserStudy.getUserstudyMemberStatus() > 2) {
-            System.out.println("권한 없음");
-            return new UserStudyResponseDto(leaderUserStudy);
+            return new UserStudyResponseDto(USERSTUDY_INVALID_REQUEST);
         }
 
         // 인원 수가 충분한지 체크
         if(leaderUserStudy.getStudy().getStudyMemberLimit() <= leaderUserStudy.getStudy().getStudyMemberNum()) {
-            System.out.println("정원 가득 참");
-            return null;
+            return new UserStudyResponseDto(USERSTUDY_MEMBER_LIMIT_FULL);
+
         }
 
         // 이미 멤버인지 혹은 보내거나 받은 요청이 있는지 체크
         UserStudy userStudy = findUserStudyByStudyIdxAndUserIdx(leaderUserStudy.getStudy().getStudyIndex(), requestDto.getUserIdx());
         if(userStudy != null) {
             if(userStudy.getUserstudyMemberStatus() <= 3) {
-                System.out.println("이미 회원임");
-                return new UserStudyResponseDto(userStudy);
+                return new UserStudyResponseDto(USERSTUDY_MEMBER_ALREADY_EXIST);
             }
             else {
-                System.out.println("이미 처리된 요청임");
-                return null;
+                return new UserStudyResponseDto(USERSTUDY_COMPLETE_REQUEST);
             }
         }
 
@@ -77,7 +87,7 @@ public class UserStudyService {
         study.addUserStudy(userStudy);
         user.adduserStudies(userStudy);
 
-        return new UserStudyResponseDto(userStudyRepository.save(userStudy));
+        return new UserStudyResponseDto(userStudyRepository.save(userStudy), SUCCESS);
     }
 
 
@@ -105,7 +115,7 @@ public class UserStudyService {
 
         userStudyRepository.save(userStudy);
 
-        return new UserStudyResponseDto(userStudy);
+        return new UserStudyResponseDto(userStudy, SUCCESS);
     }
 
     @Transactional
@@ -114,29 +124,26 @@ public class UserStudyService {
 
         // 받은 요청이 있는지 확인 && 이미 받은 요청인지 확인
         if(userStudy == null || userStudy.getUserstudyMemberStatus() <= 3) {
-            System.out.println("이미 받은 요청임 or 이미 회원임");
-            return null;
+            return new UserStudyResponseDto(USERSTUDY_COMPLETE_REQUEST);
         }
 
         // 스터디원이 가득 찼는지 확인
         // 인원 수가 충분한지 체크
         if(userStudy.getStudy().getStudyMemberLimit() <= userStudy.getStudy().getStudyMemberNum()) {
-            System.out.println("정원 가득 참");
-            return null;
+            return new UserStudyResponseDto(USERSTUDY_MEMBER_LIMIT_FULL);
         }
 
         userStudy.updateMemberStatus(3);
         userStudy.getStudy().plusMemberNum();
 
 
-        return new UserStudyResponseDto(userStudy);
+        return new UserStudyResponseDto(userStudy, SUCCESS);
     }
 
     @Transactional
     public Long rejectInvite(Long studyIdx, Long userIdx) {
         UserStudy userStudy = findUserStudyByStudyIdxAndUserIdx(studyIdx, userIdx);
         if(userStudy == null) {
-            System.out.println("이미 처리된 요청");
             return null;
         }
 
@@ -150,14 +157,12 @@ public class UserStudyService {
         // 취소하려는 userStudyIdx가 임원진인지 확인
         UserStudy leaderUserStudy = findUserStudyByIdx(userStudyIdx);
         if(leaderUserStudy.getUserstudyMemberStatus() > 2) {
-            System.out.println("권한 없음");
             return -1L;
         }
 
         // 취소하려는 초대가 유효한지 확인
         UserStudy userStudy = findUserStudyByStudyIdxAndUserIdx(leaderUserStudy.getStudy().getStudyIndex(), requestDto.getUserIdx());
         if(userStudy == null || userStudy.getUserstudyMemberStatus() <= 3) {
-            System.out.println("이미 처리된 요청 or 이미 회원");
             return -2L;
         }
 
@@ -171,12 +176,10 @@ public class UserStudyService {
         UserStudy userStudy = findUserStudyByStudyIdxAndUserIdx(requestDto.getStudyIdx(), userIdx);
         if(userStudy != null) {
             if(userStudy.getUserstudyMemberStatus() <= 3) {
-                System.out.println("이미 회원임");
-                return new UserStudyResponseDto(userStudy);
+                return new UserStudyResponseDto(USERSTUDY_ALREADY_EXIST);
             }
             else {
-                System.out.println("이미 처리된 요청");
-                return null;
+                return new UserStudyResponseDto(USERSTUDY_COMPLETE_REQUEST);
             }
         }
 
@@ -186,8 +189,7 @@ public class UserStudyService {
 
         // 인원 수 체크
         if(study.getStudyMemberLimit() <= study.getStudyMemberNum()) {
-            System.out.println("정원 가득 참");
-            return null;
+            return new UserStudyResponseDto(USERSTUDY_ALREADY_EXIST);
         }
 
         // 저장
@@ -195,7 +197,7 @@ public class UserStudyService {
         user.adduserStudies(userStudy);
         study.addUserStudy(userStudy);
 
-        return new UserStudyResponseDto(userStudyRepository.save(userStudy));
+        return new UserStudyResponseDto(userStudyRepository.save(userStudy), SUCCESS);
     }
 
     @Transactional
@@ -203,23 +205,20 @@ public class UserStudyService {
         UserStudy leaderUserStudy = findUserStudyByIdx(userStudyIdx1);
         // 운영진인지 확인
         if(leaderUserStudy.getUserstudyMemberStatus() > 2) {
-            System.out.println("권한 없음");
-            return new UserStudyResponseDto(leaderUserStudy);
+            return new UserStudyResponseDto(USERSTUDY_INVALID_REQUEST);
         }
 
 
         // 스터디원이 가득 찼는지 확인
         if(leaderUserStudy.getStudy().getStudyMemberLimit() <= leaderUserStudy.getStudy().getStudyMemberNum()) {
-            System.out.println("정원 가득 참");
-            return null;
+            return new UserStudyResponseDto(USERSTUDY_MEMBER_LIMIT_FULL);
         }
 
         UserStudy userStudy = findUserStudyByIdx(userStudyIdx2);
 
         // 이미 활동 중인 스터디거나 요청이 완료된 상황인지 확인
         if(userStudy == null || userStudy.getUserstudyMemberStatus() <= 3) {
-            System.out.println("이미 처리된 요청 or 이미 회원");
-            return null;
+            return new UserStudyResponseDto(USERSTUDY_COMPLETE_REQUEST);
         }
 
         userStudy.updateMemberStatus(3);
@@ -228,7 +227,7 @@ public class UserStudyService {
             System.out.println(userStudy.getStudy().getStudyUserstudies().size());
             userStudy.getStudy().plusMemberNum();
         }
-        return new UserStudyResponseDto(userStudy);
+        return new UserStudyResponseDto(userStudy, SUCCESS);
     }
 
     @Transactional
@@ -236,15 +235,13 @@ public class UserStudyService {
         // 운영진인지 확인
         UserStudy leaderUserStudy = findUserStudyByIdx(userStudyIdx1);
         if(leaderUserStudy.getUserstudyMemberStatus() > 2) {
-            System.out.println("권한 없음");
-            return null;
+            return -1L;
         }
 
         // 유효한 신청인지 확인
         UserStudy userStudy = findUserStudyByIdx(userStudyIdx2);
         if(userStudy == null || userStudy.getUserstudyMemberStatus() <= 3) {
-            System.out.println("이미 처리된 요청 or 이미 회원");
-            return null;
+            return -2L;
         }
 
         userStudyRepository.delete(userStudy);
@@ -281,15 +278,13 @@ public class UserStudyService {
         // 운영진인지 확인
         UserStudy leaderUserStudy = findUserStudyByIdx(userStudyIdx1);
         if(leaderUserStudy.getUserstudyMemberStatus() != 1) {
-            System.out.println("권한 없음");
-            return null;
+            return -1L;
         }
 
         // 유효한 신청인지 확인
         UserStudy userStudy = findUserStudyByIdx(userStudyIdx2);
         if(userStudy == null || userStudy.getUserstudyMemberStatus() >= 4 || userStudy.getUserstudyMemberStatus() == 1) {
-            System.out.println("이미 처리된 요청 or 이미 회원");
-            return null;
+            return -2L;
         }
 
         userStudyRepository.delete(userStudy);
@@ -302,8 +297,7 @@ public class UserStudyService {
         // 운영진인지 확인
         UserStudy manager = findUserStudyByIdx(userStudyIdx1);
         if(manager == null || manager.getUserstudyMemberStatus() > 2) {
-            System.out.println("권한 없음");
-            return null;
+            return new UserStudyResponseDto(USERSTUDY_INVALID_REQUEST);
         }
         UserStudy userStudy = findUserStudyByIdx(userStudyIdx2);
 
@@ -319,6 +313,19 @@ public class UserStudyService {
             }
         }
 
-        return new UserStudyResponseDto(userStudy);
+        return new UserStudyResponseDto(userStudy, SUCCESS);
     }
+
+    @Transactional
+    public Page<UserStudyResponseDto> getUserStudies(Long studyIdx, Pageable pageable) {
+        List<UserStudy> userStudyList = findUserStudiesByStudyIdxAndStatus(studyIdx, 5);
+        List<UserStudyResponseDto> responseDtoList = new ArrayList<>();
+
+        for (UserStudy userStudy : userStudyList) {
+            responseDtoList.add(new UserStudyResponseDto(userStudy, null));
+        }
+
+        return new PageImpl<>(responseDtoList, pageable, responseDtoList.size());
+    }
+
 }

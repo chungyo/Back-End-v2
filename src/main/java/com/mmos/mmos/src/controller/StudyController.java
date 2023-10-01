@@ -109,18 +109,5 @@ public class StudyController extends BaseController {
         return sendResponseHttpByJson(SUCCESS, "UPDATE STUDY_COMPLETE. STUDY_INDEX=" + studyIdx, studyResponseDto);
     }
 
-    /**
-     * 스터디 맴버 추방 (수정 중)
-     * @param userStudyIdx
-     * @return
-     */
-    // Study 멤버 추방
-    @ResponseBody
-    @DeleteMapping("/{userStudyIdx}/remove")
-    public ResponseEntity<ResponseApiMessage> removeUserStudy(@PathVariable Long userStudyIdx){
-        // Study 완료 업데이트
-        UserResponseDto userResponseDto = studyService.deleteUserFromStudy(userStudyIdx);
 
-        return sendResponseHttpByJson(SUCCESS, "DELETE USER_STUDY_COMPLETE. USER_STUDY_INDEX=" + userStudyIdx, userResponseDto);
-    }
 }

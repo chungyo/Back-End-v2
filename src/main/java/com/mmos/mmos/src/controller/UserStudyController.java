@@ -31,14 +31,15 @@ public class UserStudyController extends BaseController {
     public ResponseEntity<ResponseApiMessage> inviteStudy(@PathVariable Long userStudyIdx, @RequestBody UserStudyInviteDto requestDto) {
         UserStudyResponseDto userStudyResponseDto = userStudyService.inviteStudy(userStudyIdx, requestDto);
 
-        if(userStudyResponseDto == null)
-            return sendResponseHttpByJson(POST_USERSTUDY_DUPLICATE_REQUEST, "이미 보낸 요청입니다.", null);
-        else if(userStudyResponseDto.getMemberStatus() <= 3)
-            return sendResponseHttpByJson(POST_USERSTUDY_ALREADY_EXIST, "이미 존재하는 유저입니다.", null);
-        else if (userStudyResponseDto.getIndex().equals(userStudyIdx))
-            return sendResponseHttpByJson(POST_USERSTUDY_INVALID_REQUEST, "권한이 없습니다.", null);
-        else
-            return sendResponseHttpByJson(SUCCESS, "Invite User.", userStudyResponseDto);
+        if(userStudyResponseDto.getStatus().equals(USERSTUDY_COMPLETE_REQUEST))
+            return sendResponseHttpByJson(USERSTUDY_COMPLETE_REQUEST, "이미 처리된 요청입니다.", null);
+        else if(userStudyResponseDto.getStatus().equals(USERSTUDY_MEMBER_ALREADY_EXIST))
+            return sendResponseHttpByJson(USERSTUDY_MEMBER_ALREADY_EXIST, "이미 존재하는 유저입니다.", null);
+        else if (userStudyResponseDto.getStatus().equals(USERSTUDY_INVALID_REQUEST))
+            return sendResponseHttpByJson(USERSTUDY_INVALID_REQUEST, "권한이 없습니다.", null);
+        else if (userStudyResponseDto.getStatus().equals(USERSTUDY_MEMBER_LIMIT_FULL))
+            return sendResponseHttpByJson(USERSTUDY_MEMBER_LIMIT_FULL, "이미 가득 찬 스터디입니다.", null);
+        return sendResponseHttpByJson(SUCCESS, "스터디에 유저 초대 성공.", userStudyResponseDto);
     }
 
     /**
@@ -53,8 +54,10 @@ public class UserStudyController extends BaseController {
     public ResponseEntity<ResponseApiMessage> acceptInvite(@PathVariable Long studyIdx, @PathVariable Long userIdx) {
         UserStudyResponseDto userStudyResponseDto = userStudyService.acceptInvite(studyIdx, userIdx);
 
-        if(userStudyResponseDto == null)
-            return sendResponseHttpByJson(POST_USERSTUDY_COMPLETE_REQUEST, "이미 처리된 요청입니다.", null);
+        if(userStudyResponseDto.getStatus().equals(USERSTUDY_COMPLETE_REQUEST))
+            return sendResponseHttpByJson(USERSTUDY_COMPLETE_REQUEST, "이미 처리된 요청입니다.", null);
+        if(userStudyResponseDto.getStatus().equals(USERSTUDY_MEMBER_LIMIT_FULL))
+            return sendResponseHttpByJson(USERSTUDY_MEMBER_LIMIT_FULL, "이미 가득 찬 스터디입니다.", null);
         return sendResponseHttpByJson(SUCCESS, "Accept Invite.", userStudyResponseDto);
     }
 
@@ -71,7 +74,7 @@ public class UserStudyController extends BaseController {
         Long userStudyIdx = userStudyService.rejectInvite(studyIdx, userIdx);
 
         if(userStudyIdx == null)
-            return sendResponseHttpByJson(POST_USERSTUDY_COMPLETE_REQUEST, "이미 처리된 요청입니다.", null);
+            return sendResponseHttpByJson(USERSTUDY_COMPLETE_REQUEST, "이미 처리된 요청입니다.", null);
         return sendResponseHttpByJson(SUCCESS, "Reject Invite.", userStudyIdx);
     }
 
@@ -88,9 +91,9 @@ public class UserStudyController extends BaseController {
         Long idx = userStudyService.cancelInvite(userStudyIdx, requestDto);
 
         if(idx == -2L)
-            return sendResponseHttpByJson(POST_USERSTUDY_COMPLETE_REQUEST, "이미 처리된 요청입니다.", null);
+            return sendResponseHttpByJson(USERSTUDY_COMPLETE_REQUEST, "이미 처리된 요청입니다.", null);
         else if (idx == -1L)
-            return sendResponseHttpByJson(POST_USERSTUDY_INVALID_REQUEST, "권한이 없습니다.", null);
+            return sendResponseHttpByJson(USERSTUDY_INVALID_REQUEST, "권한이 없습니다.", null);
         else
             return sendResponseHttpByJson(SUCCESS, "Reject Invite.", userStudyIdx);
     }
@@ -107,10 +110,12 @@ public class UserStudyController extends BaseController {
     public ResponseEntity<ResponseApiMessage> attendRequest(@PathVariable Long userIdx, @RequestBody UserStudyAttendDto requestDto) {
         UserStudyResponseDto userStudyResponseDto = userStudyService.attendRequest(userIdx, requestDto);
 
-        if(userStudyResponseDto == null)
-            return sendResponseHttpByJson(POST_USERSTUDY_DUPLICATE_REQUEST, "이미 보낸 요청입니다.", null);
-        else if(userStudyResponseDto.getMemberStatus() <= 3)
-            return sendResponseHttpByJson(POST_USERSTUDY_ALREADY_EXIST, "이미 참가한 스터디입니다.", null);
+        if(userStudyResponseDto.getStatus().equals(USERSTUDY_COMPLETE_REQUEST))
+            return sendResponseHttpByJson(USERSTUDY_COMPLETE_REQUEST, "이미 처리된 요청입니다.", null);
+        else if(userStudyResponseDto.getStatus().equals(USERSTUDY_ALREADY_EXIST))
+            return sendResponseHttpByJson(USERSTUDY_ALREADY_EXIST, "이미 참가한 스터디입니다.", null);
+        else if (userStudyResponseDto.getStatus().equals(USERSTUDY_MEMBER_LIMIT_FULL))
+            return sendResponseHttpByJson(USERSTUDY_ALREADY_EXIST, "이미 가득 찬 스터디입니다.", null);
         return sendResponseHttpByJson(SUCCESS, "참가 요청 완료", userStudyResponseDto);
     }
 
@@ -125,12 +130,13 @@ public class UserStudyController extends BaseController {
     public ResponseEntity<ResponseApiMessage> acceptAttend(@PathVariable Long userStudyIdx1, @PathVariable Long userStudyIdx2) {
         UserStudyResponseDto userStudyResponseDto = userStudyService.acceptAttend(userStudyIdx1, userStudyIdx2);
 
-        if(userStudyResponseDto == null)
-            return sendResponseHttpByJson(POST_USERSTUDY_COMPLETE_REQUEST, "이미 처리된 요청입니다.", null);
-        else if(userStudyResponseDto.getIndex().equals(userStudyIdx1))
-            return sendResponseHttpByJson(POST_USERSTUDY_INVALID_REQUEST, "권한이 없습니다.", null);
-        else
-            return sendResponseHttpByJson(SUCCESS, "참가 요청 수락", userStudyResponseDto);
+        if(userStudyResponseDto.getStatus().equals(USERSTUDY_COMPLETE_REQUEST))
+            return sendResponseHttpByJson(USERSTUDY_COMPLETE_REQUEST, "이미 처리된 요청입니다.", null);
+        else if(userStudyResponseDto.getStatus().equals(USERSTUDY_INVALID_REQUEST))
+            return sendResponseHttpByJson(USERSTUDY_INVALID_REQUEST, "권한이 없습니다.", null);
+        else if(userStudyResponseDto.getStatus().equals(USERSTUDY_MEMBER_LIMIT_FULL))
+            return sendResponseHttpByJson(USERSTUDY_MEMBER_LIMIT_FULL, "이미 가득 찬 스터디입니다.", null);
+        return sendResponseHttpByJson(SUCCESS, "참가 요청 수락", userStudyResponseDto);
     }
 
     /**
@@ -144,8 +150,10 @@ public class UserStudyController extends BaseController {
     public ResponseEntity<ResponseApiMessage> rejectAttend(@PathVariable Long userStudyIdx1, @PathVariable Long userStudyIdx2) {
         Long userStudyIdx = userStudyService.rejectAttend(userStudyIdx1, userStudyIdx2);
 
-        if(userStudyIdx == null)
-            return sendResponseHttpByJson(POST_USERSTUDY_COMPLETE_REQUEST, "XXX", null);
+        if(userStudyIdx == -1L)
+            return sendResponseHttpByJson(USERSTUDY_INVALID_REQUEST, "권한이 없습니다.", null);
+        if(userStudyIdx == -2L)
+            return sendResponseHttpByJson(USERSTUDY_COMPLETE_REQUEST, "이미 처리된 요청입니다.", null);
         return sendResponseHttpByJson(SUCCESS, "참가 요청 거절 완료", userStudyIdx);
 
     }
@@ -157,7 +165,7 @@ public class UserStudyController extends BaseController {
         Long idx = userStudyService.cancelAttend(userStudyIdx);
 
         if(idx == null)
-            return sendResponseHttpByJson(POST_USERSTUDY_COMPLETE_REQUEST, "XXX", null);
+            return sendResponseHttpByJson(USERSTUDY_COMPLETE_REQUEST, "이미 처리된 요청입니다.", null);
         return sendResponseHttpByJson(SUCCESS, "참가 요청 철회 완료", idx);
     }
 
@@ -175,7 +183,7 @@ public class UserStudyController extends BaseController {
         Long idx = userStudyService.leaveStudy(userStudyIdx);
 
         if(idx == null)
-            return sendResponseHttpByJson(POST_USERSTUDY_COMPLETE_REQUEST, "XXX", null);
+            return sendResponseHttpByJson(USERSTUDY_COMPLETE_REQUEST, "이미 처리된 요청입니다.", null);
         return sendResponseHttpByJson(SUCCESS, "스터디 탈퇴 완료", idx);
     }
 
@@ -196,8 +204,10 @@ public class UserStudyController extends BaseController {
     ResponseEntity<ResponseApiMessage> kickMember(@PathVariable Long userStudyIdx1, @PathVariable Long userStudyIdx2) {
         Long idx = userStudyService.kickMember(userStudyIdx1, userStudyIdx2);
 
-        if(idx == null)
-            return sendResponseHttpByJson(POST_USERSTUDY_COMPLETE_REQUEST, "XXX", null);
+        if(idx == -1L)
+            return sendResponseHttpByJson(USERSTUDY_INVALID_REQUEST, "권한이 없습니다.", null);
+        if(idx == -2L)
+            return sendResponseHttpByJson(USERSTUDY_COMPLETE_REQUEST, "이미 처리된 요청입니다.", null);
         return sendResponseHttpByJson(SUCCESS, "스터디 추방 완료", idx);
     }
 
@@ -205,6 +215,7 @@ public class UserStudyController extends BaseController {
      * 직책 변경 API
      *      직책 변경은 스터디원 목록 옆에 '변경' 버튼을 누른 다음
      *      원하는 직책 중 하나를 선택하고 '변경하기' 버튼을 누르고 '정말 변경하시겠습니까?' 문구를 확인버튼 누르면 변경
+     *      선택지는 스터디 장, 운영진, 멤버 3개 존재
      * 운영진
      *      멤버 -> 운영진 변경 가능
      * 스터디 장
@@ -221,15 +232,16 @@ public class UserStudyController extends BaseController {
     ResponseEntity<ResponseApiMessage> updatePosition(@PathVariable Long userStudyIdx1, @PathVariable Long userStudyIdx2, @RequestParam Long position) {
         UserStudyResponseDto responseDto = userStudyService.updatePosition(userStudyIdx1, userStudyIdx2, position);
 
-        if(responseDto == null)
-            return sendResponseHttpByJson(POST_USERSTUDY_COMPLETE_REQUEST, "XXX", null);
-        return sendResponseHttpByJson(SUCCESS, "스터디 추방 완료", responseDto);
+        if(responseDto.getStatus().equals(USERSTUDY_INVALID_REQUEST))
+            return sendResponseHttpByJson(USERSTUDY_INVALID_REQUEST, "권한이 없습니다.", null);
+        return sendResponseHttpByJson(SUCCESS, "직책 변경 완료", responseDto);
     }
 
+    // 스터디 엔티티로 옮기기
     // 스터디 신청한 유저 목록 조회
-
-
     // 스터디 원 목록 조회
-
     // 내 스터디 조회
+
+
+
 }
