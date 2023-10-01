@@ -96,6 +96,30 @@ public class UserController extends BaseController {
     }
 
     /**
+     * 내가 참여 요청한 스터디 리스트로 조회하는 API (완료)
+     * @param userIdx: 사용자 인덱스
+     */
+    @ResponseBody
+    @GetMapping("/send/{userIdx}/studies")
+    public ResponseEntity<ResponseApiMessage> getStudySendRequestList(@PathVariable Long userIdx) {
+        List<StudyResponseDto> studyResponseDtoList = userService.getStudyRequestList(userIdx, 5);
+
+        return sendResponseHttpByJson(SUCCESS, "GET STUDIES LIST.", studyResponseDtoList);
+    }
+
+    /**
+     * 내가 참여 요청 받은 스터디 리스트로 조회하는 API (완료)
+     * @param userIdx: 사용자 인덱스
+     */
+    @ResponseBody
+    @GetMapping("/receive/{userIdx}/studies")
+    public ResponseEntity<ResponseApiMessage> getStudyReceiveRequestList(@PathVariable Long userIdx) {
+        List<StudyResponseDto> studyResponseDtoList = userService.getStudyRequestList(userIdx, 4);
+
+        return sendResponseHttpByJson(SUCCESS, "GET STUDIES LIST.", studyResponseDtoList);
+    }
+
+    /**
      * 비밀번호 변경하는 API (완료)
      * @param userPwdUpdateDto
      *          String prevPwd: 이전 비밀번호

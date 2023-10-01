@@ -9,6 +9,9 @@ import com.mmos.mmos.src.domain.entity.UserStudy;
 import com.mmos.mmos.src.repository.StudyRepository;
 import com.mmos.mmos.src.repository.UserStudyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,18 +57,18 @@ public class StudyService {
     }
 
     @Transactional
-    public List<UserResponseDto> getStudyAppliers(Long studyIdx){
+    public Page<UserResponseDto> getStudyAppliersOrInvitee(Long studyIdx, Integer status, Pageable pageable){
         Study study = findStudy(studyIdx);
 
         // UserStudy list에서 지원자 선별
         List<UserResponseDto> appliersDto = new ArrayList<>();
         for (UserStudy userStudy : study.getStudyUserstudies()){
-            if(userStudy.getUserstudyMemberStatus() == 4){
+            if(userStudy.getUserstudyMemberStatus().equals(status)) {
                 appliersDto.add(new UserResponseDto(userStudy.getUser()));
             }
         }
 
-        return appliersDto;
+        return new PageImpl<>(appliersDto, pageable, appliersDto.size());
     }
 
     @Transactional

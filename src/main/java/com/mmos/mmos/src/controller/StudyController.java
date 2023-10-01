@@ -9,6 +9,10 @@ import com.mmos.mmos.src.domain.dto.userstudy.UserStudyResponseDto;
 import com.mmos.mmos.src.service.StudyService;
 import com.mmos.mmos.src.service.UserStudyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,17 +48,31 @@ public class StudyController extends BaseController {
     }
 
     /**
-     * 스터디에 참가 요청을 보낸 유저 리스트 조회 API (초대 및 참가 요청 완료 후 다시 테스트)
+     * 스터디에 참가 요청을 보낸 유저 리스트 조회 API (완료)
      * @param studyIdx: 스터디 인덱스
      */
     // Study 신청자 조회
     @ResponseBody
     @GetMapping("/applier/{studyIdx}")
-    public ResponseEntity<ResponseApiMessage> getStudyApplier(@PathVariable Long studyIdx) {
+    public ResponseEntity<ResponseApiMessage> getStudyApplier(@PathVariable Long studyIdx, @PageableDefault(page = 0, size = 10, sort = "userIndex", direction = Sort.Direction.ASC) Pageable pageable) {
         // Study 지원자 리스트
-        List<UserResponseDto> userResponseDtoList= studyService.getStudyAppliers(studyIdx);
+        Page<UserResponseDto> userResponseDtoList= studyService.getStudyAppliersOrInvitee(studyIdx, 5, pageable);
 
-        return sendResponseHttpByJson(SUCCESS, "GET APPLIERS.",userResponseDtoList);
+        return sendResponseHttpByJson(SUCCESS, "GET APPLIERS.", userResponseDtoList);
+    }
+
+    /**
+     * 스터디가 초대 요청을 보낸 유저 리스트 조회 API (완료)
+     * @param studyIdx: 스터디 인덱스
+     */
+    // Study 신청자 조회
+    @ResponseBody
+    @GetMapping("/invitee/{studyIdx}")
+    public ResponseEntity<ResponseApiMessage> getStudyInvitee(@PathVariable Long studyIdx, @PageableDefault(page = 0, size = 10, sort = "userIndex", direction = Sort.Direction.ASC) Pageable pageable) {
+        // Study 지원자 리스트
+        Page<UserResponseDto> userResponseDtoList= studyService.getStudyAppliersOrInvitee(studyIdx, 4, pageable);
+
+        return sendResponseHttpByJson(SUCCESS, "GET APPLIERS.", userResponseDtoList);
     }
 
     /**
