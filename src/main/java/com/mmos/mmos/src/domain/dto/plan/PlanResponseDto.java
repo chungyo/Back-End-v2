@@ -29,13 +29,12 @@ public class PlanResponseDto {
         this.status = status;
     }
 
-    public PlanResponseDto(Plan plan, LocalDate date, HttpResponseStatus status) {
+    public PlanResponseDto(Plan plan, LocalDate date) {
         this.idx = plan.getPlanIndex();
         this.name = plan.getPlanName();
         this.isComplete = plan.getPlanIsComplete();
         this.isStudy = plan.getPlanIsStudy();
         this.studyTime = plan.getPlanStudyTime();
         this.date = date;
-        this.status = status;
     }
 }
