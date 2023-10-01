@@ -1,10 +1,9 @@
 package com.mmos.mmos.src.service;
 
 import com.mmos.mmos.src.domain.dto.project.*;
-import com.mmos.mmos.src.domain.entity.Calendar;
-import com.mmos.mmos.src.domain.entity.Project;
-import com.mmos.mmos.src.domain.entity.User;
+import com.mmos.mmos.src.domain.entity.*;
 import com.mmos.mmos.src.repository.CalendarRepository;
+import com.mmos.mmos.src.repository.PlanRepository;
 import com.mmos.mmos.src.repository.ProjectRepository;
 import com.mmos.mmos.src.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
-import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
-import static com.mmos.mmos.config.HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER;
+import static com.mmos.mmos.config.HttpResponseStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +22,7 @@ public class ProjectService {
     private final UserRepository userRepository;
     private final CalendarRepository calendarRepository;
     private final CalendarService calendarService;
+    private final PlanRepository planRepository;
 
     public User findUser(Long userIdx) {
         return userRepository.findById(userIdx)
@@ -93,15 +93,61 @@ public class ProjectService {
     }
 
     @Transactional
-    public ProjectResponseDto updateProjectIsComplete(Long userIdx, Long projectIdx, ProjectCompleteUpdateDto projectCompleteUpdateDto) {
+    public ProjectResponseDto updateProjectIsComplete(Long userIdx, Long projectIdx, ProjectStatusUpdateDto projectCompleteUpdateDto) {
         // 프로젝트를 소유한 유저인지 확인
         Project project = findProject(projectIdx);
         User user = findUser(userIdx);
         if(!user.getUserProjects().contains(project)){
             return new ProjectResponseDto(UPDATE_PROJECT_NOT_OWNER);
         }
-        project.updateProjectIsComplete(projectCompleteUpdateDto.getIsComplete());
+        project.updateProjectIsComplete(projectCompleteUpdateDto.getStatus());
 
+        return new ProjectResponseDto(project, SUCCESS);
+    }
+    @Transactional
+    public ProjectResponseDto updateProjectIsVisible(Long userIdx, Long projectIdx, ProjectStatusUpdateDto projectCompleteUpdateDto) {
+        // 프로젝트를 소유한 유저인지 확인
+        Project project = findProject(projectIdx);
+        User user = findUser(userIdx);
+        if(!user.getUserProjects().contains(project)){
+            return new ProjectResponseDto(UPDATE_PROJECT_NOT_OWNER);
+        }
+        Calendar calendar = findCalendar(userIdx,project.getProjectStartTime().getYear(),project.getProjectStartTime().getMonthValue());
+        List<Planner> plannerList = calendar.getCalendarPlanners();
+        // 플래너 isVisble 5개 넘는지 체크
+        for (LocalDate date = project.getProjectStartTime(); date.isBefore(project.getProjectEndTime().plusDays(1)); date = date.plusDays(1)){
+            // 달 지나면 새로운 캘린더 가져오기
+            if(date.getMonthValue() != calendar.getCalendarMonth()) {
+                calendar = findCalendar(userIdx, date.getYear(), date.getMonthValue());
+                plannerList = calendar.getCalendarPlanners();
+            }
+
+            // 프로젝트 일정을 걸친 날들의 is visible == true 플랜 + 프로젝트 개수 세기
+            for (Planner planner : plannerList) {
+                if(planner.getPlannerDate().equals(date)){
+                    int count = 0;
+                    for (Plan plannerPlan : planner.getPlannerPlans()) {
+                        if(plannerPlan.getPlanIsVisible()){
+                            count++;
+                        }
+                        if(count >= 5)
+                            return new ProjectResponseDto(UPDATE_PROJECT_FULL_VISIBLE);
+                    }
+                    for (Project userProject : user.getUserProjects()) {
+                        if((userProject.getProjectStartTime().isBefore(date)||userProject.getProjectStartTime().isEqual(date)) && (userProject.getProjectEndTime().isAfter(date)||userProject.getProjectEndTime().isEqual(date))) {
+                            if (userProject.getProjectIsVisible()) {
+                                count++;
+                            }
+                            if(count >= 5)
+                                return new ProjectResponseDto(UPDATE_PROJECT_FULL_VISIBLE);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        project.updateProjectIsVisible(projectCompleteUpdateDto.getStatus());
         return new ProjectResponseDto(project, SUCCESS);
     }
     @Transactional

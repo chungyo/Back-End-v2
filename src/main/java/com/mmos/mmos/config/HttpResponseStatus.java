@@ -102,7 +102,7 @@ public enum HttpResponseStatus {
     UPDATE_PROJECT_EMPTY_NAME(false,BAD_REQUEST.value(),"이름을 입력해주세요."),
     UPDATE_PROJECT_EMPTY_TIME(false,BAD_REQUEST.value(),"기간을 선택해주세요."),
     UPDATE_PROJECT_EMPTY_STATUS(false,BAD_REQUEST.value(),"상태를 선택해주세요."),
-
+    UPDATE_PROJECT_FULL_VISIBLE(false,BAD_REQUEST.value(),"더 이상 추가할 수 없습니다."),
     /**
      * 500 : Database, Server 오류
      */
