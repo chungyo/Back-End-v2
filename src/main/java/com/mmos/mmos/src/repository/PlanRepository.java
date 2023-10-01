@@ -15,4 +15,7 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
 
 
     Optional<List<Plan>> findPlansByPlanIsVisibleIsTrueAndPlanner_Calendar(Calendar calendar);
+
+    Long countByPlannerAndPlanIsVisibleTrue(Planner planner);
+
 }
