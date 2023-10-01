@@ -9,7 +9,6 @@ import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.repository.CalendarRepository;
 import com.mmos.mmos.src.repository.PlannerRepository;
 import com.mmos.mmos.src.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,13 +90,8 @@ public class PlannerService {
                 plannerProjectList.add(project);
             }
         }
-        // null검사
-        if (planner == null) {
-            throw new EntityNotFoundException("플래너를 찾을 수 없습니다. PLANNER_INDEX= " + plannerIdx);
-        }
 
-        PlannerResponseDto responseDto = new PlannerResponseDto(planner, plannerProjectList, HttpResponseStatus.SUCCESS);  // Assuming PlannerResponseDto constructor is modified to accept plannerProjectList
-
+        PlannerResponseDto responseDto = new PlannerResponseDto(planner, plannerProjectList, HttpResponseStatus.SUCCESS);
         return responseDto;
     }
 }
