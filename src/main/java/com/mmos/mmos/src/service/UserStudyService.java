@@ -11,12 +11,8 @@ import com.mmos.mmos.src.repository.UserRepository;
 import com.mmos.mmos.src.repository.UserStudyRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.mmos.mmos.config.HttpResponseStatus.*;
@@ -316,16 +312,6 @@ public class UserStudyService {
         return new UserStudyResponseDto(userStudy, SUCCESS);
     }
 
-    @Transactional
-    public Page<UserStudyResponseDto> getUserStudies(Long studyIdx, Pageable pageable) {
-        List<UserStudy> userStudyList = findUserStudiesByStudyIdxAndStatus(studyIdx, 5);
-        List<UserStudyResponseDto> responseDtoList = new ArrayList<>();
 
-        for (UserStudy userStudy : userStudyList) {
-            responseDtoList.add(new UserStudyResponseDto(userStudy, null));
-        }
-
-        return new PageImpl<>(responseDtoList, pageable, responseDtoList.size());
-    }
 
 }

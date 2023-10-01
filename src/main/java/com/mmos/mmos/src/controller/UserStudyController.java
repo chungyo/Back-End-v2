@@ -236,12 +236,4 @@ public class UserStudyController extends BaseController {
             return sendResponseHttpByJson(USERSTUDY_INVALID_REQUEST, "권한이 없습니다.", null);
         return sendResponseHttpByJson(SUCCESS, "직책 변경 완료", responseDto);
     }
-
-    // 스터디 엔티티로 옮기기
-    // 스터디 신청한 유저 목록 조회
-    // 스터디 원 목록 조회
-    // 내 스터디 조회
-
-
-
 }
