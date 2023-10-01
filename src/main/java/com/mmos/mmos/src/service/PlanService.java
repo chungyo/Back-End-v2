@@ -25,6 +25,7 @@ public class PlanService {
     private final UserStudyRepository userStudyRepository;
     private final CalendarRepository calendarRepository;
     private final UserRepository userRepository;
+    private final ProjectRepository projectRepository;
 
     private final PlannerService plannerService;
     private final CalendarService calendarService;
@@ -189,11 +190,25 @@ public class PlanService {
 
     // 플랜이 캘린더에 표시되는 것
     @Transactional
-    public PlanResponseDto updatePlanIsVisible(Long planIdx, PlanIsVisibleRequestDto requestDto) {
+    public PlanResponseDto updatePlanIsVisible(Long planIdx) {
         Plan plan = findPlanByIdx(planIdx);
+        Planner planner = plan.getPlanner();
+        User user = plan.getPlanner().getCalendar().getUser();
 
-        plan.updateIsVisible(requestDto.getIsVisible());
+        Long visiblePlanCount = planRepository.countByPlannerAndPlanIsVisibleTrue(planner);
+        Long visibleProjectCount = projectRepository.countByUserAndProjectIsVisibleTrue(user);
+
+        if(!plan.getPlanIsVisible()) {
+            if (visiblePlanCount + visibleProjectCount >= 5) {
+                return new PlanResponseDto(HttpResponseStatus.POST_PLAN_ISVISIBLE_FULL);
+            }
+
+            plan.updateIsVisible(true);
+        } else {
+            plan.updateIsVisible(false);
+        }
 
         return new PlanResponseDto(plan, HttpResponseStatus.SUCCESS);
     }
+
 }
