@@ -1,8 +1,6 @@
 package com.mmos.mmos.src.service;
 
-import com.mmos.mmos.src.domain.dto.project.ProjectNameUpdateDto;
-import com.mmos.mmos.src.domain.dto.project.ProjectResponseDto;
-import com.mmos.mmos.src.domain.dto.project.ProjectSaveRequestDto;
+import com.mmos.mmos.src.domain.dto.project.*;
 import com.mmos.mmos.src.domain.entity.Calendar;
 import com.mmos.mmos.src.domain.entity.Project;
 import com.mmos.mmos.src.domain.entity.User;
@@ -67,6 +65,20 @@ public class ProjectService {
     }
 
     @Transactional
+    public ProjectResponseDto updateProjectTime(Long userIdx, Long projectIdx, ProjectTimeUpdateDto projectTimeUpdateDto) {
+        // 프로젝트를 소유한 유저인지 확인
+        Project project = findProject(projectIdx);
+        User user = findUser(userIdx);
+        if(!user.getUserProjects().contains(project)){
+            return new ProjectResponseDto(UPDATE_PROJECT_NOT_OWNER);
+        }
+
+        project.updateProjectStartTime(projectTimeUpdateDto.getNewStartTime());
+        project.updateProjectEndTime(projectTimeUpdateDto.getNewEndTime());
+
+        return new ProjectResponseDto(project, SUCCESS);
+    }
+    @Transactional
     public ProjectResponseDto updateProjectName(Long userIdx, Long projectIdx, ProjectNameUpdateDto projectNameUpdateDto) {
         // 프로젝트를 소유한 유저인지 확인
         Project project = findProject(projectIdx);
@@ -76,6 +88,19 @@ public class ProjectService {
         }
 
         project.updateProjectName(projectNameUpdateDto.getNewName());
+
+        return new ProjectResponseDto(project, SUCCESS);
+    }
+
+    @Transactional
+    public ProjectResponseDto updateProjectIsComplete(Long userIdx, Long projectIdx, ProjectCompleteUpdateDto projectCompleteUpdateDto) {
+        // 프로젝트를 소유한 유저인지 확인
+        Project project = findProject(projectIdx);
+        User user = findUser(userIdx);
+        if(!user.getUserProjects().contains(project)){
+            return new ProjectResponseDto(UPDATE_PROJECT_NOT_OWNER);
+        }
+        project.updateProjectIsComplete(projectCompleteUpdateDto.getIsComplete());
 
         return new ProjectResponseDto(project, SUCCESS);
     }

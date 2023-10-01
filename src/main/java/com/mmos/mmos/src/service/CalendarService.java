@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,12 +72,22 @@ public class CalendarService {
         // user, calendar, List<Project> 객체 가져오기
         User user = findUserByIdx(userIdx);
         Calendar calendar = findCalendarByMonthAndYear(userIdx,calendarGetRequestDto.getYear(), calendarGetRequestDto.getMonth());
+        if(calendar == null){
+            saveCalendar(calendarGetRequestDto.getYear(), calendarGetRequestDto.getMonth(),userIdx);
+            calendar = findCalendarByMonthAndYear(userIdx,calendarGetRequestDto.getYear(), calendarGetRequestDto.getMonth());
+        }
         List<Project> userProjectList = user.getUserProjects();
 
         // 해당 달을 포함하는 Project 찾기
+        LocalDate startDate;
+        LocalDate endDate;
+        LocalDate calendarDate = LocalDate.of(calendarGetRequestDto.getYear(), calendarGetRequestDto.getMonth(),1);
         List<Project> calendarProjectList = new ArrayList<>();
+        System.out.println("userProjectList = " + userProjectList);
         for (Project project : userProjectList){
-            if(project.getProjectStartTime().getMonthValue() <= calendarGetRequestDto.getMonth() && project.getProjectEndTime().getYear()>=calendarGetRequestDto.getYear())
+            startDate = LocalDate.of(project.getProjectStartTime().getYear(),project.getProjectStartTime().getMonthValue(),1);
+            endDate = LocalDate.of(project.getProjectEndTime().getYear(),project.getProjectEndTime().getMonthValue(),20);
+            if((startDate.isBefore(calendarDate)||startDate.isEqual(calendarDate) )&&( endDate.isAfter(calendarDate)||endDate.isEqual((calendarDate))))
                 calendarProjectList.add(project);
         }
 

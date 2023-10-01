@@ -26,6 +26,9 @@ public class Project {
     private String projectName;
 
     @Column
+    private Boolean projectIsVisible = false;
+
+    @Column
     private Boolean projectIsComplete = false;
 
     @JsonBackReference
@@ -35,7 +38,18 @@ public class Project {
     public void updateProjectName(String newName){
         this.projectName = newName;
     }
-
+    public void updateProjectStartTime(LocalDate newStartTime){
+        this.projectStartTime = newStartTime;
+    }
+    public void updateProjectEndTime(LocalDate newEndTime){
+        this.projectEndTime= newEndTime;
+    }
+    public void updateProjectIsComplete(Boolean isComplete){
+        this.projectIsComplete = isComplete;
+    }
+    public void updateProjectIsVisible(Boolean isVisible){
+        this.projectIsVisible = isVisible;
+    }
     public Project(LocalDate projectStartTime, LocalDate projectEndTime, String projectName, User user) {
         this.projectStartTime = projectStartTime;
         this.projectEndTime = projectEndTime;
