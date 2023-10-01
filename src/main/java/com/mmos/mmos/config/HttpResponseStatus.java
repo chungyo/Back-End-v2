@@ -45,6 +45,9 @@ public enum HttpResponseStatus {
     // updateNickname
     UPDATE_USER_EMPTY_NICKNAME(false, BAD_REQUEST.value(), "닉네임을 입력해주세요."),
     UPDATE_USER_DUPLICATE_NICKNAME(false, BAD_REQUEST.value(), "이전에 사용하던 닉네임과 같습니다. 새로운 닉네임을 입력해주세요."),
+    INVALID_USER(false, BAD_REQUEST.value(), "존재하지 않는 유저입니다."),
+    FRIEND_COMPLETE_REQUEST(false, BAD_REQUEST.value(), "이미 처리된 요청입니다."),
+    d(false, BAD_REQUEST.value(), "존재하지 않는 유저입니다."),
 
 
     // Badge
@@ -62,10 +65,12 @@ public enum HttpResponseStatus {
     POST_PLAN_INVALID_REQUEST(false, BAD_REQUEST.value(),"스터디 계획이 아닙니다."),
 
     // UserStudy
-    POST_USERSTUDY_DUPLICATE_REQUEST(false, BAD_REQUEST.value(),"이미 보낸 요청입니다."),
-    POST_USERSTUDY_ALREADY_EXIST(false, BAD_REQUEST.value(),"이미 활동 중입니다."),
-    POST_USERSTUDY_INVALID_REQUEST(false, BAD_REQUEST.value(),"권한이 없습니다."),
-    POST_USERSTUDY_COMPLETE_REQUEST(false, BAD_REQUEST.value(),"이미 받은 요청입니다."),
+    USERSTUDY_ALREADY_EXIST(false, BAD_REQUEST.value(),"이미 활동 중입니다."),
+    USERSTUDY_INVALID_REQUEST(false, BAD_REQUEST.value(),"권한이 없습니다."),
+    USERSTUDY_MEMBER_LIMIT_FULL(false, BAD_REQUEST.value(),"가득 찬 스터디입니다."),
+    USERSTUDY_COMPLETE_REQUEST(false, BAD_REQUEST.value(),"이미 처리된 요청입니다."),
+    USERSTUDY_MEMBER_ALREADY_EXIST(false, BAD_REQUEST.value(),"이미 활동 중입니다."),
+
 
     // Planner
     POST_PLANNER_INVALID_REQUEST(false, BAD_REQUEST.value(), "하루가 지나지 않아서 저장할 플래너가 없습니다."),

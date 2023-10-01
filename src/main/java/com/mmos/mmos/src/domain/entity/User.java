@@ -99,6 +99,9 @@ public class User {
         this.userUserstudies.add(userStudy);
     }
 
+    public void addFriend(Friend friend) {
+        this.userFriends.add(friend);
+    }
 
     public void updatePwd(String newPwd) {
         this.userPassword = newPwd;

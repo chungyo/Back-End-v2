@@ -23,10 +23,33 @@ public class Friend {
         3: 상대방이 나에게 친구 요청을 보냄 (receive)
     */
     @Column
-    private int friendStatus;
+    private Integer friendStatus;
 
+    // 내 역매핑
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "userIndex")
     private User user;
+
+    // 친구 인덱스
+    @Column
+    private Long friendUserIndex;
+
+    public Friend(Integer friendStatus, Long friendIndex, User user) {
+        this.friendStatus = friendStatus;
+        this.friendUserIndex = friendIndex;
+        this.user = user;
+    }
+
+    public void updateStatus(Integer friendStatus) {
+        this.friendStatus = friendStatus;
+    }
+
+    public void updateIsFixedToTrue() {
+        this.friendIsFixed = true;
+    }
+
+    public void updateIsFixedToFalse() {
+        this.friendIsFixed = false;
+    }
 }
