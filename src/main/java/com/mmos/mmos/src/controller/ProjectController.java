@@ -2,10 +2,7 @@ package com.mmos.mmos.src.controller;
 
 import com.mmos.mmos.config.HttpResponseStatus;
 import com.mmos.mmos.config.ResponseApiMessage;
-import com.mmos.mmos.src.domain.dto.project.ProjectNameUpdateDto;
-import com.mmos.mmos.src.domain.dto.project.ProjectResponseDto;
-import com.mmos.mmos.src.domain.dto.project.ProjectSaveRequestDto;
-import com.mmos.mmos.src.domain.dto.project.ProjectTimeUpdateDto;
+import com.mmos.mmos.src.domain.dto.project.*;
 import com.mmos.mmos.src.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -84,6 +81,22 @@ public class ProjectController extends BaseController{
             return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER,"프로젝트를 소유한 유저가 아닙니다.", null);
         }
         return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE PROJECT NAME. PROJECT IDX=" + projectIdx, projectResponseDto);
+    }
+
+    @PatchMapping("/updateName/{userIdx}/{projectIdx}")
+    @ResponseBody
+    public ResponseEntity<ResponseApiMessage> updateProjectIsComplete(@PathVariable Long userIdx,@PathVariable Long projectIdx, @RequestBody ProjectCompleteUpdateDto projectCompleteUpdateDto){
+        // null 검사
+        if(projectCompleteUpdateDto.getIsComplete()==null) {
+            return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_EMPTY_STATUS,"EMPTY_STATUS.",null);
+        }
+
+        ProjectResponseDto projectResponseDto = projectService.updateProjectIsComplete(userIdx,projectIdx,projectCompleteUpdateDto);
+
+        if(projectResponseDto.getStatus().equals(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER)){
+            return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER,"프로젝트를 소유한 유저가 아닙니다.", null);
+        }
+        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE PROJECT_IS_COMPLETE. PROJECT IDX=" + projectIdx, projectResponseDto);
     }
 
     /**
