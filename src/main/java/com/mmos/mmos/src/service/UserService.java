@@ -58,7 +58,25 @@ public class UserService {
         // 유저가 가진 스터디 Dto 리스트 생성
         List<StudyResponseDto> studyResponseDtoList = new ArrayList<>();
         for (UserStudy userStudy : userStudyList){
-            studyResponseDtoList.add(new StudyResponseDto(userStudy.getStudy()));
+            if(userStudy.getUserstudyMemberStatus() < 4)
+                studyResponseDtoList.add(new StudyResponseDto(userStudy.getStudy()));
+        }
+
+        return studyResponseDtoList;
+    }
+
+    public List<StudyResponseDto> getStudyRequestList(Long userIdx, Integer status){
+
+        User user = findUserByIdx(userIdx);
+
+        // 유저가 가진 유저스터디 리스트
+        List<UserStudy> userStudyList = user.getUserUserstudies();
+
+        // 유저가 가진 스터디 Dto 리스트 생성
+        List<StudyResponseDto> studyResponseDtoList = new ArrayList<>();
+        for (UserStudy userStudy : userStudyList){
+            if(userStudy.getUserstudyMemberStatus().equals(status))
+                studyResponseDtoList.add(new StudyResponseDto(userStudy.getStudy()));
         }
 
         return studyResponseDtoList;
