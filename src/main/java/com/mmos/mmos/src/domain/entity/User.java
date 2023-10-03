@@ -62,6 +62,10 @@ public class User {
     @ColumnDefault("null")
     private List<UserStudy> userUserstudies = new ArrayList<>();
 
+    @JsonManagedReference
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Streak> streaks = new ArrayList<>();
+
     // 현재 친구 & 나에게 친구 요청을 한 & 내가 친구 요청을 보낸 유저들 리스트 (양방향)
     @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
