@@ -126,9 +126,10 @@ public class PlanController extends BaseController {
      */
     @ResponseBody
     @PatchMapping("/isvisible/{planIdx}")
-    public ResponseEntity<ResponseApiMessage> updatePlanIsVisible(@PathVariable Long planIdx, @RequestBody PlanIsVisibleRequestDto requestDto) {
-        PlanResponseDto responseDto = planService.updatePlanIsVisible(planIdx, requestDto);
-
+    public ResponseEntity<ResponseApiMessage> updatePlanIsVisible(@PathVariable Long planIdx) {
+        PlanResponseDto responseDto = planService.updatePlanIsVisible(planIdx);
+        if(responseDto.getStatus().equals(POST_PLAN_ISVISIBLE_FULL))
+            return sendResponseHttpByJson(POST_PLAN_ISVISIBLE_FULL, "ISVISIBLE IS FULL. PLAN_INDEX=" + planIdx, responseDto);
         return sendResponseHttpByJson(SUCCESS, "UPDATE IS VISIBLE PLAN. PLAN_INDEX=" + planIdx, responseDto);
     }
 
@@ -146,11 +147,6 @@ public class PlanController extends BaseController {
 
         return sendResponseHttpByJson(SUCCESS, "DELETE USER_STUDY_COMPLETE. USER_STUDY_INDEX=" + planIdx, null);
     }
-
-
-
-
-
 
 
 }
