@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.mmos.mmos.config.HttpResponseStatus.GET_COLLEGE_EMPTY_RETURN;
-import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
+import static com.mmos.mmos.config.HttpResponseStatus.*;
 
 @RestController
 @RequestMapping("api/v1/colleges")
@@ -32,6 +31,8 @@ public class CollegeController extends BaseController {
     public ResponseEntity<ResponseApiMessage> saveCollege(@PathVariable Long universityIdx, @RequestBody UniversitySaveRequestDto requestDto) {
         CollegeResponseDto responseDto = collegeService.saveCollege(universityIdx, requestDto);
 
+        if(responseDto.getStatus().equals(INVALID_UNIVERSITY))
+            return sendResponseHttpByJson(INVALID_UNIVERSITY, "대학교가 존재하지 않습니다. UniversityIdx = " + universityIdx,null);
         return sendResponseHttpByJson(SUCCESS, "Saved University", responseDto);
     }
 
@@ -46,6 +47,9 @@ public class CollegeController extends BaseController {
 
         if(collegeResponseDtoList.isEmpty()){
             return sendResponseHttpByJson(GET_COLLEGE_EMPTY_RETURN, "해당 대학교에 단과대학이 존재하지 않습니다.", null);
+        }
+        if(collegeResponseDtoList.get(1).getStatus().equals(INVALID_UNIVERSITY)){
+            return sendResponseHttpByJson(GET_COLLEGE_EMPTY_RETURN, "대학교가 존재하지 않습니다. UniversityIdx = "+universityIdx, null);
         }
         return sendResponseHttpByJson(SUCCESS, "Got Colleges", collegeResponseDtoList);
     }

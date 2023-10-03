@@ -1,5 +1,6 @@
 package com.mmos.mmos.src.service;
 
+import com.mmos.mmos.config.HttpResponseStatus;
 import com.mmos.mmos.src.domain.dto.badge.BadgeResponseDto;
 import com.mmos.mmos.src.domain.entity.Badge;
 import com.mmos.mmos.src.repository.BadgeRepository;
@@ -10,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mmos.mmos.config.HttpResponseStatus.INVALID_BADGE;
+import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
+
 @Service
 @RequiredArgsConstructor
 public class BadgeService {
@@ -18,12 +22,12 @@ public class BadgeService {
 
     public Badge findBadgeByIdx(Long badgeId) {
         return badgeRepository.findById(badgeId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 뱃지가 존재하지 않습니다. BADGE_ID=" + badgeId));
+                .orElse(null);
     }
 
     public List<Badge> findBadgesByPurpose(String purpose) {
         return badgeRepository.findBadgesByBadgePurpose(purpose)
-                .orElseThrow(() -> new IllegalArgumentException("휘장 == 0, 티어 == 1, 프사 == 2 다시 검색해주세요. 현재 입력=" + purpose));
+                .orElse(null);
     }
 
     // 휘장, 뱃지, 프사 모두 각각의 인덱스가 하나의 엔티티에서 다른 인덱스를 갖고 있으므로
@@ -31,8 +35,11 @@ public class BadgeService {
     @Transactional
     public BadgeResponseDto getBadge(Long badgeIdx) {
         Badge badge = findBadgeByIdx(badgeIdx);
-
-        return new BadgeResponseDto(badge);
+        // 뱃지가 존재 하지 않을 때
+        if(badge == null){
+            return new BadgeResponseDto(HttpResponseStatus.INVALID_BADGE);
+        }
+        return new BadgeResponseDto(badge, SUCCESS);
     }
 
 
@@ -45,8 +52,14 @@ public class BadgeService {
         List<Badge> badgeList = findBadgesByPurpose(purpose);
         List<BadgeResponseDto> responseDtoList = new ArrayList<>();
 
-        for (Badge badge : badgeList) {
-            responseDtoList.add(new BadgeResponseDto(badge));
+        // 목적에 맞는 뱃지가 하나도 존재 하지 않들 때
+        if( badgeList == null)
+            // List에 NOT_FOUND dto 하나 추가해서 리턴
+            responseDtoList.add(new BadgeResponseDto(INVALID_BADGE));
+        else{
+            for (Badge badge : badgeList) {
+                responseDtoList.add(new BadgeResponseDto(badge, SUCCESS));
+            }
         }
 
         return responseDtoList;

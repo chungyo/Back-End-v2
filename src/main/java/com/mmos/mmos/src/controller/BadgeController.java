@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.mmos.mmos.config.HttpResponseStatus.INVALID_BADGE;
 import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
 
 @RestController
@@ -42,6 +43,11 @@ public class BadgeController extends BaseController {
     @GetMapping("/all/{purpose}")
     public ResponseEntity<ResponseApiMessage> getBadgesByPurpose(@PathVariable String purpose) {
         List<BadgeResponseDto> responseDtoList = badgeService.getBadgesByPurpose(purpose);
+
+        // 목적에 맞는 뱃지가 존재하지 않을 때
+        if(responseDtoList.get(0).getStatus() == INVALID_BADGE){
+            return sendResponseHttpByJson(INVALID_BADGE, "NO BADGE FOUND BY PURPOSE. PURPOSE = " + purpose, null);
+        }
 
         return sendResponseHttpByJson(SUCCESS, "Load Badges.", responseDtoList);
     }

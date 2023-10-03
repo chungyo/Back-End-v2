@@ -13,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mmos.mmos.config.HttpResponseStatus.INVALID_UNIVERSITY;
+import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
+
 @Service
 @RequiredArgsConstructor
 public class CollegeService {
@@ -22,7 +25,7 @@ public class CollegeService {
 
     public University findUniversityByIdx(Long universityIdx) {
         return universityRepository.findById(universityIdx)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 대학입니다. UNIVERSITY_INDEX" + universityIdx));
+                .orElse(null);
     }
 
     public List<College> findAllColleges(University university) {
@@ -33,25 +36,34 @@ public class CollegeService {
     @Transactional
     public CollegeResponseDto saveCollege(Long universityIdx, UniversitySaveRequestDto requestDto) {
         University university = findUniversityByIdx(universityIdx);
+        if(university == null){
+            return new CollegeResponseDto(INVALID_UNIVERSITY);
+        }
         College college = new College(requestDto, university);
         collegeRepository.save(college);
         university.addCollege(college);
 
-        return new CollegeResponseDto(college);
+        return new CollegeResponseDto(college, SUCCESS);
     }
 
     @Transactional
     public List<CollegeResponseDto> getColleges(Long universityIdx) {
         // university 객체 가져오기
         University university = findUniversityByIdx(universityIdx);
+        List<CollegeResponseDto> collegeResponseDtoList = new ArrayList<>();
+
+        // 대학이 존재하지 않을 때
+        if(university == null){
+            collegeResponseDtoList.add(new CollegeResponseDto(INVALID_UNIVERSITY));
+            return collegeResponseDtoList;
+        }
 
         // university에 소속한 college 리스트로 가져오기
         List<College> collegeList = findAllColleges(university);
-        List<CollegeResponseDto> collegeResponseDtoList = new ArrayList<>();
 
         // dto 변환
         for (College college : collegeList) {
-            collegeResponseDtoList.add(new CollegeResponseDto(college));
+            collegeResponseDtoList.add(new CollegeResponseDto(college,SUCCESS));
         }
 
         return collegeResponseDtoList;

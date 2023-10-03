@@ -32,6 +32,8 @@ public class CalendarController extends BaseController {
 
         // 저장
         CalendarResponseDto calendarResponseDto= calendarService.saveCalendar(thisYear, thisMonth, userIdx);
+        if(calendarResponseDto.getStatus() == INVALID_USER)
+            return sendResponseHttpByJson(POST_CALENDAR_INVALID_REQUEST, "Calendar save failed(No User Found). USER_IDX" +userIdx, null);
         if(calendarResponseDto.getStatus() == POST_CALENDAR_INVALID_REQUEST)
             return sendResponseHttpByJson(POST_CALENDAR_INVALID_REQUEST, "Calendar save failed. THIS_DATE" + thisYear +"-"+thisMonth, null);
         return sendResponseHttpByJson(SUCCESS, "Saved calendar THIS_MONTH=" + thisMonth, calendarResponseDto);
@@ -53,6 +55,9 @@ public class CalendarController extends BaseController {
             return sendResponseHttpByJson(GET_CALENDAR_EMPTY_REQUEST, "No Date Selected", null);
 
         CalendarResponseDto calendarResponseDto = calendarService.getCalendar(userIdx,calendarGetRequestDto);
+        if(calendarResponseDto.getStatus().equals(INVALID_USER)){
+            return sendResponseHttpByJson(INVALID_USER,"User Not Found. userIdx=" + userIdx, null);
+        }
         if(calendarResponseDto.getStatus().equals(GET_CALENDAR_EMPTY_REQUEST)){
             return sendResponseHttpByJson(GET_CALENDAR_EMPTY_REQUEST,"캘린더 날짜를 입력해주세요.", null);
         }

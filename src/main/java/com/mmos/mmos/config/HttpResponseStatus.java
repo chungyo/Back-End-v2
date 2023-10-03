@@ -24,6 +24,8 @@ public enum HttpResponseStatus {
     RESPONSE_ERROR(false, HttpStatus.NOT_FOUND.value(), "값을 불러오는데 실패하였습니다."),
 
 
+    // Badge
+    INVALID_BADGE(false, BAD_REQUEST.value(), "뱃지를 찾을 수 없습니다."),
 
 
     // User
@@ -49,6 +51,8 @@ public enum HttpResponseStatus {
     FRIEND_COMPLETE_REQUEST(false, BAD_REQUEST.value(), "이미 처리된 요청입니다."),
     d(false, BAD_REQUEST.value(), "존재하지 않는 유저입니다."),
 
+    // University
+    INVALID_UNIVERSITY(false,BAD_REQUEST.value(),"대학교가 존재하지 않습니다."),
 
     // Badge
     POST_BADGE_INVALID_REQUEST(false, BAD_REQUEST.value(), "받을 뱃지가 없습니다."),

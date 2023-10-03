@@ -79,7 +79,10 @@ public class UserController extends BaseController {
 
         // Calendar 생성
         CalendarResponseDto calendarResponseDto = calendarService.saveCalendar(LocalDate.now().getYear() ,LocalDate.now().getMonthValue(), userResponseDto.getIdx());
-
+        if(calendarResponseDto.getStatus() == INVALID_USER)
+            return sendResponseHttpByJson(POST_CALENDAR_INVALID_REQUEST, "Calendar save failed(No User Found). USER_IDX" +userResponseDto.getIdx(), null);
+        if(calendarResponseDto.getStatus() == POST_CALENDAR_INVALID_REQUEST)
+            return sendResponseHttpByJson(POST_CALENDAR_INVALID_REQUEST, "Calendar save failed. THIS_DATE" +LocalDate.now().getYear() +"-"+LocalDate.now().getMonthValue(), null);
         return sendResponseHttpByJson(SUCCESS, "SAVE USER. USER_INDEX=" + userResponseDto.getIdx(), userResponseDto);
     }
 

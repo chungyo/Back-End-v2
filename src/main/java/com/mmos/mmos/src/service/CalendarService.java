@@ -18,8 +18,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.mmos.mmos.config.HttpResponseStatus.POST_CALENDAR_INVALID_REQUEST;
-import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
+import static com.mmos.mmos.config.HttpResponseStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +30,7 @@ public class CalendarService {
 
     public User findUserByIdx(Long userIdx) {
         return userRepository.findById(userIdx)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다. USER_INDEX=" + userIdx));
+                .orElse(null);
     }
 
     public Calendar findCalendarByMonthAndYear(Long userIdx, Integer calendarYear, Integer calendarMonth) {
@@ -48,6 +47,10 @@ public class CalendarService {
     @Transactional
     public CalendarResponseDto saveCalendar(Integer year, Integer month, Long userIdx) {
         User user = findUserByIdx(userIdx);
+
+        if(user == null){
+            return new CalendarResponseDto(INVALID_USER);
+        }
 
         // 막 회원 가입을 한 유저가 아니면서 같은 달의 캘린더가 이미 존재할 때 생성 막기
         if (!user.getUserCalendars().isEmpty() && findCalendarByMonthAndYear(userIdx,year,month) != null)
@@ -71,6 +74,12 @@ public class CalendarService {
     public CalendarResponseDto getCalendar(Long userIdx, CalendarGetRequestDto calendarGetRequestDto){
         // user, calendar, List<Project> 객체 가져오기
         User user = findUserByIdx(userIdx);
+
+        // user가 존재하지 않을 때
+        if (user == null) {
+            return new CalendarResponseDto(INVALID_USER);
+        }
+
         Calendar calendar = findCalendarByMonthAndYear(userIdx,calendarGetRequestDto.getYear(), calendarGetRequestDto.getMonth());
         if(calendar == null){
             saveCalendar(calendarGetRequestDto.getYear(), calendarGetRequestDto.getMonth(),userIdx);
