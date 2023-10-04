@@ -1,11 +1,9 @@
 package com.mmos.mmos.src.service;
 
-import com.mmos.mmos.config.HttpResponseStatus;
 import com.mmos.mmos.src.domain.dto.plan.PlanIsCompleteRequestDto;
 import com.mmos.mmos.src.domain.dto.plan.PlanNameUpdateRequestDto;
 import com.mmos.mmos.src.domain.dto.plan.PlanResponseDto;
 import com.mmos.mmos.src.domain.dto.plan.PlanSaveRequestDto;
-import com.mmos.mmos.src.domain.dto.plan.*;
 import com.mmos.mmos.src.domain.entity.*;
 import com.mmos.mmos.src.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.mmos.mmos.config.HttpResponseStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +37,7 @@ public class PlanService {
 
     public UserStudy findUserStudyByIdx(Long userStudyIdx) {
         return userStudyRepository.findById(userStudyIdx)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자가 가입된 스터디입니다. USERSTUDY_INDEX=" + userStudyIdx));
+                .orElse(null);
     }
 
     public Plan findPlanByIdx(Long planIdx) {
@@ -73,49 +73,51 @@ public class PlanService {
 
     @Transactional
     public PlanResponseDto savePlan(PlanSaveRequestDto requestDto, Long userIdx) {
-        try {
-            // 저장하려는 월의 캘린더가 존재하는지 확인
-            // 존재한다면 DB에서 가져오고, 존재하지 않는다면 DB에 새로 저장 후, 저장한 값 가져오기
-            Long calendarIdx;
-            Calendar calendar = findCalendarByUserIdx(userIdx, requestDto.getDate().getYear(), requestDto.getDate().getMonthValue());
-            if (calendar == null) {
-                calendarIdx = calendarService.saveCalendar(requestDto.getDate().getYear(), requestDto.getDate().getMonthValue(), userIdx).getIdx();
-            } else {
-                calendarIdx = calendar.getCalendarIndex();
-            }
-            // 저장하려는 날의 플래너가 존재하는지 확인
-            // 존재한다면 DB에서 가져오고, 존재하지 않는다면 DB에 새로 저장 후, 저장한 값 가져오기
-            Long plannerIdx;
-            Planner planner = findPlannerByCalendarIdxAndDate(calendarIdx, requestDto.getDate());
-            if (planner == null) {
-                plannerIdx = plannerService.savePlanner(requestDto.getDate(), calendarIdx).getIdx();
-            } else {
-                plannerIdx = planner.getPlannerIndex();
-            }
-            UserStudy userStudy = null;
-            if (requestDto.getIsStudy()) {
-                userStudy = findUserStudyByIdx(requestDto.getUserStudyIdx());
-            }
 
-            // Plan 객체 생성
-            planner = findPlannerByIdx(plannerIdx);
-            Plan plan = new Plan(requestDto, planner, userStudy);
-
-            // 역 FK 매핑
-            planner.addPlan(plan);
-
-            return new PlanResponseDto(planRepository.save(plan), HttpResponseStatus.SUCCESS);
-        } catch (Exception e) {
-            e.printStackTrace();
+        UserStudy userStudy = null;
+        if (requestDto.getIsStudy()) {
+            userStudy = findUserStudyByIdx(requestDto.getUserStudyIdx());
+            if(userStudy == null)
+                return new PlanResponseDto(USERSTUDY_NOT_EXIST_USERSTUDY);
         }
-        return null;
+
+        // 저장하려는 월의 캘린더가 존재하는지 확인
+        // 존재한다면 DB에서 가져오고, 존재하지 않는다면 DB에 새로 저장 후, 저장한 값 가져오기
+        Long calendarIdx;
+        Calendar calendar = findCalendarByUserIdx(userIdx, requestDto.getDate().getYear(), requestDto.getDate().getMonthValue());
+        if (calendar == null) {
+            calendarIdx = calendarService.saveCalendar(requestDto.getDate().getYear(), requestDto.getDate().getMonthValue(), userIdx).getIdx();
+        } else {
+            calendarIdx = calendar.getCalendarIndex();
+        }
+        // 저장하려는 날의 플래너가 존재하는지 확인
+        // 존재한다면 DB에서 가져오고, 존재하지 않는다면 DB에 새로 저장 후, 저장한 값 가져오기
+        Long plannerIdx;
+        Planner planner = findPlannerByCalendarIdxAndDate(calendarIdx, requestDto.getDate());
+        if (planner == null) {
+            plannerIdx = plannerService.savePlanner(requestDto.getDate(), calendarIdx).getIdx();
+        } else {
+            plannerIdx = planner.getPlannerIndex();
+        }
+
+        // Plan 객체 생성
+        planner = findPlannerByIdx(plannerIdx);
+        Plan plan = new Plan(requestDto, planner, userStudy);
+
+        // 역 FK 매핑
+        planner.addPlan(plan);
+        if(userStudy != null)
+            userStudy.addPlan(plan);
+
+        return new PlanResponseDto(planRepository.save(plan), SUCCESS);
+
     }
 
     @Transactional
     public PlanResponseDto getPlan(Long planIdx) {
         Plan plan = findPlanByIdx(planIdx);
 
-        return new PlanResponseDto(plan, HttpResponseStatus.SUCCESS);
+        return new PlanResponseDto(plan, SUCCESS);
     }
 
     // 스터디에 포함된 계획 = true
@@ -127,7 +129,7 @@ public class PlanService {
 
         List<PlanResponseDto> responseDtoList = new ArrayList<>();
         for (Plan plan : planList) {
-            responseDtoList.add(new PlanResponseDto(plan, HttpResponseStatus.SUCCESS));
+            responseDtoList.add(new PlanResponseDto(plan, SUCCESS));
         }
 
         return responseDtoList;
@@ -140,7 +142,7 @@ public class PlanService {
 
         List<PlanResponseDto> responseDtoList = new ArrayList<>();
         for (Plan plan : plans) {
-            responseDtoList.add(new PlanResponseDto(plan, HttpResponseStatus.SUCCESS));
+            responseDtoList.add(new PlanResponseDto(plan, SUCCESS));
         }
 
         return responseDtoList;
@@ -152,16 +154,21 @@ public class PlanService {
 
         plan.update(requestDto.getPlanName());
 
-        return new PlanResponseDto(plan, HttpResponseStatus.SUCCESS);
+        return new PlanResponseDto(plan, SUCCESS);
     }
 
     @Transactional
     public PlanResponseDto deletePlan(Long planIdx) {
         Plan plan = findPlanByIdx(planIdx);
 
+        plan.getPlanner().minusTime(plan.getPlanStudyTime());
+        plan.getPlanner().getCalendar().minusTime(plan.getPlanStudyTime());
+        if(plan.getPlanIsStudy())
+            plan.getUserStudy().getStudy().minusAverageStudyTime(plan.getPlanStudyTime());
+
         planRepository.delete(plan);
 
-        return new PlanResponseDto(plan, HttpResponseStatus.SUCCESS);
+        return new PlanResponseDto(plan, SUCCESS);
     }
 
     // plan 완수 여부 기능
@@ -169,8 +176,8 @@ public class PlanService {
     public PlanResponseDto updatePlanIsComplete(Long planIdx, PlanIsCompleteRequestDto requestDto) {
         Plan plan = findPlanByIdx(planIdx);
         // 같은 경우 제외
-        if(plan.getPlanIsComplete() == requestDto.getIsComplete()){
-            return new PlanResponseDto(HttpResponseStatus.UPDATE_PLAN_REDUNDANT_REQUEST);
+        if (plan.getPlanIsComplete() == requestDto.getIsComplete()) {
+            return new PlanResponseDto(UPDATE_PLAN_REDUNDANT_REQUEST);
         }
 
         plan.updateIsComplete(requestDto.getIsComplete());
@@ -184,7 +191,7 @@ public class PlanService {
             calendar.updateMonthlyPlanNum(requestDto.getIsComplete());
         }
 
-        return new PlanResponseDto(plan, HttpResponseStatus.SUCCESS);
+        return new PlanResponseDto(plan, SUCCESS);
 
     }
 
@@ -198,9 +205,9 @@ public class PlanService {
         Long visiblePlanCount = planRepository.countByPlannerAndPlanIsVisibleTrue(planner);
         Long visibleProjectCount = projectRepository.countByUserAndProjectIsVisibleTrue(user);
 
-        if(!plan.getPlanIsVisible()) {
+        if (!plan.getPlanIsVisible()) {
             if (visiblePlanCount + visibleProjectCount >= 5) {
-                return new PlanResponseDto(HttpResponseStatus.POST_PLAN_ISVISIBLE_FULL);
+                return new PlanResponseDto(POST_PLAN_ISVISIBLE_FULL);
             }
 
             plan.updateIsVisible(true);
@@ -208,7 +215,7 @@ public class PlanService {
             plan.updateIsVisible(false);
         }
 
-        return new PlanResponseDto(plan, HttpResponseStatus.SUCCESS);
+        return new PlanResponseDto(plan, SUCCESS);
     }
 
 }

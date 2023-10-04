@@ -1,7 +1,10 @@
 package com.mmos.mmos.src.controller;
 
 import com.mmos.mmos.config.ResponseApiMessage;
-import com.mmos.mmos.src.domain.dto.plan.*;
+import com.mmos.mmos.src.domain.dto.plan.PlanIsCompleteRequestDto;
+import com.mmos.mmos.src.domain.dto.plan.PlanNameUpdateRequestDto;
+import com.mmos.mmos.src.domain.dto.plan.PlanResponseDto;
+import com.mmos.mmos.src.domain.dto.plan.PlanSaveRequestDto;
 import com.mmos.mmos.src.service.PlanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -41,9 +44,11 @@ public class PlanController extends BaseController {
         if(!requestDto.getIsStudy() && requestDto.getUserStudyIdx() != null || requestDto.getIsStudy() && requestDto.getUserStudyIdx() == null)
             return sendResponseHttpByJson(POST_PLAN_INVALID_REQUEST, "isStudy == false && userStudyIdx != null.", requestDto);
 
-        planService.savePlan(requestDto, userIdx);
+        PlanResponseDto responseDto = planService.savePlan(requestDto, userIdx);
 
-        return sendResponseHttpByJson(SUCCESS, "Saved Plan.", requestDto);
+        if(responseDto.getStatus().equals(USERSTUDY_NOT_EXIST_USERSTUDY))
+            return sendResponseHttpByJson(USERSTUDY_NOT_EXIST_USERSTUDY, "참여 중인 스터디가 아닙니다.", null);
+        return sendResponseHttpByJson(SUCCESS, "Saved Plan.", responseDto);
     }
 
     /**
@@ -122,7 +127,6 @@ public class PlanController extends BaseController {
 
     /**
      * 내 계획 캘린더에 표시 여부 수정하는 API (완료)
-     *
      */
     @ResponseBody
     @PatchMapping("/isvisible/{planIdx}")
@@ -136,9 +140,7 @@ public class PlanController extends BaseController {
 
     /**
      * 내 계획 삭제하는 API(완료)
-     * @param planIdx: 계획 인덱스
-     *
-     * @return
+     * @param planIdx: 삭제하려는 계획 인덱스
      */
     @ResponseBody
     @DeleteMapping("/{planIdx}")
