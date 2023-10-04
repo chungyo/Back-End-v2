@@ -54,12 +54,13 @@ public class FriendService {
         sendUser.addFriend(receiveFriend);
         receiveUser.addFriend(sendFriend);
 
-        return new FriendResponseDto(receiveFriend, SUCCESS);
+        return new FriendResponseDto(receiveFriend, receiveUser, SUCCESS);
     }
 
     @Transactional
     public FriendResponseDto acceptRequest(Long userIdx2, Long userIdx1) {
         Friend receiveFriend = findFriendByUserIdxAndFriendIdx(userIdx2, userIdx1);
+        User user = findUserByIdx(userIdx2);
         Friend sendFriend = findFriendByUserIdxAndFriendIdx(userIdx1, userIdx2);
 
         if (receiveFriend.getFriendStatus() == 1 || sendFriend.getFriendStatus() == 1)
@@ -68,7 +69,7 @@ public class FriendService {
         receiveFriend.updateStatus(1);
         sendFriend.updateStatus(1);
 
-        return new FriendResponseDto(receiveFriend, SUCCESS);
+        return new FriendResponseDto(receiveFriend, user, SUCCESS);
     }
 
     @Transactional
@@ -88,13 +89,14 @@ public class FriendService {
     @Transactional
     public FriendResponseDto updateFixedFriend(Long userIdx1, Long userIdx2) {
         Friend friend = findFriendByUserIdxAndFriendIdx(userIdx1, userIdx2);
+        User user = findUserByIdx(userIdx2);
 
         if (!friend.getFriendIsFixed())
             friend.updateIsFixedToTrue();
         else
             friend.updateIsFixedToFalse();
 
-        return new FriendResponseDto(friend, SUCCESS);
+        return new FriendResponseDto(friend, user, SUCCESS);
     }
 
     @Transactional

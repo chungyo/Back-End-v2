@@ -17,11 +17,12 @@ public class FriendResponseDto {
     private HttpResponseStatus status;
     private User user;
 
-    public FriendResponseDto(Friend friend, HttpResponseStatus status) {
+    public FriendResponseDto(Friend friend, User user, HttpResponseStatus status) {
         this.idx = friend.getFriendIndex();
         this.isFixed = friend.getFriendIsFixed();
         this.friendStatus = friend.getFriendStatus();
         this.friendIdx = friend.getFriendUserIndex();
+        this.user = user;
         this.status = status;
     }
 

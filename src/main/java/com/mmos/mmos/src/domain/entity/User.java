@@ -48,6 +48,12 @@ public class User {
     @Column
     private Long userStudentId;
 
+    @Column
+    private Long userCurrentStreak = 0L;
+
+    @Column
+    private Long userTopStreak = 0L;
+
     @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Calendar> userCalendars = new ArrayList<>();
@@ -111,6 +117,18 @@ public class User {
 
     public void updateNickname(String nickname) {
         this.userNickname = nickname;
+    }
+
+    public void updateTopStreak(Long days) {
+        this.userTopStreak = days;
+    }
+
+    public void plusCurrentStreak() {
+        this.userCurrentStreak++;
+    }
+
+    public void resetCurrentStreak() {
+        this.userCurrentStreak = 0L;
     }
 
 }
