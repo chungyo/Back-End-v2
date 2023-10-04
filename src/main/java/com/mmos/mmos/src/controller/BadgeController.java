@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.mmos.mmos.config.HttpResponseStatus.INVALID_BADGE;
 import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
 
 @RestController
@@ -33,23 +32,37 @@ public class BadgeController extends BaseController {
     }
 
     /**
-     * 도전과제/티어/프사 중 한 부문을 리스트로 조회하는 API (완료)
-     * @param purpose
-     *          도전과제 == 'badge'
-     *          티어 == 'tier'
-     *          프사 == 'pfp' 입력
+     * 도전 과제 리스트 조회 API (완료)
      */
     @ResponseBody
-    @GetMapping("/all/{purpose}")
-    public ResponseEntity<ResponseApiMessage> getBadgesByPurpose(@PathVariable String purpose) {
-        List<BadgeResponseDto> responseDtoList = badgeService.getBadgesByPurpose(purpose);
+    @GetMapping("/badges/all")
+    public ResponseEntity<ResponseApiMessage> getBadges() {
+        List<BadgeResponseDto> responseDtoList = badgeService.getBadgesByPurpose("badge");
 
-        // 목적에 맞는 뱃지가 존재하지 않을 때
-        if(responseDtoList.get(0).getStatus() == INVALID_BADGE){
-            return sendResponseHttpByJson(INVALID_BADGE, "NO BADGE FOUND BY PURPOSE. PURPOSE = " + purpose, null);
-        }
+        return sendResponseHttpByJson(SUCCESS, "Load Badge List.", responseDtoList);
+    }
 
-        return sendResponseHttpByJson(SUCCESS, "Load Badges.", responseDtoList);
+    /**
+     * 티어 리스트 조회 API (완료)
+     * @return
+     */
+    @ResponseBody
+    @GetMapping("/tiers/all")
+    public ResponseEntity<ResponseApiMessage> getTiers() {
+        List<BadgeResponseDto> responseDtoList = badgeService.getBadgesByPurpose("tier");
+
+        return sendResponseHttpByJson(SUCCESS, "Load Tier List.", responseDtoList);
+    }
+
+    /**
+     * 프로필 사진 리스트 조회 API (완료)
+     */
+    @ResponseBody
+    @GetMapping("/pfps/all")
+    public ResponseEntity<ResponseApiMessage> getPfps() {
+        List<BadgeResponseDto> responseDtoList = badgeService.getBadgesByPurpose("pfp");
+
+        return sendResponseHttpByJson(SUCCESS, "Load Pfp List.", responseDtoList);
     }
 
 }

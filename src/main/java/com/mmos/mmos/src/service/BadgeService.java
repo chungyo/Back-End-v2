@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.mmos.mmos.config.HttpResponseStatus.INVALID_BADGE;
 import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
 
 @Service
@@ -36,12 +35,11 @@ public class BadgeService {
     public BadgeResponseDto getBadge(Long badgeIdx) {
         Badge badge = findBadgeByIdx(badgeIdx);
         // 뱃지가 존재 하지 않을 때
-        if(badge == null){
+        if (badge == null) {
             return new BadgeResponseDto(HttpResponseStatus.INVALID_BADGE);
         }
         return new BadgeResponseDto(badge, SUCCESS);
     }
-
 
 
     // 휘장 전체 조회 = badge
@@ -52,14 +50,8 @@ public class BadgeService {
         List<Badge> badgeList = findBadgesByPurpose(purpose);
         List<BadgeResponseDto> responseDtoList = new ArrayList<>();
 
-        // 목적에 맞는 뱃지가 하나도 존재 하지 않들 때
-        if( badgeList == null)
-            // List에 NOT_FOUND dto 하나 추가해서 리턴
-            responseDtoList.add(new BadgeResponseDto(INVALID_BADGE));
-        else{
-            for (Badge badge : badgeList) {
-                responseDtoList.add(new BadgeResponseDto(badge, SUCCESS));
-            }
+        for (Badge badge : badgeList) {
+            responseDtoList.add(new BadgeResponseDto(badge, SUCCESS));
         }
 
         return responseDtoList;
