@@ -23,6 +23,12 @@ public class Streak {
 
     @JsonBackReference
     @ManyToOne
+    @JoinColumn(name = "userIndex")
     private User user;
 
+    public Streak(Integer streakLevel, LocalDate streakDate, User user) {
+        this.streakLevel = streakLevel;
+        this.streakDate = streakDate;
+        this.user = user;
+    }
 }
