@@ -80,6 +80,4 @@ public class Plan {
         this.planStudyTime += time;
     }
 
-
-
 }

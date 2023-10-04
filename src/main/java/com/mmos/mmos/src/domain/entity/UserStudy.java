@@ -49,6 +49,10 @@ public class UserStudy {
         this.userstudyMemberStatus = memberStatus;
     }
 
+    public void addPlan(Plan plan) {
+        this.userstudyPlans.add(plan);
+    }
+
     @Builder
     public UserStudy(Integer userstudyIsMember, User user, Study study) {
         this.userstudyMemberStatus = userstudyIsMember;
