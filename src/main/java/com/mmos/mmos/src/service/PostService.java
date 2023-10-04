@@ -75,12 +75,8 @@ public class PostService {
         Study study = findStudyByIdx(studyIdx);
 
         // Post 생성/매핑
-        Post post = new Post(new PostSaveRequestDto(postSaveRequestDto.getPostTitle().toLowerCase(),
-                                                    postSaveRequestDto.getPostContents().toLowerCase(),
-                                                    postSaveRequestDto.getPostImage(),
-                                                    postSaveRequestDto.getIsNotice()),
-                                user,
-                                study);
+        Post post = new Post(postSaveRequestDto, user, study);
+
         study.addPost(post);
         postRepository.save(post);
 
