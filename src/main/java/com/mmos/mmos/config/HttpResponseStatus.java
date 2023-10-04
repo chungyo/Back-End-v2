@@ -92,6 +92,7 @@ public enum HttpResponseStatus {
     UPDATE_STUDY_EMPTY_NAME(false, BAD_REQUEST.value(), "스터디이름을 입력해주세요."),
     UPDATE_STUDY_DUPLICATE_NAME(false, BAD_REQUEST.value(), "이전 이름과 같습니다. 새로운 이름을 입력해주세요."),
     UPDATE_STUDY_ALREADY_COMPLETE(false, BAD_REQUEST.value(), "이미 완수한 스터디입니다."),
+    EMPTY_STUDY(false, BAD_REQUEST.value(), "존재하지 않는 스터디입니다."),
 
     // StudyTime
     POST_STUDYTIME_DUPLICATE_REQUEST(false, BAD_REQUEST.value(), "이미 진행 중인 계획이 있습니다."),
@@ -102,6 +103,8 @@ public enum HttpResponseStatus {
     POST_POST_EMPTY_CONTENTS(false, BAD_REQUEST.value(), "글 내용을 입력해주세요."),
     POST_NOT_AUTHORIZED(false, BAD_REQUEST.value(), "권한이 없습니다."),
 
+    // Streak
+    ALREADY_EXIST_STREAK(false, BAD_REQUEST.value(), "이미 존재하는 스트릭입니다."),
 
     // Project
     POST_PROJECT_EMPTY_NAME(false, BAD_REQUEST.value(), "이름을 입력해주세요."),
