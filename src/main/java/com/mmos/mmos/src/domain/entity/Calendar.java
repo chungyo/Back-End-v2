@@ -57,6 +57,11 @@ public class Calendar {
     public void addTime(Long time) {
         this.calendarMonthlyStudyTime += time;
     }
+
+    public void minusTime(Long time) {
+        this.calendarMonthlyStudyTime -= time;
+    }
+
     public void updateMonthlyPlanNum(Boolean status){
         if(status){
             this.calendarMonthlyCompletedPlanNum++;
