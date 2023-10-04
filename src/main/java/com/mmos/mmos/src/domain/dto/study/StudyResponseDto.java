@@ -1,10 +1,8 @@
 package com.mmos.mmos.src.domain.dto.study;
 
+import com.mmos.mmos.config.HttpResponseStatus;
 import com.mmos.mmos.src.domain.entity.Study;
-import com.mmos.mmos.src.domain.entity.UserStudy;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 public class StudyResponseDto {
@@ -14,6 +12,7 @@ public class StudyResponseDto {
     private String name;
     private Boolean isVisible;
     private Boolean isComplete;
+    private HttpResponseStatus status;
 
     public StudyResponseDto(Study study) {
         this.index = study.getStudyIndex();
@@ -21,5 +20,9 @@ public class StudyResponseDto {
         this.name = study.getStudyName();
         this.isVisible = study.getStudyIsVisible();
         this.isComplete = study.getStudyIsComplete();
+    }
+
+    public StudyResponseDto(HttpResponseStatus status) {
+        this.status = status;
     }
 }

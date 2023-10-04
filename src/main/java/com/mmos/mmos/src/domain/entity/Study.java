@@ -44,6 +44,9 @@ public class Study {
     @Column
     private Boolean studyIsComplete = false;
 
+    @Column
+    private Long studyAverageStudyTime = 0L;
+
     public void updateStudyName(String studyName) {
         this.studyName = studyName;
     }
@@ -67,5 +70,22 @@ public class Study {
     }
     public void minusMemberNum() {
         this.studyMemberNum--;
+    }
+
+    public void plusAverageStudyTime(Long studyTime) {
+        this.studyAverageStudyTime = (this.studyAverageStudyTime * studyMemberNum + studyTime) / studyMemberNum;
+    }
+
+    public void minusAverageStudyTime(Long studyTime) {
+        Long newAvgTime = this.studyAverageStudyTime * studyMemberNum;
+        newAvgTime -= studyTime;
+        if(newAvgTime <= 0)
+            this.studyAverageStudyTime = 0L;
+        else
+            this.studyAverageStudyTime = newAvgTime / studyMemberNum;
+    }
+
+    public void resetAvgStudyTime() {
+        this.studyAverageStudyTime = 0L;
     }
 }

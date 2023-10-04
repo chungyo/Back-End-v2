@@ -127,5 +127,64 @@ public class StudyController extends BaseController {
         return sendResponseHttpByJson(SUCCESS, "UPDATE STUDY_COMPLETE. STUDY_INDEX=" + studyIdx, studyResponseDto);
     }
 
+    /**
+     * 인원이 가장 많은 스터디 TOP 3를 구하는 API (완료)
+     */
+    // 인원이 가장 많은 스터디 랭킹
+    @ResponseBody
+    @GetMapping("/rank/people")
+    public ResponseEntity<ResponseApiMessage> getPopularStudy() {
+        List<StudyResponseDto> responseDtoList = studyService.getPopularStudy();
 
+        return sendResponseHttpByJson(SUCCESS, "인원이 가장 많은 스터디 조회 완료", responseDtoList);
+    }
+
+    /**
+     * 한 달 평균 공부 시간이 가장 많은 스터디 랭킹 (완료)
+     */
+    // 금주의 평균 공부 시간이 많은 스터디 랭킹
+    @ResponseBody
+    @GetMapping("/rank/time")
+    public ResponseEntity<ResponseApiMessage> getHardestStudy() {
+        List<StudyResponseDto> responseDtoList = studyService.getHardestStudy();
+
+        return sendResponseHttpByJson(SUCCESS, "평균 공부 시간이 가장 많은 스터디 랭킹", responseDtoList);
+    }
+
+    /**
+     * 한 달이 지나면 모든 스터디의 평균 공부 시간이 0으로 초기화 되는 API (완료)
+     */
+    @ResponseBody
+    @PatchMapping("/reset")
+    public ResponseEntity<ResponseApiMessage> resetAvgStudyTime() {
+        studyService.resetAvgStudyTime();
+
+        return sendResponseHttpByJson(SUCCESS, "평균 공부 시간이 가장 많은 스터디 랭킹", null);
+    }
+
+    /**
+     * 스터디 조회 API (완료)
+     * @param studyIdx: 조회하려는 스터디의 인덱스
+     */
+    @ResponseBody
+    @GetMapping("")
+    public ResponseEntity<ResponseApiMessage> getStudy(Long studyIdx) {
+        StudyResponseDto responseDto = studyService.getStudy(studyIdx);
+
+        if(responseDto.getStatus() == EMPTY_STUDY)
+            return sendResponseHttpByJson(EMPTY_STUDY, "존재하지 않는 스터디입니다.", null);
+        return sendResponseHttpByJson(SUCCESS, "스터디 조회 성공", responseDto);
+    }
+
+    /**
+     * 스터디 목록 조회 API (완료)
+     * @param pageable: 페이징 기본 파라미터
+     */
+    @ResponseBody
+    @GetMapping("/all")
+    public ResponseEntity<ResponseApiMessage> getStudies(@PageableDefault(page = 0, size = 5, sort = "studyIndex", direction = Sort.Direction.ASC) Pageable pageable) {
+        Page<StudyResponseDto> page = studyService.getStudies(pageable);
+
+        return sendResponseHttpByJson(SUCCESS, "전체 스터디 조회 완료", page);
+    }
 }

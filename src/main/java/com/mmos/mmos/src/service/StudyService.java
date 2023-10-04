@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mmos.mmos.config.HttpResponseStatus.EMPTY_STUDY;
+
 @Service
 @RequiredArgsConstructor
 public class StudyService {
@@ -36,12 +38,22 @@ public class StudyService {
 
     public Study findStudy(Long studyIdx){
         return studyRepository.findById(studyIdx)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 스터디입니다. STUDY_INDEX" + studyIdx));
+                .orElse(null);
     }
 
     public UserStudy findUserStudy(Long userStudyIdx){
         return userStudyRepository.findById(userStudyIdx)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 스터디입니다. STUDY_INDEX" + userStudyIdx));
+    }
+
+    public List<Study> findPopularStudy() {
+        return studyRepository.findTop3ByStudyIsCompleteAndAndStudyIsVisibleOrderByStudyMemberNumDesc(false, true)
+                .orElse(null);
+    }
+
+    public List<Study> findHardestStudy() {
+        return studyRepository.findTop3ByStudyIsCompleteAndStudyIsVisibleOrderByStudyAverageStudyTimeDesc(false, true)
+                .orElse(null);
     }
     
     // 스터디 이름 업데이트
@@ -111,5 +123,63 @@ public class StudyService {
 
         // 삭제된 유저 정보 Dto 반환
         return new UserResponseDto(user);
+    }
+
+
+    @Transactional
+    public List<StudyResponseDto> getPopularStudy() {
+        List<StudyResponseDto> responseDtoList = new ArrayList<>();
+        List<Study> studyList = findPopularStudy();
+
+        for (Study study : studyList) {
+            responseDtoList.add(new StudyResponseDto(study));
+        }
+
+        return responseDtoList;
+    }
+
+    @Transactional
+    public List<StudyResponseDto> getHardestStudy() {
+        List<StudyResponseDto> responseDtoList = new ArrayList<>();
+        List<Study> studyList = findHardestStudy();
+
+        for (Study study : studyList) {
+            if(study.getStudyAverageStudyTime() == 0L)
+                continue;
+            responseDtoList.add(new StudyResponseDto(study));
+        }
+
+        return responseDtoList;
+    }
+
+    @Transactional
+    public Page<StudyResponseDto> getStudies(Pageable pageable) {
+        List<StudyResponseDto> responseDtoList = new ArrayList<>();
+        List<Study> studyList = studyRepository.findAll();
+
+        for (Study study : studyList) {
+            responseDtoList.add(new StudyResponseDto(study));
+        }
+
+        return new PageImpl<>(responseDtoList, pageable, responseDtoList.size());
+    }
+
+    @Transactional
+    public StudyResponseDto getStudy(Long studyIdx) {
+        Study study = findStudy(studyIdx);
+
+        if(study == null)
+            return new StudyResponseDto(EMPTY_STUDY);
+
+        return new StudyResponseDto(study);
+    }
+
+    @Transactional
+    public void resetAvgStudyTime() {
+        List<Study> studyList = studyRepository.findAll();
+
+        for (Study study : studyList) {
+            study.resetAvgStudyTime();
+        }
     }
 }
