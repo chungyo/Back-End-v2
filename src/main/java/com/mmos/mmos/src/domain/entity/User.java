@@ -131,4 +131,8 @@ public class User {
         this.userCurrentStreak = 0L;
     }
 
+    public void addStreak(Streak streak) {
+        this.streaks.add(streak);
+    }
+
 }
