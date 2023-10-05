@@ -69,9 +69,6 @@ public class UserController extends BaseController {
         // Regex 검사(학번, 이름, 이메일, 닉네임)
 
 
-        // 비밀번호 암호화
-
-
         // User 생성
         UserResponseDto userResponseDto = userService.saveUser(requestDto);
         if(userResponseDto == null)
