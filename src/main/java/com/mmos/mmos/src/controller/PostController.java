@@ -127,7 +127,9 @@ public class PostController extends BaseController {
         if(idx == -1L)
             return sendResponseHttpByJson(USERSTUDY_NOT_EXIST_USERSTUDY, "참여 중인 스터디가 아닙니다.", null);
         if(idx == -2L)
-            return sendResponseHttpByJson(POST_NOT_AUTHORIZED, "권한이 없습니다." + idx, null);
+            return sendResponseHttpByJson(POST_NOT_AUTHORIZED, "권한이 없습니다.", null);
+        if(idx == -3L)
+            return sendResponseHttpByJson(EMPTY_POST, "존재하지 않는 글입니다.", null);
         return sendResponseHttpByJson(SUCCESS, "DELETE POST. POST_INDEX = " + idx, idx);
 
     }

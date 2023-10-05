@@ -46,6 +46,8 @@ public class PlanController extends BaseController {
 
         PlanResponseDto responseDto = planService.savePlan(requestDto, userIdx);
 
+        if(responseDto.getStatus().equals(EMPTY_PLANNER))
+            return sendResponseHttpByJson(EMPTY_PLANNER, "존재하지 않는 플래너입니다.", null);
         if(responseDto.getStatus().equals(USERSTUDY_NOT_EXIST_USERSTUDY))
             return sendResponseHttpByJson(USERSTUDY_NOT_EXIST_USERSTUDY, "참여 중인 스터디가 아닙니다.", null);
         return sendResponseHttpByJson(SUCCESS, "Saved Plan.", responseDto);
@@ -76,6 +78,8 @@ public class PlanController extends BaseController {
     public ResponseEntity<ResponseApiMessage> getPlansByIsStudy(@PathVariable Long plannerIdx, @PathVariable Boolean planIsStudy){
         List<PlanResponseDto> responseDtoList = planService.getPlansByPlanIsStudy(plannerIdx, planIsStudy);
 
+        if(responseDtoList == null)
+            return sendResponseHttpByJson(EMPTY_PLANNER, "존재하지 않는 플래너입니다.", null);
         return sendResponseHttpByJson(SUCCESS, "Load Plans.", responseDtoList);
     }
 
@@ -90,6 +94,8 @@ public class PlanController extends BaseController {
     public ResponseEntity<ResponseApiMessage> getPlans(@PathVariable Long plannerIdx) {
         List<PlanResponseDto> responseDtoList = planService.getPlans(plannerIdx);
 
+        if(responseDtoList == null)
+            return sendResponseHttpByJson(EMPTY_PLANNER, "존재하지 않는 플래너입니다.", null);
         return sendResponseHttpByJson(SUCCESS, "GET PLANS.", responseDtoList);
     }
 

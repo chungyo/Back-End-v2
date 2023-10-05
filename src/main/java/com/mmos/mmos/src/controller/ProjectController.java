@@ -1,12 +1,13 @@
 package com.mmos.mmos.src.controller;
 
-import com.mmos.mmos.config.HttpResponseStatus;
 import com.mmos.mmos.config.ResponseApiMessage;
 import com.mmos.mmos.src.domain.dto.project.*;
 import com.mmos.mmos.src.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static com.mmos.mmos.config.HttpResponseStatus.*;
 
 @RestController
 @RequestMapping("/api/v1/projects")
@@ -27,12 +28,14 @@ public class ProjectController extends BaseController{
     public ResponseEntity<ResponseApiMessage> saveProject(@PathVariable Long userIdx, @RequestBody ProjectSaveRequestDto projectSaveRequestDto){
         // null 검사
         if(projectSaveRequestDto.getName()==null) {
-            return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_EMPTY_NAME,"EMPTY_NAME.",null);
+            return sendResponseHttpByJson(UPDATE_PROJECT_EMPTY_NAME,"EMPTY_NAME.",null);
         }
 
         ProjectResponseDto projectResponseDto = projectService.saveProject(userIdx,projectSaveRequestDto);
 
-        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "SAVE PROJECT. PROJECT IDX=" + projectResponseDto.getProjectIndex(), projectResponseDto);
+        if(projectResponseDto.getStatus().equals(EMPTY_USER))
+            return sendResponseHttpByJson(EMPTY_USER, "존재하지 않는 사용자입니다.", null);
+        return sendResponseHttpByJson(SUCCESS, "SAVE PROJECT. PROJECT IDX=" + projectResponseDto.getProjectIndex(), projectResponseDto);
     }
 
 
@@ -49,15 +52,18 @@ public class ProjectController extends BaseController{
     public ResponseEntity<ResponseApiMessage> updateProjectTime(@PathVariable Long userIdx,@PathVariable Long projectIdx, @RequestBody ProjectTimeUpdateDto projectTimeUpdateDto){
         // null 검사
         if(projectTimeUpdateDto.getNewStartTime()==null||projectTimeUpdateDto.getNewEndTime()==null) {
-            return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_EMPTY_TIME,"EMPTY_TIME.",null);
+            return sendResponseHttpByJson(UPDATE_PROJECT_EMPTY_TIME,"EMPTY_TIME.",null);
         }
 
         ProjectResponseDto projectResponseDto = projectService.updateProjectTime(userIdx,projectIdx,projectTimeUpdateDto);
 
-        if(projectResponseDto.getStatus().equals(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER)){
-            return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER,"프로젝트를 소유한 유저가 아닙니다.", null);
-        }
-        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE PROJECT NAME. PROJECT IDX=" + projectIdx, projectResponseDto);
+        if(projectResponseDto.getStatus().equals(EMPTY_PROJECT))
+            return sendResponseHttpByJson(EMPTY_PROJECT,"존재하지 않는 프로젝트입니다.", null);
+        if(projectResponseDto.getStatus().equals(EMPTY_USER))
+            return sendResponseHttpByJson(EMPTY_USER,"존재하지 않는 유저입니다.", null);
+        if(projectResponseDto.getStatus().equals(UPDATE_PROJECT_NOT_OWNER))
+            return sendResponseHttpByJson(UPDATE_PROJECT_NOT_OWNER,"프로젝트를 소유한 유저가 아닙니다.", null);
+        return sendResponseHttpByJson(SUCCESS, "UPDATE PROJECT NAME. PROJECT IDX=" + projectIdx, projectResponseDto);
     }
 
     /**
@@ -72,15 +78,18 @@ public class ProjectController extends BaseController{
     public ResponseEntity<ResponseApiMessage> updateProjectName(@PathVariable Long userIdx,@PathVariable Long projectIdx, @RequestBody ProjectNameUpdateDto projectNameUpdateDto){
         // null 검사
         if(projectNameUpdateDto.getNewName()==null) {
-            return sendResponseHttpByJson(HttpResponseStatus.POST_PROJECT_EMPTY_NAME,"EMPTY_NAME.",null);
+            return sendResponseHttpByJson(POST_PROJECT_EMPTY_NAME,"EMPTY_NAME.",null);
         }
 
         ProjectResponseDto projectResponseDto = projectService.updateProjectName(userIdx,projectIdx,projectNameUpdateDto);
 
-        if(projectResponseDto.getStatus().equals(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER)){
-            return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER,"프로젝트를 소유한 유저가 아닙니다.", null);
-        }
-        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE PROJECT NAME. PROJECT IDX=" + projectIdx, projectResponseDto);
+        if(projectResponseDto.getStatus().equals(EMPTY_PROJECT))
+            return sendResponseHttpByJson(EMPTY_PROJECT,"존재하지 않는 프로젝트입니다.", null);
+        if(projectResponseDto.getStatus().equals(EMPTY_USER))
+            return sendResponseHttpByJson(EMPTY_USER,"존재하지 않는 유저입니다.", null);
+        if(projectResponseDto.getStatus().equals(UPDATE_PROJECT_NOT_OWNER))
+            return sendResponseHttpByJson(UPDATE_PROJECT_NOT_OWNER,"프로젝트를 소유한 유저가 아닙니다.", null);
+        return sendResponseHttpByJson(SUCCESS, "UPDATE PROJECT NAME. PROJECT IDX=" + projectIdx, projectResponseDto);
     }
 
     /**
@@ -95,15 +104,18 @@ public class ProjectController extends BaseController{
     public ResponseEntity<ResponseApiMessage> updateProjectIsComplete(@PathVariable Long userIdx,@PathVariable Long projectIdx, @RequestBody ProjectStatusUpdateDto projectCompleteUpdateDto){
         // null 검사
         if(projectCompleteUpdateDto.getStatus()==null) {
-            return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_EMPTY_STATUS,"EMPTY_STATUS.",null);
+            return sendResponseHttpByJson(UPDATE_PROJECT_EMPTY_STATUS,"EMPTY_STATUS.",null);
         }
 
         ProjectResponseDto projectResponseDto = projectService.updateProjectIsComplete(userIdx,projectIdx,projectCompleteUpdateDto);
 
-        if(projectResponseDto.getStatus().equals(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER)){
-            return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER,"프로젝트를 소유한 유저가 아닙니다.", null);
-        }
-        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE PROJECT_IS_COMPLETE. PROJECT IDX=" + projectIdx, projectResponseDto);
+        if(projectResponseDto.getStatus().equals(EMPTY_PROJECT))
+            return sendResponseHttpByJson(EMPTY_PROJECT,"존재하지 않는 프로젝트입니다.", null);
+        if(projectResponseDto.getStatus().equals(EMPTY_USER))
+            return sendResponseHttpByJson(EMPTY_USER,"존재하지 않는 유저입니다.", null);
+        if(projectResponseDto.getStatus().equals(UPDATE_PROJECT_NOT_OWNER))
+            return sendResponseHttpByJson(UPDATE_PROJECT_NOT_OWNER,"프로젝트를 소유한 유저가 아닙니다.", null);
+        return sendResponseHttpByJson(SUCCESS, "UPDATE PROJECT_IS_COMPLETE. PROJECT IDX=" + projectIdx, projectResponseDto);
     }
 
     /**
@@ -118,18 +130,20 @@ public class ProjectController extends BaseController{
     public ResponseEntity<ResponseApiMessage> updateProjectIsVisible(@PathVariable Long userIdx,@PathVariable Long projectIdx, @RequestBody ProjectStatusUpdateDto projectStatusUpdateDto){
         // null 검사
         if(projectStatusUpdateDto.getStatus()==null) {
-            return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_EMPTY_STATUS,"EMPTY_STATUS.",null);
+            return sendResponseHttpByJson(UPDATE_PROJECT_EMPTY_STATUS,"EMPTY_STATUS.",null);
         }
 
         ProjectResponseDto projectResponseDto = projectService.updateProjectIsVisible(userIdx,projectIdx,projectStatusUpdateDto);
 
-        if(projectResponseDto.getStatus().equals(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER)){
-            return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER,"프로젝트를 소유한 유저가 아닙니다.", null);
-        }
-        if(projectResponseDto.getStatus().equals(HttpResponseStatus.UPDATE_PROJECT_FULL_VISIBLE)){
-            return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_FULL_VISIBLE,"더 이상 추가할 수 없습니다.", null);
-        }
-        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "UPDATE PROJECT_IS_COMPLETE. PROJECT IDX=" + projectIdx, projectResponseDto);
+        if(projectResponseDto.getStatus().equals(EMPTY_PROJECT))
+            return sendResponseHttpByJson(EMPTY_PROJECT,"존재하지 않는 프로젝트입니다.", null);
+        if(projectResponseDto.getStatus().equals(EMPTY_USER))
+            return sendResponseHttpByJson(EMPTY_USER,"존재하지 않는 유저입니다.", null);
+        if(projectResponseDto.getStatus().equals(UPDATE_PROJECT_NOT_OWNER))
+            return sendResponseHttpByJson(UPDATE_PROJECT_NOT_OWNER,"프로젝트를 소유한 유저가 아닙니다.", null);
+        if(projectResponseDto.getStatus().equals(UPDATE_PROJECT_FULL_VISIBLE))
+            return sendResponseHttpByJson(UPDATE_PROJECT_FULL_VISIBLE,"더 이상 추가할 수 없습니다.", null);
+        return sendResponseHttpByJson(SUCCESS, "UPDATE PROJECT_IS_COMPLETE. PROJECT IDX=" + projectIdx, projectResponseDto);
     }
 
     /**
@@ -143,9 +157,14 @@ public class ProjectController extends BaseController{
     public ResponseEntity<ResponseApiMessage> deleteProject(@PathVariable Long userIdx, @PathVariable Long projectIdx){
 
         Long deleteProjectIdx = projectService.deleteProject(userIdx,projectIdx);
-        if(deleteProjectIdx == null){
-            return sendResponseHttpByJson(HttpResponseStatus.UPDATE_PROJECT_NOT_OWNER,"프로젝트를 소유한 유저가 아닙니다.", null);
+
+        if(deleteProjectIdx == -1L)
+            return sendResponseHttpByJson(EMPTY_USER,"존재하지 않는 유저입니다.", null);
+        if(deleteProjectIdx == -2L){
+            return sendResponseHttpByJson(UPDATE_PROJECT_NOT_OWNER,"프로젝트를 소유한 유저가 아닙니다.", null);
         }
-        return sendResponseHttpByJson(HttpResponseStatus.SUCCESS, "DELETE PROJECT. PROJECT IDX= " + deleteProjectIdx, null);
+        if(deleteProjectIdx == -3L)
+            return sendResponseHttpByJson(EMPTY_PROJECT,"존재하지 않는 프로젝트입니다.", null);
+        return sendResponseHttpByJson(SUCCESS, "DELETE PROJECT. PROJECT IDX= " + deleteProjectIdx, null);
     }
 }

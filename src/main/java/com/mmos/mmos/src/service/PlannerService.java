@@ -1,6 +1,5 @@
 package com.mmos.mmos.src.service;
 
-import com.mmos.mmos.config.HttpResponseStatus;
 import com.mmos.mmos.src.domain.dto.planner.PlannerResponseDto;
 import com.mmos.mmos.src.domain.entity.Calendar;
 import com.mmos.mmos.src.domain.entity.Planner;
@@ -17,6 +16,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mmos.mmos.config.HttpResponseStatus.*;
+
 @Service
 @RequiredArgsConstructor
 public class PlannerService {
@@ -27,25 +28,25 @@ public class PlannerService {
 
     public Calendar findCalendarByIdx(Long calendarIdx) {
         return calendarRepository.findById(calendarIdx)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 캘린더입니다. CALENDAR_INDEX=" + calendarIdx));
+                .orElse(null);
     }
 
     public Planner findPlannerByIdx(Long plannerIdx){
         return plannerRepository.findById(plannerIdx)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 플래너입니다. PLANNER_ID= " + plannerIdx));
+                .orElse(null);
     }
 
     public User findUserByIdx(Long userIdx) {
         return userRepository.findById(userIdx)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다. USER_INDEX=" + userIdx));
+                .orElse(null);
     }
-
-
 
     // 플래너 생성
     @Transactional
     public PlannerResponseDto savePlanner(LocalDate today, Long calendarIdx) {
         Calendar calendar = findCalendarByIdx(calendarIdx);
+        if(calendar == null)
+            return new PlannerResponseDto(EMPTY_CALENDAR);
 
         // 막 회원 가입을 한 유저가 아니면서 같은 날의 플래너가 이미 존재할 때 생성 막기
         if(plannerRepository.findPlannerByCalendar_CalendarIndexAndPlannerDate(calendarIdx, today).isPresent())
@@ -57,7 +58,7 @@ public class PlannerService {
 
         plannerRepository.save(planner);
 
-        return new PlannerResponseDto(planner,null, HttpResponseStatus.SUCCESS);
+        return new PlannerResponseDto(planner,null, SUCCESS);
     }
 
 
@@ -65,15 +66,23 @@ public class PlannerService {
     @Transactional
     public PlannerResponseDto setMemo(Long plannerIdx, String plannerMemo) {
         Planner planner = findPlannerByIdx(plannerIdx);  // 플래너 찾기
+        if(planner == null)
+            return new PlannerResponseDto(EMPTY_PLANNER);
         planner.setMemo(plannerMemo);  // 메모 설정
         plannerRepository.save(planner);  // 변경 사항 저장
-        return new PlannerResponseDto(planner,null, HttpResponseStatus.SUCCESS);  // 변경된 플래너 반환
+        return new PlannerResponseDto(planner,null, SUCCESS);  // 변경된 플래너 반환
     }
 
     @Transactional
     public PlannerResponseDto getPlanner(Long plannerIdx, Long userIdx) {
         Planner planner = findPlannerByIdx(plannerIdx);
+        if(planner == null)
+            return new PlannerResponseDto(EMPTY_PLANNER);
+
         User user = findUserByIdx(userIdx);
+        if(user == null)
+            return new PlannerResponseDto(EMPTY_USER);
+
         List<Project> userProjectList = user.getUserProjects();
 
         // 해당 날짜를 포함하는 Project 찾기
@@ -91,7 +100,7 @@ public class PlannerService {
             }
         }
 
-        PlannerResponseDto responseDto = new PlannerResponseDto(planner, plannerProjectList, HttpResponseStatus.SUCCESS);
+        PlannerResponseDto responseDto = new PlannerResponseDto(planner, plannerProjectList, SUCCESS);
         return responseDto;
     }
 }

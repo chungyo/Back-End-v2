@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
+import static com.mmos.mmos.config.HttpResponseStatus.*;
 
 @RestController
 @RequestMapping("/api/v1/planners")
@@ -31,6 +31,8 @@ public class PlannerController extends BaseController {
     public ResponseEntity<ResponseApiMessage> updatePlannerMemo(@RequestBody PlannerUpdateMemoRequestDto requestDto, @PathVariable Long plannerIdx){
          PlannerResponseDto responseDto = plannerService.setMemo(plannerIdx,requestDto.getMemo());
 
+        if(responseDto.getStatus().equals(EMPTY_PLANNER))
+            return sendResponseHttpByJson(EMPTY_PLANNER, "존재하지 않는 플래너입니다.", null);
          return sendResponseHttpByJson(SUCCESS, "UPDATE PLANNER_MEMO_COMPLETE. PLANNER_INDEX=" + plannerIdx, responseDto);
 
     }
@@ -43,8 +45,13 @@ public class PlannerController extends BaseController {
     @ResponseBody
     @GetMapping("/all/{userIdx}/{plannerIdx}")
     public ResponseEntity<ResponseApiMessage> getPlanner(@PathVariable Long userIdx, @PathVariable Long plannerIdx) {
-        PlannerResponseDto responseDtoList = plannerService.getPlanner(plannerIdx, userIdx);
-        return sendResponseHttpByJson(SUCCESS, "GET PLANNER COMPLETE. PLANNER_INDEX=" + plannerIdx, responseDtoList);
+        PlannerResponseDto responseDto = plannerService.getPlanner(plannerIdx, userIdx);
+
+        if(responseDto.getStatus().equals(EMPTY_PLANNER))
+            return sendResponseHttpByJson(EMPTY_PLANNER, "존재하지 않는 플래너입니다.", null);
+        if(responseDto.getStatus().equals(EMPTY_USER))
+            return sendResponseHttpByJson(EMPTY_USER, "존재하지 않는 유저입니다.", null);
+        return sendResponseHttpByJson(SUCCESS, "GET PLANNER COMPLETE. PLANNER_INDEX=" + plannerIdx, responseDto);
     }
 
 

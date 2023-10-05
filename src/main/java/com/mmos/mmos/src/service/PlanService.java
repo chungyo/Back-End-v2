@@ -32,7 +32,7 @@ public class PlanService {
 
     public Planner findPlannerByIdx(Long plannerIdx) {
         return plannerRepository.findById(plannerIdx)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 플래너입니다. PLANNER_INDEX=" + plannerIdx));
+                .orElse(null);
     }
 
     public UserStudy findUserStudyByIdx(Long userStudyIdx) {
@@ -42,23 +42,17 @@ public class PlanService {
 
     public Plan findPlanByIdx(Long planIdx) {
         return planRepository.findById(planIdx)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 플랜입니다. PLAN_INDEX=" + planIdx));
+                .orElse(null);
     }
 
     public List<Plan> findPlansByPlannerAndPlanIsStudy(Planner planner, Boolean isStudy) {
         return planRepository.findPlansByPlannerAndPlanIsStudy(planner, isStudy)
-                .orElseThrow(() -> new IllegalArgumentException("스터디 계획 == true, 일반 계획 == false 다시 검색해 주세요. 현재 입력 =  " + isStudy));
+                .orElse(null);
     }
 
     public Planner findPlannerByCalendarIdxAndDate(Long calendarIdx, LocalDate date) {
         return plannerRepository.findPlannerByCalendar_CalendarIndexAndPlannerDate(calendarIdx, date)
                 .orElse(null);
-    }
-
-
-    public User findUserByIdx(Long userIdx) {
-        return userRepository.findById(userIdx)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다. USER_INDEX=" + userIdx));
     }
 
     public Calendar findCalendarByUserIdx(Long userIdx, int year, int month) {
@@ -68,7 +62,7 @@ public class PlanService {
 
     public List<Plan> findPlansByPlanner(Planner planner) {
         return planRepository.findPlansByPlanner(planner)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 플래너입니다. PLANNER_INDEX=" + planner.getPlannerIndex()));
+                .orElse(null);
     }
 
     @Transactional
@@ -102,6 +96,8 @@ public class PlanService {
 
         // Plan 객체 생성
         planner = findPlannerByIdx(plannerIdx);
+        if(planner == null)
+            return new PlanResponseDto(EMPTY_PLANNER);
         Plan plan = new Plan(requestDto, planner, userStudy);
 
         // 역 FK 매핑
@@ -117,6 +113,8 @@ public class PlanService {
     public PlanResponseDto getPlan(Long planIdx) {
         Plan plan = findPlanByIdx(planIdx);
 
+        if(plan == null)
+            return new PlanResponseDto(EMPTY_PLAN);
         return new PlanResponseDto(plan, SUCCESS);
     }
 
@@ -125,6 +123,8 @@ public class PlanService {
     @Transactional
     public List<PlanResponseDto> getPlansByPlanIsStudy(Long plannerIdx, Boolean isStudy) {
         Planner planner = findPlannerByIdx(plannerIdx);  // Planner 객체를 찾는다
+        if(planner == null)
+            return null;
         List<Plan> planList = findPlansByPlannerAndPlanIsStudy(planner, isStudy);
 
         List<PlanResponseDto> responseDtoList = new ArrayList<>();
@@ -138,6 +138,8 @@ public class PlanService {
     @Transactional
     public List<PlanResponseDto> getPlans(Long plannerIdx) {
         Planner planner = findPlannerByIdx(plannerIdx);  // Planner 객체를 찾는다
+        if(planner == null)
+            return null;
         List<Plan> plans = findPlansByPlanner(planner);  // 해당 Planner와 관련된 Plan 객체들을 찾는다
 
         List<PlanResponseDto> responseDtoList = new ArrayList<>();
@@ -151,6 +153,8 @@ public class PlanService {
     @Transactional
     public PlanResponseDto updatePlan(Long planIdx, PlanNameUpdateRequestDto requestDto) {
         Plan plan = findPlanByIdx(planIdx);
+        if(plan == null)
+            return new PlanResponseDto(EMPTY_PLAN);
 
         plan.update(requestDto.getPlanName());
 
@@ -160,6 +164,8 @@ public class PlanService {
     @Transactional
     public PlanResponseDto deletePlan(Long planIdx) {
         Plan plan = findPlanByIdx(planIdx);
+        if(plan == null)
+            return new PlanResponseDto(EMPTY_PLAN);
 
         plan.getPlanner().minusTime(plan.getPlanStudyTime());
         plan.getPlanner().getCalendar().minusTime(plan.getPlanStudyTime());
@@ -175,6 +181,8 @@ public class PlanService {
     @Transactional
     public PlanResponseDto updatePlanIsComplete(Long planIdx, PlanIsCompleteRequestDto requestDto) {
         Plan plan = findPlanByIdx(planIdx);
+        if(plan == null)
+            return new PlanResponseDto(EMPTY_PLAN);
         // 같은 경우 제외
         if (plan.getPlanIsComplete() == requestDto.getIsComplete()) {
             return new PlanResponseDto(UPDATE_PLAN_REDUNDANT_REQUEST);
@@ -199,6 +207,8 @@ public class PlanService {
     @Transactional
     public PlanResponseDto updatePlanIsVisible(Long planIdx) {
         Plan plan = findPlanByIdx(planIdx);
+        if(plan == null)
+            return new PlanResponseDto(EMPTY_PLAN);
         Planner planner = plan.getPlanner();
         User user = plan.getPlanner().getCalendar().getUser();
 

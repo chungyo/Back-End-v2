@@ -49,7 +49,7 @@ public enum HttpResponseStatus {
     UPDATE_USER_DUPLICATE_NICKNAME(false, BAD_REQUEST.value(), "이전에 사용하던 닉네임과 같습니다. 새로운 닉네임을 입력해주세요."),
     INVALID_USER(false, BAD_REQUEST.value(), "존재하지 않는 유저입니다."),
     FRIEND_COMPLETE_REQUEST(false, BAD_REQUEST.value(), "이미 처리된 요청입니다."),
-    d(false, BAD_REQUEST.value(), "존재하지 않는 유저입니다."),
+    EMPTY_USER(false, BAD_REQUEST.value(), "존재하지 않는 유저입니다."),
 
     // University
     INVALID_UNIVERSITY(false,BAD_REQUEST.value(),"대학교가 존재하지 않습니다."),
@@ -64,11 +64,13 @@ public enum HttpResponseStatus {
     // Calendar
     POST_CALENDAR_INVALID_REQUEST(false, BAD_REQUEST.value(), "캘린더가 이미 존재합니다."),
     GET_CALENDAR_EMPTY_REQUEST(false, BAD_REQUEST.value(), "날짜가 선택되지 않았습니다."),
+    EMPTY_CALENDAR(false, BAD_REQUEST.value(), "존재하지 않는 캘린더입니다."),
     // plan
     POST_PLAN_EMPTY_CONTENTS(false, BAD_REQUEST.value(),"계획 내용이 없습니다."),
     POST_PLAN_INVALID_REQUEST(false, BAD_REQUEST.value(),"스터디 계획이 아닙니다."),
     UPDATE_PLAN_REDUNDANT_REQUEST(false, BAD_REQUEST.value(),"이미 변경되었습니다."),
     POST_PLAN_ISVISIBLE_FULL(false, BAD_REQUEST.value(),"캘린더에 표시할 수 없습니다."),
+    EMPTY_PLAN(false, BAD_REQUEST.value(),"존재하지 않는 플랜입니다."),
 
     // College
     GET_COLLEGE_EMPTY_RETURN(false, BAD_REQUEST.value(), "해당 대학교에 단과대학이 존재하지 않습니다."),
@@ -87,6 +89,8 @@ public enum HttpResponseStatus {
 
     // Planner
     POST_PLANNER_INVALID_REQUEST(false, BAD_REQUEST.value(), "하루가 지나지 않아서 저장할 플래너가 없습니다."),
+    EMPTY_PLANNER(false, BAD_REQUEST.value(), "존재하지 않는 플래너입니다."),
+
 
     // Study
     UPDATE_STUDY_EMPTY_NAME(false, BAD_REQUEST.value(), "스터디이름을 입력해주세요."),
@@ -102,6 +106,8 @@ public enum HttpResponseStatus {
     POST_POST_EMPTY_TITLE(false, BAD_REQUEST.value(), "글 제목을 입력해주세요."),
     POST_POST_EMPTY_CONTENTS(false, BAD_REQUEST.value(), "글 내용을 입력해주세요."),
     POST_NOT_AUTHORIZED(false, BAD_REQUEST.value(), "권한이 없습니다."),
+    EMPTY_POST(false, BAD_REQUEST.value(), "존재하지 않는 글입니다."),
+
 
     // Streak
     ALREADY_EXIST_STREAK(false, BAD_REQUEST.value(), "이미 존재하는 스트릭입니다."),
@@ -115,6 +121,8 @@ public enum HttpResponseStatus {
     UPDATE_PROJECT_EMPTY_TIME(false,BAD_REQUEST.value(),"기간을 선택해주세요."),
     UPDATE_PROJECT_EMPTY_STATUS(false,BAD_REQUEST.value(),"상태를 선택해주세요."),
     UPDATE_PROJECT_FULL_VISIBLE(false,BAD_REQUEST.value(),"더 이상 추가할 수 없습니다."),
+    EMPTY_PROJECT(false,BAD_REQUEST.value(),"존재하지 않는 프로젝트입니다."),
+
     /**
      * 500 : Database, Server 오류
      */

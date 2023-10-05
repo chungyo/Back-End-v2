@@ -13,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mmos.mmos.config.HttpResponseStatus.GET_COLLEGE_EMPTY_RETURN;
+import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
+
 @Service
 @RequiredArgsConstructor
 public class MajorService {
@@ -22,7 +25,7 @@ public class MajorService {
 
     public College findCollegeByIdx(Long collegeIdx) {
         return collegeRepository.findById(collegeIdx)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 단과대학입니다. COLLEGE_INDEX" + collegeIdx));
+                .orElseThrow(null);
     }
 
     public List<Major> findAllMajors(College college){
@@ -33,17 +36,21 @@ public class MajorService {
     @Transactional
     public MajorResponseDto saveMajor(Long collegeIdx, MajorSaveRequestDto requestDto) {
         College college = findCollegeByIdx(collegeIdx);
+        if(college == null)
+            return new MajorResponseDto(GET_COLLEGE_EMPTY_RETURN);
         Major major = new Major(requestDto, college);
         majorRepository.save(major);
         college.addMajor(major);
 
-        return new MajorResponseDto(major);
+        return new MajorResponseDto(major, SUCCESS);
     }
 
     @Transactional
     public List<MajorResponseDto> getMajors(Long collegeIdx){
         // college 객체 가져오기
         College college = findCollegeByIdx(collegeIdx);
+        if(college == null)
+            return null;
 
         // college에 소속한 major 리스트로 가져오기
         List<Major> majorList = findAllMajors(college);

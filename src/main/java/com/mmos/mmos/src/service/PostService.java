@@ -34,22 +34,22 @@ public class PostService {
 
     public User findUserByIdx(Long userIdx) {
         return userRepository.findById(userIdx)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다. USER_INDEX=" + userIdx));
+                .orElse(null);
     }
 
     public Study findStudyByIdx(Long studyIdx) {
         return studyRepository.findById(studyIdx)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 스터디입니다. STUDY_INDEX=" + studyIdx));
+                .orElseThrow(null);
     }
 
     public Post findPostByIdx(Long postIdx) {
         return postRepository.findById(postIdx)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물입니다. POST_INDEX=" + postIdx));
+                .orElse(null);
     }
 
     public List<Post> findPostsByPostIsNotice(Boolean isNotice) {
         return postRepository.findPostsByPostIsNotice(isNotice)
-                .orElseThrow(() -> new IllegalArgumentException(" 공지글 == true, 홍보글 == false 다시 검색해 주세요. 현재 입력 =  " + isNotice));
+                .orElse(null);
     }
 
     public List<Post> findPostsByStudy(Study study) {
@@ -72,7 +72,11 @@ public class PostService {
 
         // User, Study 검색
         User user = findUserByIdx(userIdx);
+        if(user == null)
+            return new PostResponseDto(EMPTY_USER);
         Study study = findStudyByIdx(studyIdx);
+        if(study == null)
+            return new PostResponseDto(EMPTY_STUDY);
 
         // Post 생성/매핑
         Post post = new Post(postSaveRequestDto, user, study);
@@ -86,7 +90,11 @@ public class PostService {
     @Transactional
     public PostResponseDto updatePost(Long postIdx, PostUpdateRequestDto postUpdateRequestDto, Long userIdx) {
         User user = findUserByIdx(userIdx);
+        if(user == null)
+            return new PostResponseDto(EMPTY_USER);
         Post post = findPostByIdx(postIdx);
+        if(post == null)
+            return new PostResponseDto(EMPTY_POST);
 
         if (!post.getPostWriterIndex().equals(user.getUserIndex()))
             return new PostResponseDto(POST_NOT_AUTHORIZED);
@@ -105,6 +113,8 @@ public class PostService {
     @Transactional
     public PostResponseDto getPost(Long postIdx) {
         Post post = findPostByIdx(postIdx);
+        if(post == null)
+            return new PostResponseDto(EMPTY_POST);
 
         return new PostResponseDto(post, SUCCESS);
     }
@@ -114,6 +124,7 @@ public class PostService {
     public Page<PostResponseDto> getPromotions(Boolean isNotice, Pageable pageable) {
         List<PostResponseDto> responseDtoList = new ArrayList<>();
         List<Post> posts = findPostsByPostIsNotice(isNotice);
+
         for (Post post : posts) {
             if (!post.getPostIsNotice()) {
                 responseDtoList.add(new PostResponseDto(post));
@@ -126,13 +137,13 @@ public class PostService {
     // 내 스터디 공지 게시글 조회
     @Transactional
     public Page<PostResponseDto> getNotices(Long userIdx, Long studyIdx, Pageable pageable) {
-        Study study = findStudyByIdx(studyIdx);
         List<PostResponseDto> responseDtoList = new ArrayList<>();
+
+        Study study = findStudyByIdx(studyIdx);
         if(study == null) {
-//            responseDtoList.add(new PostResponseDto(USERSTUDY_NOT_EXIST_USERSTUDY));
-//            return responseDtoList;
             return null;
         }
+
         List<Post> postList = findPostsByStudy(study);
         for (Post post : postList) {
             responseDtoList.add(new PostResponseDto(post));
@@ -145,6 +156,8 @@ public class PostService {
     @Transactional
     public Long deletePost(Long postIdx, Long userStudyIdx) {
         Post post = findPostByIdx(postIdx);
+        if(post == null)
+            return -3L;
 
         UserStudy userStudy = findUserStudyByIdx(userStudyIdx);
         if (userStudy == null)

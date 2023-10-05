@@ -26,7 +26,7 @@ public class ProjectService {
 
     public User findUser(Long userIdx) {
         return userRepository.findById(userIdx)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElse(null);
     }
 
     public Calendar findCalendar(Long userIdx, int year, int month) {
@@ -36,13 +36,15 @@ public class ProjectService {
 
     public Project findProject(Long projectIdx){
         return projectRepository.findById(projectIdx)
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 프로젝트입니다."));
+                .orElse(null);
     }
 
     @Transactional
     public ProjectResponseDto saveProject(Long userIdx, ProjectSaveRequestDto projectSaveRequestDto) {
         // user 찾기
         User user = findUser(userIdx);
+        if(user == null)
+            return new ProjectResponseDto(EMPTY_USER);
 
         // 프로젝트 시작시각부터 종료시각까지 필요한 달 체크. 없으면 생성.
         LocalDate startTime = projectSaveRequestDto.getStartTime();
@@ -68,7 +70,11 @@ public class ProjectService {
     public ProjectResponseDto updateProjectTime(Long userIdx, Long projectIdx, ProjectTimeUpdateDto projectTimeUpdateDto) {
         // 프로젝트를 소유한 유저인지 확인
         Project project = findProject(projectIdx);
+        if(project == null)
+            return new ProjectResponseDto(EMPTY_PROJECT);
         User user = findUser(userIdx);
+        if(user == null)
+            return new ProjectResponseDto(EMPTY_USER);
         if(!user.getUserProjects().contains(project)){
             return new ProjectResponseDto(UPDATE_PROJECT_NOT_OWNER);
         }
@@ -82,7 +88,11 @@ public class ProjectService {
     public ProjectResponseDto updateProjectName(Long userIdx, Long projectIdx, ProjectNameUpdateDto projectNameUpdateDto) {
         // 프로젝트를 소유한 유저인지 확인
         Project project = findProject(projectIdx);
+        if(project == null)
+            return new ProjectResponseDto(EMPTY_PROJECT);
         User user = findUser(userIdx);
+        if(user == null)
+            return new ProjectResponseDto(EMPTY_USER);
         if(!user.getUserProjects().contains(project)){
             return new ProjectResponseDto(UPDATE_PROJECT_NOT_OWNER);
         }
@@ -96,7 +106,11 @@ public class ProjectService {
     public ProjectResponseDto updateProjectIsComplete(Long userIdx, Long projectIdx, ProjectStatusUpdateDto projectCompleteUpdateDto) {
         // 프로젝트를 소유한 유저인지 확인
         Project project = findProject(projectIdx);
+        if(project == null)
+            return new ProjectResponseDto(EMPTY_PROJECT);
         User user = findUser(userIdx);
+        if(user == null)
+            return new ProjectResponseDto(EMPTY_USER);
         if(!user.getUserProjects().contains(project)){
             return new ProjectResponseDto(UPDATE_PROJECT_NOT_OWNER);
         }
@@ -108,7 +122,11 @@ public class ProjectService {
     public ProjectResponseDto updateProjectIsVisible(Long userIdx, Long projectIdx, ProjectStatusUpdateDto projectCompleteUpdateDto) {
         // 프로젝트를 소유한 유저인지 확인
         Project project = findProject(projectIdx);
+        if(project == null)
+            return new ProjectResponseDto(EMPTY_PROJECT);
         User user = findUser(userIdx);
+        if(user == null)
+            return new ProjectResponseDto(EMPTY_USER);
         if(!user.getUserProjects().contains(project)){
             return new ProjectResponseDto(UPDATE_PROJECT_NOT_OWNER);
         }
@@ -154,9 +172,13 @@ public class ProjectService {
     public Long deleteProject(Long userIdx, Long projectIdx){
         // 프로젝트를 소유한 유저인지 확인
         Project project = findProject(projectIdx);
+        if(project == null)
+            return -3L;
         User user = findUser(userIdx);
+        if(user == null)
+            return -1L;
         if(!user.getUserProjects().contains(project)){
-            return null;
+            return -2L;
         }
 
         projectRepository.delete(project);

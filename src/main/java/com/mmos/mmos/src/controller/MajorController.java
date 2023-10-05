@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.mmos.mmos.config.HttpResponseStatus.GET_MAJOR_EMPTY_RETURN;
-import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
+import static com.mmos.mmos.config.HttpResponseStatus.*;
 
 @RestController
 @RequestMapping("/api/v1/majors")
@@ -33,7 +32,9 @@ public class MajorController extends BaseController {
     public ResponseEntity<ResponseApiMessage> saveMajor(@PathVariable Long collegeIdx, @RequestBody MajorSaveRequestDto requestDto) {
         MajorResponseDto responseDto = majorService.saveMajor(collegeIdx, requestDto);
 
-        return sendResponseHttpByJson(SUCCESS, "Saved Majors", responseDto);
+        if(responseDto.getStatus().equals(GET_COLLEGE_EMPTY_RETURN))
+            return sendResponseHttpByJson(GET_COLLEGE_EMPTY_RETURN, "존재하지 않는 학과입니다.", null);
+        return sendResponseHttpByJson(SUCCESS, "학과 저장 성공", responseDto);
 
     }
 
@@ -46,9 +47,9 @@ public class MajorController extends BaseController {
     public  ResponseEntity<ResponseApiMessage> getMajors(@PathVariable Long collegeIdx){
         List<MajorResponseDto> majorResponseDtoList = majorService.getMajors(collegeIdx);
 
-        if(majorResponseDtoList.isEmpty()){
+        if(majorResponseDtoList == null){
             return sendResponseHttpByJson(GET_MAJOR_EMPTY_RETURN, "해당 단과대학에 학과가 존재하지 않습니다.", null);
         }
-        return sendResponseHttpByJson(SUCCESS, "Got Majors", majorResponseDtoList);
+        return sendResponseHttpByJson(SUCCESS, "학과 조회 성공", majorResponseDtoList);
     }
 }
