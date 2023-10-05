@@ -68,28 +68,37 @@ public class StreakService {
 
         if(planner == null) {
             user.resetCurrentStreak();
-            System.out.println('a');
-            return new StreakResponseDto(streakRepository.save(new Streak(0, beforeDay, user)));
+            Streak streak = streakRepository.save(new Streak(0, beforeDay, user));
+            user.addStreak(streak);
+            return new StreakResponseDto(streak);
         }
         else {
             if(planner.getPlannerDailyStudyTime() >= 5 * 60) {
                 user.plusCurrentStreak();
                 updateTopStreak(user);
-                return new StreakResponseDto(streakRepository.save(new Streak(3, beforeDay, user)));
+                Streak streak = streakRepository.save(new Streak(3, beforeDay, user));
+                user.addStreak(streak);
+                return new StreakResponseDto(streak);
             }
             else if(planner.getPlannerDailyStudyTime() >= 3 * 60) {
                 user.plusCurrentStreak();
                 updateTopStreak(user);
-                return new StreakResponseDto(streakRepository.save(new Streak(2, beforeDay, user)));
+                Streak streak = streakRepository.save(new Streak(2, beforeDay, user));
+                user.addStreak(streak);
+                return new StreakResponseDto(streak);
             }
             else if(planner.getPlannerDailyStudyTime() >= 60) {
                 user.plusCurrentStreak();
                 updateTopStreak(user);
-                return new StreakResponseDto(streakRepository.save(new Streak(1, beforeDay, user)));
+                Streak streak = streakRepository.save(new Streak(1, beforeDay, user));
+                user.addStreak(streak);
+                return new StreakResponseDto(streak);
             }
             else {
                 user.resetCurrentStreak();
-                return new StreakResponseDto(streakRepository.save(new Streak(0, beforeDay, user)));
+                Streak streak = streakRepository.save(new Streak(0, beforeDay, user));
+                user.addStreak(streak);
+                return new StreakResponseDto(streak);
             }
         }
     }
