@@ -12,12 +12,16 @@ import com.mmos.mmos.src.domain.entity.UserStudy;
 import com.mmos.mmos.src.repository.MajorRepository;
 import com.mmos.mmos.src.repository.UniversityRepository;
 import com.mmos.mmos.src.repository.UserRepository;
+import com.mmos.mmos.utils.SHA256;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.mmos.mmos.config.HttpResponseStatus.EMPTY_USER;
+import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +30,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UniversityRepository universityRepository;
     private final MajorRepository majorRepository;
+
     public User findUserByIdx(Long userIdx) {
         return userRepository.findById(userIdx)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다. USER_INDEX" + userIdx));
@@ -96,7 +101,9 @@ public class UserService {
             return null;
         }
 
-        User user = new User(requestDto, major);
+        UserSaveRequestDto encryptedRequestDto = new UserSaveRequestDto(requestDto, SHA256.encrypt(requestDto.getPwd()));
+
+        User user = new User(encryptedRequestDto, major);
 
 
         userRepository.save(user);
@@ -114,7 +121,7 @@ public class UserService {
         User user = findUserByIdx(userIdx);
 
         // 사용자가 입력한 이전 비밀번호와 DB에 저장된 비밀번호와 같은지 확인
-        if(!user.getUserPassword().equals(userPwdUpdateDto.getPrevPwd()))
+        if(!user.getUserPassword().equals(SHA256.encrypt(userPwdUpdateDto.getPrevPwd())))
             return null;
 
         // 유저 비밀번호 변경
@@ -136,5 +143,15 @@ public class UserService {
         user.updateNickname(userNicknameUpdateDto.getNewNickname());
 
         return new UserResponseDto(user);
+    }
+
+    @Transactional
+    public UserResponseDto getUser(Long userIdx) {
+        User user = findUserByIdx(userIdx);
+
+        if(user == null)
+            return new UserResponseDto(EMPTY_USER);
+
+        return new UserResponseDto(user, SUCCESS);
     }
 }
