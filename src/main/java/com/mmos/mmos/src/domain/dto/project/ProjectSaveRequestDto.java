@@ -12,5 +12,7 @@ public class ProjectSaveRequestDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate endTime;
     private String name;
+    private Boolean isStudy;
+    private Long studyIdx;
 
 }
