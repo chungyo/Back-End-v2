@@ -2,10 +2,7 @@ package com.mmos.mmos.src.service;
 
 import com.mmos.mmos.src.domain.dto.project.*;
 import com.mmos.mmos.src.domain.entity.*;
-import com.mmos.mmos.src.repository.CalendarRepository;
-import com.mmos.mmos.src.repository.PlanRepository;
-import com.mmos.mmos.src.repository.ProjectRepository;
-import com.mmos.mmos.src.repository.UserRepository;
+import com.mmos.mmos.src.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +20,7 @@ public class ProjectService {
     private final CalendarRepository calendarRepository;
     private final CalendarService calendarService;
     private final PlanRepository planRepository;
+    private final StudyRepository studyRepository;
 
     public User findUser(Long userIdx) {
         return userRepository.findById(userIdx)
@@ -39,12 +37,19 @@ public class ProjectService {
                 .orElse(null);
     }
 
+    public Study findStudy(Long studyIdx) {
+        return studyRepository.findById(studyIdx)
+                .orElse(null);
+    }
+
+
     @Transactional
     public ProjectResponseDto saveProject(Long userIdx, ProjectSaveRequestDto projectSaveRequestDto) {
         // user 찾기
         User user = findUser(userIdx);
         if(user == null)
             return new ProjectResponseDto(EMPTY_USER);
+
 
         // 프로젝트 시작시각부터 종료시각까지 필요한 달 체크. 없으면 생성.
         LocalDate startTime = projectSaveRequestDto.getStartTime();
@@ -59,6 +64,25 @@ public class ProjectService {
 
         // 프로젝트 생성
         Project project = new Project(startTime, endTime, projectSaveRequestDto.getName(), user);
+
+        //isStudy 검사
+        /*
+        Boolean isStudy = projectSaveRequestDto.getIsStudy();
+        Long studyIdx = projectSaveRequestDto.getStudyIdx();
+
+        if (projectSaveRequestDto.getIsStudy()) {
+            if (projectSaveRequestDto.getStudyIdx() == null) {
+                return new ProjectResponseDto(EMPTY_STUDY);
+            }
+            Study study = findStudy(projectSaveRequestDto.getStudyIdx());
+            if (study == null) {
+                return new ProjectResponseDto(EMPTY_PROJECT);
+            }
+            project.setStudy(study);
+        } else {
+            project.setStudy(null);
+        }
+        */
 
         // User에 프로젝트 저장
         user.getUserProjects().add(project);
