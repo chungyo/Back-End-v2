@@ -29,6 +29,9 @@ public class Study {
     @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Post> studyPosts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Project> studyProjects = new ArrayList<>();
+
     @Column
     private Integer studyMemberLimit;
 
