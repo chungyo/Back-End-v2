@@ -24,15 +24,19 @@ public class User {
     private Long userIndex;
 
     @Column
+    @Pattern(regexp = "^[A-Za-z0-9]{5,20}$")
     private String userId;
 
     @Column
+    //@Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~!@#$%^&*()+|=])[A-Za-z\\d~!@#$%^&*()+|=]{8,16}$", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
     private String userPassword;
 
     @Column
+    @Pattern(regexp = "^[가-힣A-Za-z ]{2,20}$")
     private String userName;
 
     @Column
+    @Pattern(regexp = "^[가-힣A-Za-z0-9_.]{3,20}$")
     private String userNickname;
 
     @Column
