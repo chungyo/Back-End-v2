@@ -31,6 +31,17 @@ public class Project {
     @Column
     private Boolean projectIsComplete = false;
 
+    @Column
+    private Boolean projectIsStudy = false;
+
+    @Column
+    private Boolean projectIsAttend = false;
+
+    @JsonBackReference
+    @ManyToOne
+    private Study study;
+
+
     @JsonBackReference
     @ManyToOne
     private User user;
@@ -56,4 +67,9 @@ public class Project {
         this.projectName = projectName;
         this.user = user;
     }
+
+    public void setStudy(Study study) {
+        this.study = study;
+    }
+
 }
