@@ -10,7 +10,9 @@ import com.mmos.mmos.src.domain.dto.user.UserSaveRequestDto;
 import com.mmos.mmos.src.service.CalendarService;
 import com.mmos.mmos.src.service.PlannerService;
 import com.mmos.mmos.src.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +29,7 @@ public class UserController extends BaseController {
     private final UserService userService;
     private final CalendarService calendarService;
     private final PlannerService plannerService;
+
 
     /**
      * 회원가입 API (수정 중)

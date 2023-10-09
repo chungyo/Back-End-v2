@@ -14,6 +14,7 @@ import com.mmos.mmos.src.repository.UniversityRepository;
 import com.mmos.mmos.src.repository.UserRepository;
 import com.mmos.mmos.utils.SHA256;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UniversityRepository universityRepository;
     private final MajorRepository majorRepository;
+
 
     public User findUserByIdx(Long userIdx) {
         return userRepository.findById(userIdx)
@@ -101,10 +103,10 @@ public class UserService {
             return null;
         }
 
-        UserSaveRequestDto encryptedRequestDto = new UserSaveRequestDto(requestDto, SHA256.encrypt(requestDto.getPwd()));
+        //UserSaveRequestDto encryptedRequestDto = new UserSaveRequestDto(requestDto, SHA256.encrypt(requestDto.getPwd()));
+        //User user = new User(encryptedRequestDto, major);
 
-        User user = new User(encryptedRequestDto, major);
-
+        User user = new User(requestDto, major);
 
         userRepository.save(user);
 
