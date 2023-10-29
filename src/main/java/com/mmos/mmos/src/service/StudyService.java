@@ -127,15 +127,4 @@ public class StudyService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-
-//    @Transactional
-//    public Long calculateAvgStudyTime(Study study) throws BaseException {
-//        try {
-//
-//        } catch (EmptyEntityException e) {
-//            throw new BaseException(EMPTY_STUDY);
-//        } catch (Exception e) {
-//            throw new BaseException(DATABASE_ERROR);
-//        }
-//    }
 }
