@@ -49,7 +49,7 @@ public class Post {
     @JoinColumn(name = "studyIndex")
     private Study study = null;
 
-    public Post(PostSaveRequestDto postSaveRequestDto, User user, Study study) {
+    public Post(PostSaveRequestDto postSaveRequestDto, User user, Study study, Timestamp postCreatedAt, Timestamp postUpdatedAt) {
         this.postIsNotice = postSaveRequestDto.getIsNotice();
         this.postTitle = postSaveRequestDto.getPostTitle();
         this.postContents = postSaveRequestDto.getPostContents();
@@ -57,6 +57,8 @@ public class Post {
         this.postWriterIndex = user.getUserIndex();
         this.postWriterName = user.getUserName();
         this.study = study;
+        this.postCreatedAt = postCreatedAt;
+        this.postUpdatedAt = postUpdatedAt;
     }
 
     public void setUpdatedAt(Timestamp now) {

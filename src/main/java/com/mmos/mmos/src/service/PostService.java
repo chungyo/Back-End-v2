@@ -48,7 +48,7 @@ public class PostService {
     }
 
     public List<Post> searchPromotion(String searchStr) throws BaseException {
-        return postRepository.findPostsByPostTitleContainingIgnoreCaseOrPostContentsContainingIgnoreCase(searchStr, searchStr)
+        return postRepository.findPostsByPostTitleContainingOrPostContentsContaining(searchStr, searchStr)
                 .orElseThrow(() -> new EmptyEntityException(EMPTY_POST));
     }
 
@@ -63,7 +63,7 @@ public class PostService {
             Study study = userStudy.getStudy();
 
             // Post 생성/매핑
-            Post post = new Post(postSaveRequestDto, user, study);
+            Post post = new Post(postSaveRequestDto, user, study, new Timestamp(System.currentTimeMillis()), null);
             study.addPost(post);
 
             return postRepository.save(post);
@@ -179,6 +179,7 @@ public class PostService {
         } catch (EmptyEntityException e) {
             throw new BaseException(e.getStatus());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }

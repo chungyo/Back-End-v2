@@ -12,5 +12,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Optional<List<Post>> findPostsByPostIsNoticeAndStudy(Boolean isNotice, Study study);
 
-    Optional<List<Post>> findPostsByPostTitleContainingIgnoreCaseOrPostContentsContainingIgnoreCase(String title, String contents);
+    Optional<List<Post>> findPostsByPostTitleContainingOrPostContentsContaining(String title, String contents);
 }

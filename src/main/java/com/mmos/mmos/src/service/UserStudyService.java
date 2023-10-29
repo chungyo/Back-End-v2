@@ -69,7 +69,7 @@ public class UserStudyService {
         try {
             // userStudyIdx가 리더의 것인지 확인
             UserStudy leaderUserStudy = findUserStudyByIdx(userStudyIdx);
-            if(leaderUserStudy.getUserstudyMemberStatus().equals(1))
+            if(!leaderUserStudy.getUserstudyMemberStatus().equals(1))
                 throw new NotAuthorizedAccessException(USERSTUDY_INVALID_REQUEST);
 
             // 인원 수가 충분한지 체크
@@ -94,9 +94,11 @@ public class UserStudyService {
             }
         } catch (EmptyEntityException |
                  DuplicateRequestException |
+                 NotAuthorizedAccessException |
                  OutOfRangeException e) {
             throw new BaseException(e.getStatus());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }
@@ -141,7 +143,7 @@ public class UserStudyService {
         try {
             if(isAdmin) {
                 UserStudy adminUserStudy = findUserStudyByIdx(adminUserStudyIdx);
-                if(adminUserStudy.getUserstudyMemberStatus().equals(1))
+                if(!adminUserStudy.getUserstudyMemberStatus().equals(1))
                     throw new NotAuthorizedAccessException(NOT_AUTHORIZED);
             }
 
@@ -161,7 +163,7 @@ public class UserStudyService {
         try {
             if(isAdmin) {
                 UserStudy adminUserStudy = findUserStudyByIdx(adminUserStudyIdx);
-                if(adminUserStudy.getUserstudyMemberStatus().equals(1))
+                if(!adminUserStudy.getUserstudyMemberStatus().equals(1))
                     throw new NotAuthorizedAccessException(NOT_AUTHORIZED);
             }
 
