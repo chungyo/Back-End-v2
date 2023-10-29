@@ -8,23 +8,13 @@ spring:
     show-sql: true
     properties:
       hibernate:
+        ddl-auto: update
         format_sql: true
         dialect: org.hibernate.dialect.H2Dialect
-        ddl-auto: update
+#        hbm2ddl:
+#          auto: create
     database: h2
 
   h2:
     console:
       enabled: true
-
-
-  mail:
-    host: smtp.naver.com
-    port: 465
-    username: mam-mos@naver.com
-    password: cnddud123!
-    properties:
-      mail.smtp.auth: true
-      mail.smtp.enable: true
-      mail.smtp.ssl.enable: true
-      mail.smtp.ssl.trust: smtp.naver.com

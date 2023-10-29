@@ -1,15 +1,14 @@
 package com.mmos.mmos.src.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.mmos.mmos.src.domain.dto.plan.PlanSaveRequestDto;
+import com.mmos.mmos.src.domain.dto.request.PlanSaveRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
-import java.util.List;
+import java.sql.Timestamp;
 
 @Entity
 @Getter
@@ -33,34 +32,26 @@ public class Plan {
     @Column
     private Boolean planIsVisible = false;
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "plan", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<StudyTime> planStudytimeTimes;
-
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "plannerIndex")
     private Planner planner;
 
-    @JsonBackReference
-    @ManyToOne
-    @JoinColumn(name = "userstudyIndex")
-    private UserStudy userStudy;
-
     @Column
     @ColumnDefault("0")
     private Long planStudyTime;
 
+    @Column
+    private Timestamp studytimeStartTime;
 
-    public Plan(PlanSaveRequestDto requestDto, Planner planner, UserStudy userStudy) {
+    public Plan(PlanSaveRequestDto requestDto, Planner planner) {
         this.planName = requestDto.getPlanName();
         this.planIsStudy = requestDto.getIsStudy();
         this.planner = planner;
-        this.userStudy = userStudy;
     }
 
 
-    public void update(String planName) {
+    public void updateName(String planName) {
         this.planName = planName;
     }
 
@@ -72,12 +63,15 @@ public class Plan {
         this.planIsVisible = planIsVisible;
     }
 
-    public void addStudyTime(StudyTime studyTime) {
-        this.planStudytimeTimes.add(studyTime);
-    }
-
-    public void addTime(Long time) {
+    public void setStudyTime(Long time) {
         this.planStudyTime += time;
     }
 
+    public void setStartTime(Timestamp now) {
+        this.studytimeStartTime = now;
+    }
+
+    public void resetTime() {
+        this.studytimeStartTime = null;
+    }
 }

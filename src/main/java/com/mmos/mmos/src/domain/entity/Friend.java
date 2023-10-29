@@ -31,25 +31,23 @@ public class Friend {
     @JoinColumn(name = "userIndex")
     private User user;
 
-    // 친구 인덱스
-    @Column
-    private Long friendUserIndex;
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "friendUserIndex")
+    private User friend;
 
-    public Friend(Integer friendStatus, Long friendIndex, User user) {
+
+    public Friend(Integer friendStatus, User send, User receive) {
         this.friendStatus = friendStatus;
-        this.friendUserIndex = friendIndex;
-        this.user = user;
+        this.user = send;
+        this.friend = receive;
     }
 
     public void updateStatus(Integer friendStatus) {
         this.friendStatus = friendStatus;
     }
 
-    public void updateIsFixedToTrue() {
-        this.friendIsFixed = true;
-    }
-
-    public void updateIsFixedToFalse() {
-        this.friendIsFixed = false;
+    public void updateIsFixed(boolean isFixed) {
+        this.friendIsFixed = isFixed;
     }
 }

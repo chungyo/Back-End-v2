@@ -1,6 +1,7 @@
 package com.mmos.mmos.src.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.mmos.mmos.src.domain.dto.request.ProjectSaveRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +33,16 @@ public class Project {
     private Boolean projectIsComplete = false;
 
     @Column
-    private Boolean projectIsStudy = false;
+    private Boolean projectIsStudy;
+
+    @Column
+    private String projectMemo;
+
+    @Column
+    private String projectPlace;
+
+    @Column
+    private Long projectNumber;
 
     @Column
     private Boolean projectIsAttend = false;
@@ -40,7 +50,6 @@ public class Project {
     @JsonBackReference
     @ManyToOne
     private Study study;
-
 
     @JsonBackReference
     @ManyToOne
@@ -61,11 +70,25 @@ public class Project {
     public void updateProjectIsVisible(Boolean isVisible){
         this.projectIsVisible = isVisible;
     }
-    public Project(LocalDate projectStartTime, LocalDate projectEndTime, String projectName, User user) {
-        this.projectStartTime = projectStartTime;
-        this.projectEndTime = projectEndTime;
-        this.projectName = projectName;
+
+    public Project(ProjectSaveRequestDto requestDto, User user, Study study, Long projectNumber) {
+        this.projectStartTime = requestDto.getStartTime();
+        this.projectEndTime = requestDto.getEndTime();
+        this.projectName = requestDto.getName();
+        this.projectMemo = requestDto.getMemo();
+        this.projectPlace = requestDto.getPlace();
+        this.projectIsStudy = requestDto.getIsStudy();
         this.user = user;
+        this.study = study;
+        this.projectNumber = projectNumber;
+    }
+
+    public Project(ProjectSaveRequestDto requestDto, User user) {
+        this.projectStartTime = requestDto.getStartTime();
+        this.projectEndTime = requestDto.getEndTime();
+        this.projectName = requestDto.getName();
+        this.user = user;
+        this.projectIsStudy = requestDto.getIsStudy();
     }
 
     public void setStudy(Study study) {

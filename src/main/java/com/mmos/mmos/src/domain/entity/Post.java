@@ -1,7 +1,7 @@
 package com.mmos.mmos.src.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.mmos.mmos.src.domain.dto.post.PostSaveRequestDto;
+import com.mmos.mmos.src.domain.dto.request.PostSaveRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -59,7 +59,14 @@ public class Post {
         this.study = study;
     }
 
+    public void setUpdatedAt(Timestamp now) {
+        this.postUpdatedAt = now;
+    }
 
+    public void updateWriter(User user) {
+        this.postWriterIndex = user.getUserIndex();
+        this.postWriterName = user.getUserName();
+    }
 
     public void updateTitle(String title) {
         this.postTitle = title;

@@ -1,6 +1,7 @@
 package com.mmos.mmos.src.repository;
 
 import com.mmos.mmos.src.domain.entity.Friend;
+import com.mmos.mmos.src.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -10,5 +11,7 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     Optional<Friend> findFriendByUser_UserIndexAndFriendUserIndex(Long userIdx, Long friendIdx);
 
-    List<Friend> findFriendsByUser_UserIndexAndFriendStatus(Long userIdx, Integer status);
+    Optional<List<Friend>> findFriendsByUser_UserIndexAndFriendStatus(Long userIdx, Integer status);
+
+    Optional<Friend> findFriendByUserAndFriend(User user, User friend);
 }

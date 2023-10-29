@@ -2,7 +2,6 @@ package com.mmos.mmos.src.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.mmos.mmos.src.domain.dto.university.UniversitySaveRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,8 +30,8 @@ public class College {
     @JoinColumn(name = "universityIndex")
     private University university;
 
-    public College(UniversitySaveRequestDto requestDto, University university) {
-        this.collegeName = requestDto.getName();
+    public College(String name, University university) {
+        this.collegeName = name;
         this.university = university;
 
     }

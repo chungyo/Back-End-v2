@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-    Optional<List<Post>> findPostsByPostIsNotice(Boolean postIsNotice);
+    Optional<List<Post>> findPostsByPostIsNoticeIsFalse();
 
     Optional<List<Post>> findPostsByPostIsNoticeAndStudy(Boolean isNotice, Study study);
 
-    Optional<List<Post>> findPostsByPostTitleContainingOrPostContentsContaining(String title, String contents);
+    Optional<List<Post>> findPostsByPostTitleContainingIgnoreCaseOrPostContentsContainingIgnoreCase(String title, String contents);
 }

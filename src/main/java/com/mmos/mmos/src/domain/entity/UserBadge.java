@@ -25,10 +25,14 @@ public class UserBadge {
     private Badge badge;
 
     @Column
-    private Boolean userbadgeIsVisible = true;
+    private Boolean userbadgeIsVisible = false;
 
     public UserBadge(User user, Badge badge) {
         this.user = user;
         this.badge = badge;
+    }
+
+    public void updateIsVisible(boolean status) {
+        this.userbadgeIsVisible = status;
     }
 }

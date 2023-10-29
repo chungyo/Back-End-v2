@@ -2,7 +2,6 @@ package com.mmos.mmos.src.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.mmos.mmos.src.domain.dto.major.MajorSaveRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,8 +29,8 @@ public class Major {
     @OneToMany(mappedBy = "major", cascade = CascadeType.REMOVE,orphanRemoval = true)
     private List<User> majorUsers;
 
-    public Major(MajorSaveRequestDto requestDto, College college) {
-        this.majorName = requestDto.getName();
+    public Major(String name, College college) {
+        this.majorName = name;
         this.college = college;
     }
 

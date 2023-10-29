@@ -10,4 +10,5 @@ public interface UserBadgeRepository extends JpaRepository<UserBadge, Long> {
 
     Optional<List<UserBadge>> findUserBadgesByUser_UserIndexAndBadge_BadgePurpose(Long idx, String purpose);
 
+    Optional<List<UserBadge>> findUserBadgeByUser_UserIndexAndBadge_BadgePurposeAndUserbadgeIsVisibleIsTrue(Long userIdx, String purpose);
 }

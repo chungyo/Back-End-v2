@@ -1,10 +1,11 @@
 package com.mmos.mmos.src.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.mmos.mmos.src.domain.dto.study.StudySaveRequestDto;
+import com.mmos.mmos.src.domain.dto.request.StudySaveRequestDto;
 import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +25,10 @@ public class Study {
     private List<UserStudy> studyUserstudies = new ArrayList<>();
 
     @JsonManagedReference
-    @Column
-    @ColumnDefault("null")
     @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Post> studyPosts = new ArrayList<>();
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Project> studyProjects = new ArrayList<>();
 
@@ -42,25 +42,33 @@ public class Study {
     private String studyName;
 
     @Column
+    private String studyMemo;
+
+    @Column
     private Boolean studyIsVisible = true;
 
     @Column
     private Boolean studyIsComplete = false;
 
-    @Column
-    private Long studyAverageStudyTime = 0L;
+    public void addProject(Project project) {
+        this.studyProjects.add(project);
+    }
 
     public void updateStudyName(String studyName) {
         this.studyName = studyName;
     }
 
+    public void updateStudyMemo(String studyMemo) {
+        this.studyMemo = studyMemo;
+    }
+
     public void updateStudyIsComplete(){this.studyIsComplete = true;}
 
-    @Builder
     public Study(StudySaveRequestDto requestDto) {
         this.studyName = requestDto.getName();
         this.studyMemberLimit = requestDto.getMemberLimit();
     }
+
     public void addPost(Post post){
         this.studyPosts.add(post);
     }
@@ -73,22 +81,5 @@ public class Study {
     }
     public void minusMemberNum() {
         this.studyMemberNum--;
-    }
-
-    public void plusAverageStudyTime(Long studyTime) {
-        this.studyAverageStudyTime = (this.studyAverageStudyTime * studyMemberNum + studyTime) / studyMemberNum;
-    }
-
-    public void minusAverageStudyTime(Long studyTime) {
-        Long newAvgTime = this.studyAverageStudyTime * studyMemberNum;
-        newAvgTime -= studyTime;
-        if(newAvgTime <= 0)
-            this.studyAverageStudyTime = 0L;
-        else
-            this.studyAverageStudyTime = newAvgTime / studyMemberNum;
-    }
-
-    public void resetAvgStudyTime() {
-        this.studyAverageStudyTime = 0L;
     }
 }

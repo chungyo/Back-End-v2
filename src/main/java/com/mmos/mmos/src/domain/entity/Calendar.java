@@ -29,11 +29,11 @@ public class Calendar {
 
     @Column
     @ColumnDefault("0")
-    private Long calendarMonthlyStudyTime;
+    private Long calendarMonthlyStudyTime = 0L;
 
     @Column
     @ColumnDefault("0")
-    private Long calendarMonthlyCompletedPlanNum;
+    private Long calendarMonthlyCompletedPlanNum = 0L;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.REMOVE, orphanRemoval = true)

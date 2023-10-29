@@ -2,7 +2,7 @@ package com.mmos.mmos.src.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.mmos.mmos.src.domain.dto.user.UserSaveRequestDto;
+import com.mmos.mmos.src.domain.dto.request.SignUpRequestDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
@@ -44,18 +44,27 @@ public class User {
     private String userEmail;
 
     @Column
+    @ColumnDefault(value = "0")
     private Long userTotalStudyTime = 0L;
 
     @Column
+    @ColumnDefault(value = "0")
+    private Long userWeeklyStudyTime = 0L;
+
+    @Column
+    @ColumnDefault(value = "0")
     private Long userTotalCompletedScheduleNum = 0L;
 
     @Column
-    private Long userStudentId;
+    @ColumnDefault(value = "0")
+    private Long userTotalScheduleNum = 0L;
 
     @Column
+    @ColumnDefault(value = "0")
     private Long userCurrentStreak = 0L;
 
     @Column
+    @ColumnDefault(value = "0")
     private Long userTopStreak = 0L;
 
     @JsonManagedReference
@@ -89,13 +98,12 @@ public class User {
     @JoinColumn(name = "majorIndex")
     private Major major;
 
-    public User(UserSaveRequestDto responseDto, Major major) {
+    public User(SignUpRequestDto responseDto, Major major) {
         this.userId = responseDto.getId();
         this.userPassword = responseDto.getPwd();
         this.userName = responseDto.getName();
         this.userNickname = responseDto.getNickname();
         this.userEmail = responseDto.getEmail();
-        this.userStudentId = responseDto.getStudentId();
         this.major = major;
     }
 
@@ -115,6 +123,26 @@ public class User {
         this.userFriends.add(friend);
     }
 
+    public void addProject(Project project) {
+        this.userProjects.add(project);
+    }
+
+    public void addTotalTime(Long time) {
+        this.userTotalStudyTime += time;
+    }
+
+    public void minusTotalTime(Long time) {
+        this.userTotalStudyTime -= time;
+    }
+
+    public void addWeeklyTime(Long time) {
+        this.userTotalStudyTime += time;
+    }
+
+    public void minusWeeklyTime(Long time) {
+        this.userTotalStudyTime -= time;
+    }
+
     public void updatePwd(String newPwd) {
         this.userPassword = newPwd;
     }
@@ -126,6 +154,25 @@ public class User {
     public void updateTopStreak(Long days) {
         this.userTopStreak = days;
     }
+
+    public void updateTotalSchedule(boolean status) {
+        if(status){
+            this.userTotalScheduleNum++;
+        }
+        else{
+            this.userTotalScheduleNum--;
+        }
+    }
+
+    public void updateTotalCompleteSchedule(boolean status) {
+        if(status){
+            this.userTotalCompletedScheduleNum++;
+        }
+        else{
+            this.userTotalCompletedScheduleNum--;
+        }
+    }
+
 
     public void plusCurrentStreak() {
         this.userCurrentStreak++;
