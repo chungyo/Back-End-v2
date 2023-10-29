@@ -165,6 +165,7 @@ public class PlanService {
                 Timestamp now = new Timestamp(System.currentTimeMillis());
                 // 시간 차이 계산 (분 단위)
                 Long studyTime = (now.getTime() - plan.getStudytimeStartTime().getTime()) / 60000;
+
                 // 총 공부 시간 계산
                 plan.setStudyTime(studyTime);
                 planner.addTime(studyTime);
@@ -201,15 +202,22 @@ public class PlanService {
                 user.updateTotalCompleteSchedule(false);
             user.updateTotalSchedule(false);
 
+
+
             LocalDate today = LocalDate.now();
+            LocalDate endOfWeek = today.with(DayOfWeek.SUNDAY);
             LocalDate startOfWeek = today.with(DayOfWeek.MONDAY); // 이번 주의 월요일로 설정
 
+            System.out.println("startOfWeek = " + startOfWeek);
+            System.out.println("endOfWeek = " + endOfWeek);
+
             // 이번 주 계획인지 확인하고 맞다면 이번 주 공부 시간에서도 삭제
-            for(; startOfWeek.isBefore(today.with(DayOfWeek.SUNDAY)) ||
-                    startOfWeek.isEqual(today.with(DayOfWeek.SUNDAY));
-                    startOfWeek.plusDays(1)) {
-                if(startOfWeek.isEqual(plan.getPlanner().getPlannerDate()))
+            for(; today.isBefore(endOfWeek) || today.isEqual(endOfWeek); today = today.plusDays(1)) {
+                if(today.isEqual(plan.getPlanner().getPlannerDate())) {
+                    System.out.println(today.getDayOfMonth());
                     user.minusWeeklyTime(plan.getPlanStudyTime());
+                    break;
+                }
             }
 
             planRepository.delete(plan);

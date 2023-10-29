@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface StudyRepository extends JpaRepository<Study, Long> {
 
-    Optional<List<Study>> findTop3ByStudyIsCompleteAndAndStudyIsVisibleOrderByStudyMemberNumDesc(boolean isComplete, boolean isVisible);
+//    Optional<List<Study>> findTop3ByStudyIsCompleteAndAndStudyIsVisibleOrderByStudyMemberNumDesc(boolean isComplete, boolean isVisible);
 
-    Optional<List<Study>> findTop3ByStudyIsCompleteAndStudyIsVisibleOrderByStudyAvgStudyTimeDesc(boolean isComplete, boolean isVisible);
+//    Optional<List<Study>> findTop3ByStudyIsCompleteAndStudyIsVisibleOrderByStudyAvgStudyTimeDesc(boolean isComplete, boolean isVisible);
 }

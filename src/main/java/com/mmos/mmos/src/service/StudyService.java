@@ -43,15 +43,15 @@ public class StudyService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 스터디입니다. STUDY_INDEX" + userStudyIdx));
     }
 
-    public List<Study> findPopularStudy() {
-        return studyRepository.findTop3ByStudyIsCompleteAndAndStudyIsVisibleOrderByStudyMemberNumDesc(false, true)
-                .orElse(null);
-    }
-
-    public List<Study> findHardestStudy() throws BaseException {
-        return studyRepository.findTop3ByStudyIsCompleteAndStudyIsVisibleOrderByStudyAvgStudyTimeDesc(false, true)
-                .orElseThrow(() -> new EmptyEntityException(EMPTY_STUDY));
-    }
+//    public List<Study> findPopularStudy() {
+//        return studyRepository.findTop3ByStudyIsCompleteAndAndStudyIsVisibleOrderByStudyMemberNumDesc(false, true)
+//                .orElse(null);
+//    }
+//
+//    public List<Study> findHardestStudy() throws BaseException {
+//        return studyRepository.findTop3ByStudyIsCompleteAndStudyIsVisibleOrderByStudyAvgStudyTimeDesc(false, true)
+//                .orElseThrow(() -> new EmptyEntityException(EMPTY_STUDY));
+//    }
     
     // 스터디 업데이트 (이름, 메모, 완수여부 설정)
     @Transactional

@@ -154,7 +154,7 @@ public class PlannerPageController extends BaseController {
     public ResponseEntity<ResponseApiMessage> deletePlan(@RequestParam Long planIdx) {
         try {
             Plan plan = planService.deletePlan(planIdx);
-            return sendResponseHttpByJson(SUCCESS, "계획 표시 여부 수정 성공", new PlannerSectionDto(plan.getPlanner()));
+            return sendResponseHttpByJson(SUCCESS, "계획 삭제 성공", new PlannerSectionDto(plan.getPlanner()));
         } catch (BaseException e) {
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }
