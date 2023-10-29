@@ -15,7 +15,7 @@ import java.util.List;
 public class PlannerSectionDto {
 
     // 플래너 인덱스
-    private Long idx;
+    private Long plannerIdx;
     // 월
     private Integer month;
     // 일
@@ -26,7 +26,7 @@ public class PlannerSectionDto {
     private List<Plan> plans = new ArrayList<>();
 
     public PlannerSectionDto(Planner planner) {
-        this.idx = planner.getPlannerIndex();
+        this.plannerIdx = planner.getPlannerIndex();
         this.month = planner.getPlannerDate().getMonthValue();
         this.day = planner.getPlannerDate().getDayOfMonth();
         this.todayStudyTime = planner.getPlannerDailyStudyTime();
