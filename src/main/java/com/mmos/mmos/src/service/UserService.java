@@ -52,6 +52,7 @@ public class UserService {
         } catch (DuplicateRequestException e) {
             throw new BaseException(e.getStatus());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }

@@ -136,11 +136,11 @@ public class User {
     }
 
     public void addWeeklyTime(Long time) {
-        this.userTotalStudyTime += time;
+        this.userWeeklyStudyTime += time;
     }
 
     public void minusWeeklyTime(Long time) {
-        this.userTotalStudyTime -= time;
+        this.userWeeklyStudyTime -= time;
     }
 
     public void updatePwd(String newPwd) {
