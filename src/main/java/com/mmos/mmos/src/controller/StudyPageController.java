@@ -36,7 +36,7 @@ public class StudyPageController extends BaseController {
     // 현재 스터디 기준 가져오기 (전체 정보가 아님) -> 스터디도 페이지로 가져오나? -> 일단 페이지로 가져오자
     @GetMapping("")
     public ResponseEntity<ResponseApiMessage> getPage(@RequestParam Long userIdx,
-                                                      @PageableDefault(size = 1, sort = "studyIdx") Pageable StudyPage,
+                                                      @PageableDefault(size = 1, sort = "studyIdx") Pageable studyPage,
                                                       @PageableDefault(size = 1, sort = "projectNumber", direction = Sort.Direction.ASC) Pageable projectPage,
                                                       @PageableDefault(size = 3, sort = "postIndex", direction = Sort.Direction.DESC) Pageable noticePage,
                                                       @PageableDefault(size = 5, sort = "postIndex", direction = Sort.Direction.DESC) Pageable promotionPage) {
@@ -76,18 +76,12 @@ public class StudyPageController extends BaseController {
                 myStudySectionDto.add(new MyStudySectionDto(userStudy.getStudy(),
                         new PageImpl<>(projectSectionDto, projectPage, projectSectionDto.size()),
                         new StudyMemberSectionDto(userStudy.getStudy(), memberSectionInMemberDto),
-                        new PageImpl<>(noticeSectionDto, noticePage, projectSectionDto.size())));
+                        postService.getNotices(userStudy, noticePage)));
             }
 
-
-
-
-
-
-            StudyPageResponseDto studyPageResponseDto = new StudyPageResponseDto();
-
             return sendResponseHttpByJson(SUCCESS, "스터디 페이지 로드 성공",
-                    null);
+                    new StudyPageResponseDto(new PageImpl<>(myStudySectionDto, studyPage, myStudySectionDto.size()),
+                                            postService.getPromotions(promotionPage)));
         } catch (BaseException e) {
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }
@@ -376,11 +370,13 @@ public class StudyPageController extends BaseController {
                 throw new NotAuthorizedAccessException(NOT_AUTHORIZED);
 
             Study study = userStudy.getStudy();
+            Project project = projectService.getProject(projectIdx);
             for (Project studyProject : study.getStudyProjects()) {
-
+                if(project.getProjectNumber().equals(studyProject.getProjectNumber()))
+                    projectService.updateProject(studyProject.getProjectIndex(), requestDto, true, userStudyIdx);
             }
 
-            return sendResponseHttpByJson(SUCCESS, "스터디 일정 수정 성공", projectService.updateProject(projectIdx, requestDto, true, userStudyIdx));
+            return sendResponseHttpByJson(SUCCESS, "스터디 일정 수정 성공", null);
         } catch (BaseException e) {
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }

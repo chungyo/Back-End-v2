@@ -58,28 +58,45 @@ public class ProjectService {
     }
 
     @Transactional
-    public List<Project> getProjects(Long calendarIdx, Integer day) throws BaseException {
-        Calendar calendar = findCalendarByIdx(calendarIdx);
-        User user = calendar.getUser();
-
-        List<Project> projects = user.getUserProjects();
-
-        // 해당 날짜를 포함하는 Project 찾기
-        List<Project> plannerProjectList = new ArrayList<>();
-        LocalDate targetDate = LocalDate.of(calendar.getCalendarYear(), calendar.getCalendarMonth(), day);  // 특정 날짜 가져오기
-
-        for (Project project : projects) {
-            LocalDate projectStart = project.getProjectStartTime();
-            LocalDate projectEnd = project.getProjectEndTime();
-
-            // 특정 날짜가 프로젝트의 시작과 종료 사이에 있는지 확인
-            if ((projectStart.isBefore(targetDate) || projectStart.isEqual(targetDate)) &&
-                    (projectEnd.isAfter(targetDate) || projectEnd.isEqual(targetDate))) {
-                plannerProjectList.add(project);
-            }
+    public Project getProject(Long projectIdx) throws BaseException {
+        try {
+            return findProjectByIdx(projectIdx);
+        } catch (EmptyEntityException e) {
+            throw new BaseException(e.getStatus());
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
         }
+    }
 
-        return plannerProjectList;
+    @Transactional
+    public List<Project> getProjects(Long calendarIdx, Integer day) throws BaseException {
+        try {
+            Calendar calendar = findCalendarByIdx(calendarIdx);
+            User user = calendar.getUser();
+
+            List<Project> projects = user.getUserProjects();
+
+            // 해당 날짜를 포함하는 Project 찾기
+            List<Project> plannerProjectList = new ArrayList<>();
+            LocalDate targetDate = LocalDate.of(calendar.getCalendarYear(), calendar.getCalendarMonth(), day);  // 특정 날짜 가져오기
+
+            for (Project project : projects) {
+                LocalDate projectStart = project.getProjectStartTime();
+                LocalDate projectEnd = project.getProjectEndTime();
+
+                // 특정 날짜가 프로젝트의 시작과 종료 사이에 있는지 확인
+                if ((projectStart.isBefore(targetDate) || projectStart.isEqual(targetDate)) &&
+                        (projectEnd.isAfter(targetDate) || projectEnd.isEqual(targetDate))) {
+                    plannerProjectList.add(project);
+                }
+            }
+
+            return plannerProjectList;
+        } catch (EmptyEntityException e) {
+            throw new BaseException(e.getStatus());
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
     }
 
     @Transactional
@@ -196,7 +213,7 @@ public class ProjectService {
 
     // 스터디라면 스터디매핑가능하도록 + 권한
     @Transactional
-    public Project updateProject(Long projectIdx, ProjectUpdateRequestDto requestDto, Boolean isStudyPage, Long userStudyIdx) throws BaseException {
+    public Project updateProject(Long projectIdx, ProjectUpdateRequestDto requestDto, Boolean isStudyPage, Long adminUserStudyIdx) throws BaseException {
         try {
             Project project = findProjectByIdx(projectIdx);
 
@@ -204,7 +221,7 @@ public class ProjectService {
             if(isStudyPage) {
                 if(!project.getProjectIsStudy())
                     throw new BusinessLogicException(BUSINESS_LOGIC_ERROR);
-                if(findUserstudyByIdx(userStudyIdx).getUserstudyMemberStatus().equals(1))
+                if(findUserstudyByIdx(adminUserStudyIdx).getUserstudyMemberStatus().equals(1))
                     throw new NotAuthorizedAccessException(NOT_AUTHORIZED);
             } else
                 if(project.getProjectIsStudy())
