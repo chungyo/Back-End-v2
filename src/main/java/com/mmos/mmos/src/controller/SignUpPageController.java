@@ -8,6 +8,7 @@ import com.mmos.mmos.src.domain.entity.Major;
 import com.mmos.mmos.src.domain.entity.University;
 import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.service.*;
+import com.univcert.api.UnivCert;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.mmos.mmos.config.HttpResponseStatus.BUSINESS_LOGIC_ERROR;
 import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
 
 @RestController
@@ -85,6 +87,28 @@ public class SignUpPageController extends BaseController {
             return sendResponseHttpByJson(SUCCESS, "회원가입 성공", user);
         } catch (BaseException e) {
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
+        }
+    }
+
+    @PostMapping("/email")
+    public ResponseEntity<ResponseApiMessage> sendCertificationNumber(@RequestParam String email) {
+        try {
+            Map<String, Object> result = UnivCert.certify("ee5c770b-a868-49c3-9b98-1aaf42383c94", email, "가천대학교", true);
+            return sendResponseHttpByJson(SUCCESS, "이메일 전송 성공", result.get("code"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return sendResponseHttpByJson(BUSINESS_LOGIC_ERROR, "서버 오류", null);
+        }
+    }
+
+    @PostMapping("/email/certified")
+    public ResponseEntity<ResponseApiMessage> checkCertificationNumber(@RequestParam String email, @RequestParam int code) {
+        try {
+            Map<String, Object> result = UnivCert.certifyCode("ee5c770b-a868-49c3-9b98-1aaf42383c94", email, "가천대학교", code);
+            return sendResponseHttpByJson(SUCCESS, result.get("message").toString(), result.get("code"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return sendResponseHttpByJson(BUSINESS_LOGIC_ERROR, "서버 오류", null);
         }
     }
 }
