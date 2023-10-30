@@ -6,9 +6,7 @@ import com.mmos.mmos.src.domain.dto.request.BadgeUpdateRequestDto;
 import com.mmos.mmos.src.domain.entity.Badge;
 import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.domain.entity.UserBadge;
-import com.mmos.mmos.src.repository.BadgeRepository;
 import com.mmos.mmos.src.repository.UserBadgeRepository;
-import com.mmos.mmos.src.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,20 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.mmos.mmos.config.HttpResponseStatus.*;
+import static com.mmos.mmos.config.HttpResponseStatus.DATABASE_ERROR;
+import static com.mmos.mmos.config.HttpResponseStatus.EMPTY_USERBADGE;
 
 @Service
 @RequiredArgsConstructor
 public class UserBadgeService {
     private final UserBadgeRepository userBadgeRepository;
-    private final UserRepository userRepository;
-    private final BadgeRepository badgeRepository;
+    private final UserService userService;
     private final BadgeService badgeService;
-
-    public User findUserByIdx(Long userIdx) throws BaseException {
-        return userRepository.findById(userIdx)
-                .orElseThrow(() -> new EmptyEntityException(EMPTY_USER));
-    }
 
     public UserBadge findUserBadgeByIdx(Long userBadgeIdx) throws BaseException {
         return userBadgeRepository.findById(userBadgeIdx)
@@ -46,14 +39,10 @@ public class UserBadgeService {
                 .orElseThrow(() -> new EmptyEntityException(EMPTY_USERBADGE));
     }
 
-    public List<Badge> findBadges() {
-        return badgeRepository.findAll();
-    }
-
     public void saveUserBadge(Long userIdx) throws BaseException {
         try {
-            User user = findUserByIdx(userIdx);
-            List<Badge> badges = findBadges();
+            User user = userService.getUser(userIdx);
+            List<Badge> badges = badgeService.findAllBadges();
 
             List<Badge> newBadges = new ArrayList<>();
             for (Badge badge : badges) {
@@ -67,7 +56,7 @@ public class UserBadgeService {
                 )
                 {
                     // 유저가 이미 해당 뱃지를 존재하는 경우 continue
-                    Boolean isExist = false;
+                    boolean isExist = false;
                     for(UserBadge userOwnBadge : user.getUserUserbadges())
                         if (userOwnBadge.getBadge() == badge) {
                             isExist = true;

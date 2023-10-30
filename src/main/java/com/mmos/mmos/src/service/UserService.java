@@ -25,6 +25,11 @@ public class UserService {
                 .orElseThrow(() -> new EmptyEntityException(EMPTY_USER));
     }
 
+    public User findUserById(String id) throws BaseException {
+        return userRepository.findUserByUserId(id)
+                .orElseThrow(() -> new EmptyEntityException(EMPTY_USER));
+    }
+
     @Transactional
     public User getUser(Long userIdx) throws BaseException {
         try {
@@ -45,6 +50,8 @@ public class UserService {
                 throw new DuplicateRequestException(USER_DUPLICATE_SAVE);
 
             Major major = majorService.getMajor(requestDto.getMajorIdx());
+            //requestDto.encryptPwd(encrypt(requestDto.getPwd()));
+
             User user = new User(requestDto, major);
             major.addUser(user);
 

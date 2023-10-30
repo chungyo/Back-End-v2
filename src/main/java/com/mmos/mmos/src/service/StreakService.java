@@ -8,7 +8,6 @@ import com.mmos.mmos.src.domain.entity.Planner;
 import com.mmos.mmos.src.domain.entity.Streak;
 import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.repository.StreakRepository;
-import com.mmos.mmos.src.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,12 +21,7 @@ import static com.mmos.mmos.config.HttpResponseStatus.*;
 @RequiredArgsConstructor
 public class StreakService {
     private final StreakRepository streakRepository;
-    private final UserRepository userRepository;
-
-    public User findUserByIdx(Long userIdx) throws BaseException {
-        return userRepository.findById(userIdx)
-                .orElseThrow(() -> new EmptyEntityException(EMPTY_USER));
-    }
+    private final UserService userService;
 
     public List<Streak> findStreaks60Days(User user) throws BaseException {
         return streakRepository.findTop60ByUserOrderByStreakIndexDesc(user)
@@ -42,7 +36,7 @@ public class StreakService {
     @Transactional
     public void saveStreak(Long userIdx) throws BaseException {
         try {
-            User user = findUserByIdx(userIdx);
+            User user = userService.getUser(userIdx);
             LocalDate beforeDay = LocalDate.now().minusDays(1);
 
             for (Streak streak : user.getStreaks()) {
@@ -106,7 +100,7 @@ public class StreakService {
     @Transactional
     public List<Streak> getStreaks(Long userIdx) throws BaseException {
         try {
-            User user = findUserByIdx(userIdx);
+            User user = userService.getUser(userIdx);
             return findStreaks60Days(user);
         } catch (EmptyEntityException e) {
             throw new BaseException(e.getStatus());

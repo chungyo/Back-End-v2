@@ -11,7 +11,6 @@ import com.mmos.mmos.src.domain.entity.Study;
 import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.domain.entity.UserStudy;
 import com.mmos.mmos.src.repository.PostRepository;
-import com.mmos.mmos.src.repository.UserStudyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -30,16 +29,11 @@ import static com.mmos.mmos.config.HttpResponseStatus.*;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final UserStudyRepository userStudyRepository;
+    private final UserStudyService userStudyService;
 
     public Post findPostByIdx(Long postIdx) throws BaseException {
         return postRepository.findById(postIdx)
                 .orElseThrow(() -> new EmptyEntityException(EMPTY_POST));
-    }
-
-    public UserStudy findUserStudyByIdx(Long userStudyIdx) throws BaseException {
-        return userStudyRepository.findById(userStudyIdx)
-                .orElseThrow(() -> new EmptyEntityException(EMPTY_USERSTUDY));
     }
 
     public List<Post> findPostsByPostIsNotice() throws BaseException {
@@ -55,7 +49,7 @@ public class PostService {
     @Transactional
     public Post savePost(Long userStudyIdx, PostSaveRequestDto postSaveRequestDto) throws BaseException {
         try {
-            UserStudy userStudy = findUserStudyByIdx(userStudyIdx);
+            UserStudy userStudy = userStudyService.getUserStudy(userStudyIdx);
             if (!userStudy.getUserstudyMemberStatus().equals(1))
                 throw new NotAuthorizedAccessException(NOT_AUTHORIZED);
 
@@ -77,7 +71,7 @@ public class PostService {
     @Transactional
     public Post updatePost(Long postIdx, Long userStudyIdx, PostSaveRequestDto requestDto) throws BaseException {
         try {
-            UserStudy userStudy = findUserStudyByIdx(userStudyIdx);
+            UserStudy userStudy = userStudyService.getUserStudy(userStudyIdx);
             if(!userStudy.getUserstudyMemberStatus().equals(1))
                 throw new NotAuthorizedAccessException(NOT_AUTHORIZED);
 
@@ -158,7 +152,7 @@ public class PostService {
     @Transactional
     public void deletePost(Long postIdx, Long userStudyIdx) throws BaseException {
         try {
-            UserStudy userStudy = findUserStudyByIdx(userStudyIdx);
+            UserStudy userStudy = userStudyService.getUserStudy(userStudyIdx);
             if (!userStudy.getUserstudyMemberStatus().equals(1))
                 throw new NotAuthorizedAccessException(NOT_AUTHORIZED);
 

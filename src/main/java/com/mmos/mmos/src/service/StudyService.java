@@ -8,9 +8,7 @@ import com.mmos.mmos.src.domain.entity.Study;
 import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.domain.entity.UserStudy;
 import com.mmos.mmos.src.repository.PostRepository;
-import com.mmos.mmos.src.repository.ProjectRepository;
 import com.mmos.mmos.src.repository.StudyRepository;
-import com.mmos.mmos.src.repository.UserStudyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -28,30 +26,12 @@ import static com.mmos.mmos.config.HttpResponseStatus.EMPTY_STUDY;
 @RequiredArgsConstructor
 public class StudyService {
     private final StudyRepository studyRepository;
-    private final UserStudyRepository userStudyRepository;
     private final PostRepository postRepository;
-    private final ProjectRepository projectRepository;
-    private final UserService userService;
 
     public Study findStudyByIdx(Long studyIdx) throws BaseException {
         return studyRepository.findById(studyIdx)
                 .orElseThrow(() -> new EmptyEntityException(EMPTY_STUDY));
     }
-
-    public UserStudy findUserStudy(Long userStudyIdx){
-        return userStudyRepository.findById(userStudyIdx)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 스터디입니다. STUDY_INDEX" + userStudyIdx));
-    }
-
-//    public List<Study> findPopularStudy() {
-//        return studyRepository.findTop3ByStudyIsCompleteAndAndStudyIsVisibleOrderByStudyMemberNumDesc(false, true)
-//                .orElse(null);
-//    }
-//
-//    public List<Study> findHardestStudy() throws BaseException {
-//        return studyRepository.findTop3ByStudyIsCompleteAndStudyIsVisibleOrderByStudyAvgStudyTimeDesc(false, true)
-//                .orElseThrow(() -> new EmptyEntityException(EMPTY_STUDY));
-//    }
     
     // 스터디 업데이트 (이름, 메모, 완수여부 설정)
     @Transactional

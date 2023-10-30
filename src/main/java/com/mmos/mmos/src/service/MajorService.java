@@ -4,7 +4,6 @@ import com.mmos.mmos.config.exception.BaseException;
 import com.mmos.mmos.config.exception.EmptyEntityException;
 import com.mmos.mmos.src.domain.entity.College;
 import com.mmos.mmos.src.domain.entity.Major;
-import com.mmos.mmos.src.repository.CollegeRepository;
 import com.mmos.mmos.src.repository.MajorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,19 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.mmos.mmos.config.HttpResponseStatus.*;
+import static com.mmos.mmos.config.HttpResponseStatus.DATABASE_ERROR;
+import static com.mmos.mmos.config.HttpResponseStatus.EMPTY_MAJOR;
 
 @Service
 @RequiredArgsConstructor
 public class MajorService {
 
     private final MajorRepository majorRepository;
-    private final CollegeRepository collegeRepository;
+    private final CollegeService collegeService;
 
-    public College findCollegeByIdx(Long collegeIdx) throws BaseException {
-        return collegeRepository.findById(collegeIdx)
-                .orElseThrow(() -> new EmptyEntityException(EMPTY_COLLEGE));
-    }
 
     public List<Major> findAllMajors(College college) throws BaseException {
         return majorRepository.findAllByCollege(college)
@@ -39,7 +35,7 @@ public class MajorService {
     @Transactional
     public Major saveMajor(Long collegeIdx, String name) throws BaseException {
         try {
-            College college = findCollegeByIdx(collegeIdx);
+            College college = collegeService.findCollegeByIdx(collegeIdx);
             Major major = new Major(name, college);
 
             college.addMajor(major);
@@ -66,7 +62,7 @@ public class MajorService {
     public List<Major> getMajors(Long collegeIdx) throws BaseException {
         try {
             // college 객체 가져오기
-            College college = findCollegeByIdx(collegeIdx);
+            College college = collegeService.findCollegeByIdx(collegeIdx);
             return findAllMajors(college);
         } catch (EmptyEntityException e) {
             throw new BaseException(e.getStatus());

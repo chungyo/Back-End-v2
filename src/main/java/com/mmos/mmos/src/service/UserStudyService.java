@@ -4,38 +4,19 @@ import com.mmos.mmos.config.exception.*;
 import com.mmos.mmos.src.domain.entity.Study;
 import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.domain.entity.UserStudy;
-import com.mmos.mmos.src.repository.StudyRepository;
-import com.mmos.mmos.src.repository.UserRepository;
 import com.mmos.mmos.src.repository.UserStudyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static com.mmos.mmos.config.HttpResponseStatus.*;
 
 @Service
 @RequiredArgsConstructor
 public class UserStudyService {
-    private final UserRepository userRepository;
     private final UserStudyRepository userStudyRepository;
-    private final StudyRepository studyRepository;
-
-    public Study findStudyByIdx(Long studyIdx) throws BaseException {
-        return studyRepository.findById(studyIdx)
-                .orElseThrow(() -> new EmptyEntityException(EMPTY_STUDY));
-    }
-
-    public User findUserByIdx(Long userIdx) throws BaseException {
-        return userRepository.findById(userIdx)
-                .orElseThrow(() -> new EmptyEntityException(EMPTY_USER));
-    }
-
-    public User findUserById(String id) throws BaseException {
-        return userRepository.findUserByUserId(id)
-                .orElseThrow(() -> new EmptyEntityException(EMPTY_USER));
-    }
+    private final UserService userService;
+    private final StudyService studyService;
 
     public UserStudy findUserStudyByStudyIdxAndUserIdx(Study study, User user) throws BaseException {
         return userStudyRepository.findUserStudyByStudyAndUser(study, user)
@@ -45,11 +26,6 @@ public class UserStudyService {
     public UserStudy findUserStudyByIdx(Long userStudyIdx) throws BaseException {
         return userStudyRepository.findById(userStudyIdx)
                 .orElseThrow(() -> new EmptyEntityException(EMPTY_USERSTUDY));
-    }
-
-    public List<UserStudy> findUserStudiesByStudyIdxAndStatus(Long studyIdx, Integer status) {
-        return userStudyRepository.findUserStudiesByStudy_StudyIndexAndUserstudyMemberStatus(studyIdx, status)
-                .orElse(null);
     }
 
     @Transactional
@@ -77,14 +53,14 @@ public class UserStudyService {
                 throw new OutOfRangeException(USERSTUDY_MEMBER_LIMIT_FULL);
 
             // 이미 멤버인지 혹은 보내거나 받은 요청이 있는지 체크
-            User user = findUserById(id);
+            User user = userService.findUserById(id);
             UserStudy userStudy;
             try {
                 userStudy = findUserStudyByStudyIdxAndUserIdx(leaderUserStudy.getStudy(), user);
                 throw new DuplicateRequestException(USERSTUDY_COMPLETE_REQUEST);
             } catch (BaseException e) {
                 // 객체 불러오기
-                Study study = findStudyByIdx(leaderUserStudy.getStudy().getStudyIndex());
+                Study study = studyService.getStudy(leaderUserStudy.getStudy().getStudyIndex());
 
                 userStudy = new UserStudy(3, user, study);
                 study.addUserStudy(userStudy);
@@ -107,8 +83,8 @@ public class UserStudyService {
     public UserStudy saveUserStudy(Integer memberStatus, Long userIdx, Long studyIdx) throws BaseException {
         try {
             // 객체 불러오기
-            Study study = findStudyByIdx(studyIdx);
-            User user = findUserByIdx(userIdx);
+            Study study = studyService.getStudy(studyIdx);
+            User user = userService.getUser(userIdx);
 
             // 인원 수가 충분한지 체크
             if(study.getStudyMemberLimit() <= study.getStudyMemberNum()) {

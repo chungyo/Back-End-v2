@@ -21,40 +21,17 @@ import static com.mmos.mmos.config.HttpResponseStatus.*;
 @RequiredArgsConstructor
 public class ProjectService {
     private final ProjectRepository projectRepository;
-    private final CalendarRepository calendarRepository;
     private final CalendarService calendarService;
-    private final StudyRepository studyRepository;
-    private final UserRepository userRepository;
-    private final UserStudyRepository userStudyRepository;
-
-    public User findUserByIdx(Long userIdx) throws BaseException {
-        return userRepository.findById(userIdx)
-                .orElseThrow(() -> new EmptyEntityException(EMPTY_USER));
-    }
-
-    public Study findStudyByIdx(Long studyIdx) throws BaseException {
-        return studyRepository.findById(studyIdx)
-                .orElseThrow(() -> new EmptyEntityException(EMPTY_STUDY));
-    }
-
-    public Calendar findCalendarByIdx(Long calendarIdx) throws BaseException {
-        return calendarRepository.findById(calendarIdx)
-                .orElseThrow(() -> new EmptyEntityException(EMPTY_CALENDAR));
-    }
+    private final StudyService studyService;
+    private final UserStudyService userStudyService;
 
     public Project findProjectByIdx(Long projectIdx) throws BaseException {
         return projectRepository.findById(projectIdx)
                 .orElseThrow(() -> new EmptyEntityException(EMPTY_PROJECT));
     }
 
-    public Calendar findCalendarByUserIdxAndDate(Long projectIdx, Integer year, Integer month) throws BaseException {
-        return calendarRepository.findCalendarByUser_UserIndexAndCalendarYearAndCalendarMonth(projectIdx, year, month)
-                .orElseThrow(() -> new EmptyEntityException(EMPTY_CALENDAR));
-    }
-
-    public UserStudy findUserstudyByIdx(Long userStudyIdx) throws BaseException {
-        return userStudyRepository.findById(userStudyIdx)
-                .orElseThrow(() -> new EmptyEntityException(EMPTY_USERSTUDY));
+    public Long countByUserAndProjectIsVisibleTrue(User user) {
+        return projectRepository.countByUserAndProjectIsVisibleTrue(user);
     }
 
     @Transactional
@@ -71,7 +48,7 @@ public class ProjectService {
     @Transactional
     public List<Project> getProjects(Long calendarIdx, Integer day) throws BaseException {
         try {
-            Calendar calendar = findCalendarByIdx(calendarIdx);
+            Calendar calendar = calendarService.findCalendarByIdx(calendarIdx);
             User user = calendar.getUser();
 
             List<Project> projects = user.getUserProjects();
@@ -120,7 +97,7 @@ public class ProjectService {
             if(isStudy) {
                 if(requestDto.getStudyIdx() == null)
                     throw new EmptyInputException(EMPTY_STUDY);
-                Study study = findStudyByIdx(requestDto.getStudyIdx());
+                Study study = studyService.getStudy(requestDto.getStudyIdx());
                 project = new Project(requestDto, user, study, studyNum);
                 study.addProject(project);
             } else {
@@ -145,7 +122,7 @@ public class ProjectService {
             if(project.getProjectIsVisible()) {
                 project.updateProjectIsVisible(false);
             } else {
-                Calendar calendar = findCalendarByUserIdxAndDate(user.getUserIndex(),
+                Calendar calendar = calendarService.findCalendarByUserIdxAndDate(user.getUserIndex(),
                         project.getProjectStartTime().getYear(),
                         project.getProjectStartTime().getMonthValue());
                 List<Planner> plannerList = calendar.getCalendarPlanners();
@@ -153,7 +130,7 @@ public class ProjectService {
                 for (LocalDate date = project.getProjectStartTime(); date.isBefore(project.getProjectEndTime().plusDays(1)); date = date.plusDays(1)) {
                     // 달 지나면 새로운 캘린더 가져오기
                     if (date.getMonthValue() != calendar.getCalendarMonth()) {
-                        calendar = findCalendarByUserIdxAndDate(user.getUserIndex(), date.getYear(), date.getMonthValue());
+                        calendar = calendarService.findCalendarByUserIdxAndDate(user.getUserIndex(), date.getYear(), date.getMonthValue());
                         plannerList = calendar.getCalendarPlanners();
                     }
 
@@ -221,7 +198,7 @@ public class ProjectService {
             if(isStudyPage) {
                 if(!project.getProjectIsStudy())
                     throw new BusinessLogicException(BUSINESS_LOGIC_ERROR);
-                if(findUserstudyByIdx(adminUserStudyIdx).getUserstudyMemberStatus().equals(1))
+                if(userStudyService.getUserStudy(adminUserStudyIdx).getUserstudyMemberStatus().equals(1))
                     throw new NotAuthorizedAccessException(NOT_AUTHORIZED);
             } else
                 if(project.getProjectIsStudy())
@@ -283,24 +260,6 @@ public class ProjectService {
         try {
             Project project = findProjectByIdx(projectIdx);
             projectRepository.delete(project);
-        } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
-        } catch (Exception e) {
-            throw new BaseException(DATABASE_ERROR);
-        }
-    }
-
-    @Transactional
-    public List<Project> getStudyProjects(Long userIdx) throws BaseException {
-        try {
-            List<Project> projects = new ArrayList<>();
-
-            User user = findUserByIdx(userIdx);
-            for (UserStudy userstudy : user.getUserUserstudies()) {
-                projects.addAll(userstudy.getStudy().getStudyProjects());
-            }
-
-            return projects;
         } catch (EmptyEntityException e) {
             throw new BaseException(e.getStatus());
         } catch (Exception e) {

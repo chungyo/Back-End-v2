@@ -29,6 +29,10 @@ public class BadgeService {
                 .orElseThrow(() -> new EmptyEntityException(EMPTY_BADGE));
     }
 
+    public List<Badge> findAllBadges() {
+        return badgeRepository.findAll();
+    }
+
     // 휘장, 뱃지, 프사 모두 각각의 인덱스가 하나의 엔티티에서 다른 인덱스를 갖고 있으므로
     // 따로 나눌 필요 없이 index 값으로만 하면 됨
     @Transactional

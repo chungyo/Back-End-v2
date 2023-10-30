@@ -18,4 +18,8 @@ public class SignUpRequestDto {
     private String name;
     // 닉네임
     private String nickname;
+
+    public void encryptPwd(String pwd) {
+        this.pwd = pwd;
+    }
 }

@@ -6,40 +6,33 @@ import com.mmos.mmos.config.exception.EmptyEntityException;
 import com.mmos.mmos.config.exception.OutOfRangeException;
 import com.mmos.mmos.src.domain.dto.request.PlanSaveRequestDto;
 import com.mmos.mmos.src.domain.dto.request.PlanUpdateRequestDto;
-import com.mmos.mmos.src.domain.entity.*;
-import com.mmos.mmos.src.repository.*;
-import lombok.RequiredArgsConstructor;
+import com.mmos.mmos.src.domain.entity.Calendar;
+import com.mmos.mmos.src.domain.entity.Plan;
+import com.mmos.mmos.src.domain.entity.Planner;
+import com.mmos.mmos.src.domain.entity.User;
+import com.mmos.mmos.src.repository.PlanRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.List;
 
 import static com.mmos.mmos.config.HttpResponseStatus.*;
 
 @Service
-@RequiredArgsConstructor
 public class PlanService {
 
     private final PlanRepository planRepository;
-    private final PlannerRepository plannerRepository;
-    private final UserStudyRepository userStudyRepository;
-    private final CalendarRepository calendarRepository;
-    private final UserRepository userRepository;
-    private final ProjectRepository projectRepository;
+    private final PlannerService plannerService;
+    private final ProjectService projectService;
 
-//    private final PlannerService plannerService;
-    private final CalendarService calendarService;
-
-    public Planner findPlannerByIdx(Long plannerIdx) throws BaseException {
-        return plannerRepository.findById(plannerIdx)
-                .orElseThrow(() -> new EmptyEntityException(EMPTY_PLANNER));
-    }
-
-    public UserStudy findUserStudyByIdx(Long userStudyIdx) throws BaseException {
-        return userStudyRepository.findById(userStudyIdx)
-                .orElseThrow(() -> new EmptyEntityException(EMPTY_USER));
+    public PlanService(PlanRepository planRepository, @Lazy PlannerService plannerService, @Lazy ProjectService projectService) {
+        this.planRepository = planRepository;
+        this.plannerService = plannerService;
+        this.projectService = projectService;
     }
 
     public Plan findPlanByIdx(Long planIdx) throws BaseException {
@@ -47,10 +40,15 @@ public class PlanService {
                 .orElseThrow(() -> new EmptyEntityException(EMPTY_PLAN));
     }
 
+    public List<Plan> findPlansIsVisible(Calendar calendar) throws BaseException {
+        return planRepository.findPlansByPlanIsVisibleIsTrueAndPlanner_Calendar(calendar)
+                .orElseThrow(() -> new EmptyEntityException(EMPTY_PLAN));
+    }
+
     @Transactional
     public Plan savePlan(Long plannerIdx, PlanSaveRequestDto requestDto) throws BaseException{
         try {
-            Planner planner = findPlannerByIdx(plannerIdx);
+            Planner planner = plannerService.findPlannerByIdx(plannerIdx);
             Plan plan = new Plan(requestDto, planner);
             planner.addPlan(plan);
             planner.getCalendar().getUser().updateTotalSchedule(true);
@@ -128,7 +126,7 @@ public class PlanService {
             User user = plan.getPlanner().getCalendar().getUser();
 
             Long visiblePlanCount = planRepository.countByPlannerAndPlanIsVisibleTrue(planner);
-            Long visibleProjectCount = projectRepository.countByUserAndProjectIsVisibleTrue(user);
+            Long visibleProjectCount = projectService.countByUserAndProjectIsVisibleTrue(user);
 
             if (!plan.getPlanIsVisible()) {
                 if (visiblePlanCount + visibleProjectCount >= 5)

@@ -7,7 +7,6 @@ import com.mmos.mmos.config.exception.EmptyEntityException;
 import com.mmos.mmos.src.domain.entity.Friend;
 import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.repository.FriendRepository;
-import com.mmos.mmos.src.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,12 +22,7 @@ import static com.mmos.mmos.config.HttpResponseStatus.*;
 public class FriendService {
 
     private final FriendRepository friendRepository;
-    private final UserRepository userRepository;
-
-    public User findUserByIdx(Long userIdx) throws BaseException {
-        return userRepository.findById(userIdx)
-                .orElseThrow(() -> new EmptyEntityException(EMPTY_USER));
-    }
+    private final UserService userService;
 
     public Friend findFriendByIdx(Long friendIdx) throws BaseException {
         return friendRepository.findById(friendIdx)
@@ -40,11 +34,6 @@ public class FriendService {
                 .orElseThrow(() -> new EmptyEntityException(EMPTY_USER));
     }
 
-    public User findUserById(String id) throws BaseException {
-        return userRepository.findUserByUserId(id)
-                .orElseThrow(() -> new EmptyEntityException(EMPTY_USER));
-    }
-
     public Friend findFriendByUserAndFriend(User user, User friend) throws BaseException {
         return friendRepository.findFriendByUserAndFriend(user, friend)
                 .orElseThrow(() -> new EmptyEntityException(EMPTY_FRIEND));
@@ -53,7 +42,7 @@ public class FriendService {
     @Transactional
     public void friendWithMe(Long userIdx) throws BaseException {
         try {
-            User user = findUserByIdx(userIdx);
+            User user = userService.getUser(userIdx);
             if(user.getUserFriends().isEmpty())
                 friendRepository.save(new Friend(1, user, user));
 
@@ -123,8 +112,8 @@ public class FriendService {
     @Transactional
     public Friend sendFriendRequest(Long userIdx, String friendId) throws BaseException {
         try {
-            User user = findUserByIdx(userIdx);
-            User friend = findUserById(friendId);
+            User user = userService.getUser(userIdx);
+            User friend = userService.findUserById(friendId);
 
             if(user.equals(friend))
                 throw new BusinessLogicException(BUSINESS_LOGIC_ERROR);

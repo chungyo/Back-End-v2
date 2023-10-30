@@ -13,9 +13,11 @@ java {
 
 repositories {
 	mavenCentral()
+	maven{url 'https://jitpack.io'}
 }
 
 dependencies {
+	implementation 'com.github.in-seo:univcert:master-SNAPSHOT'
 	implementation('org.projectlombok:lombok')
 	compileOnly('org.projectlombok:lombok')
 	annotationProcessor('org.projectlombok:lombok')

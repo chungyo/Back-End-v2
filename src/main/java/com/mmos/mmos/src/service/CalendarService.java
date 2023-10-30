@@ -10,9 +10,7 @@ import com.mmos.mmos.src.domain.entity.Plan;
 import com.mmos.mmos.src.domain.entity.Project;
 import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.repository.CalendarRepository;
-import com.mmos.mmos.src.repository.PlanRepository;
-import com.mmos.mmos.src.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,16 +21,16 @@ import java.util.List;
 import static com.mmos.mmos.config.HttpResponseStatus.*;
 
 @Service
-@RequiredArgsConstructor
 public class CalendarService {
 
     private final CalendarRepository calendarRepository;
-    private final UserRepository userRepository;
-    private final PlanRepository planRepository;
+    private final UserService userService;
+    private final PlanService planService;
 
-    public User findUserByIdx(Long userIdx) throws BaseException {
-        return userRepository.findById(userIdx)
-                .orElseThrow(() -> new EmptyEntityException(EMPTY_USER));
+    public CalendarService(CalendarRepository calendarRepository, @Lazy UserService userService, @Lazy PlanService planService) {
+        this.calendarRepository = calendarRepository;
+        this.userService = userService;
+        this.planService = planService;
     }
 
     public Calendar findCalendarByMonthAndYear(Long userIdx, Integer calendarYear, Integer calendarMonth) throws BaseException {
@@ -40,21 +38,21 @@ public class CalendarService {
                 .orElseThrow(() -> new EmptyEntityException(EMPTY_CALENDAR));
     }
 
-    public Calendar findCalendars(Long userIdx, Integer calendarYear, Integer calendarMonth) throws BaseException {
-        return calendarRepository.findCalendarByUser_UserIndexAndCalendarYearAndCalendarMonth(userIdx, calendarYear, calendarMonth)
+    public Calendar findCalendarByUserIdxAndDate(Long projectIdx, Integer year, Integer month) throws BaseException {
+        return calendarRepository.findCalendarByUser_UserIndexAndCalendarYearAndCalendarMonth(projectIdx, year, month)
                 .orElseThrow(() -> new EmptyEntityException(EMPTY_CALENDAR));
     }
 
-    public List<Plan> findPlansIsVisible(Calendar calendar) throws BaseException {
-        return planRepository.findPlansByPlanIsVisibleIsTrueAndPlanner_Calendar(calendar)
-                .orElseThrow(() -> new EmptyEntityException(EMPTY_PLAN));
+    public Calendar findCalendarByIdx(Long calendarIdx) throws BaseException {
+        return calendarRepository.findById(calendarIdx)
+                .orElseThrow(() -> new EmptyEntityException(EMPTY_CALENDAR));
     }
 
     // 캘린더 생성
     @Transactional
     public Calendar saveCalendar(Integer year, Integer month, Long userIdx) throws BaseException {
         try {
-            User user = findUserByIdx(userIdx);
+            User user = userService.getUser(userIdx);
 
             // 막 회원 가입을 한 유저가 아니면서 같은 달의 캘린더가 이미 존재할 때 생성 막기
             if (!user.getUserCalendars().isEmpty()) {
@@ -90,7 +88,7 @@ public class CalendarService {
     public CalendarSectionDto getCalendar(Long userIdx, CalendarGetRequestDto calendarGetRequestDto) throws BaseException {
         // User 가져오기
         try {
-            User user = findUserByIdx(userIdx);
+            User user = userService.getUser(userIdx);
 
             // Calendar 가져오기
             boolean isExist = false;
@@ -125,7 +123,7 @@ public class CalendarService {
                 }
 
                 // 해당 달에서 planIsVisible == true인 plan들을 리스트로 가져오기
-                plans = findPlansIsVisible(calendar);
+                plans = planService.findPlansIsVisible(calendar);
             }
 
             return new CalendarSectionDto(calendar, calendarProjectList, plans);
