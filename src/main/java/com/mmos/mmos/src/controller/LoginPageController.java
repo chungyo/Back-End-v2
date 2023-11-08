@@ -41,4 +41,6 @@ public class LoginPageController extends BaseController {
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }
     }
+
+
 }

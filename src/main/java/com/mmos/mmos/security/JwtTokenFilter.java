@@ -1,6 +1,5 @@
 package com.mmos.mmos.security;
 
-import com.mmos.mmos.config.exception.BaseException;
 import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.service.UserService;
 import jakarta.servlet.FilterChain;
@@ -18,7 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
-import static com.mmos.mmos.security.Secret.*;
+import static com.mmos.mmos.security.Secret.JWT_SECRET_KEY;
 
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
