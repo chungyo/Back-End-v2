@@ -51,6 +51,7 @@ public enum HttpResponseStatus {
     EMPTY_USER(false, BAD_REQUEST.value(), "존재하지 않는 유저입니다."),
     EMPTY_FRIEND(false, BAD_REQUEST.value(), "존재하지 않는 친구입니다."),
     DUPLICATE_FRIEND_REQUEST(false, BAD_REQUEST.value(), "중복된 친구 요청입니다."),
+    LOGIN_FAIL(false, BAD_REQUEST.value(), "아이디와 비밀번호를 확인해주세요"),
 
     // University
     EMPTY_UNIVERSITY(false,BAD_REQUEST.value(),"대학교가 존재하지 않습니다."),
