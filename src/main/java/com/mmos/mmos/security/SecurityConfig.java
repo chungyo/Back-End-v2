@@ -30,8 +30,10 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtTokenFilter(userService), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorizeRequest ->
                         authorizeRequest
-                                .requestMatchers(new AntPathRequestMatcher("/login/**")).authenticated()
-                                .anyRequest().permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/login/**")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/dev/**")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/signup/**")).permitAll()
+                                .anyRequest().authenticated()
                 )
                 .build();
     }
