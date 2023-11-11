@@ -1,4 +1,4 @@
-package com.mmos.mmos.src.domain.entity;
+package com.mmos.mmos.src.domain.entity.primary;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -31,4 +31,6 @@ public class Badge {
     @Column
     private String badgePurpose;
 
+    @Column
+    private Integer badgeLevel; // 뱃지 획득 난이도
 }

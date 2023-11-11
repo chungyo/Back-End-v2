@@ -5,11 +5,10 @@ import com.mmos.mmos.config.exception.DuplicateRequestException;
 import com.mmos.mmos.config.exception.EmptyEntityException;
 import com.mmos.mmos.src.domain.dto.request.CalendarGetRequestDto;
 import com.mmos.mmos.src.domain.dto.response.home.CalendarSectionDto;
-import com.mmos.mmos.src.domain.entity.Calendar;
-import com.mmos.mmos.src.domain.entity.Plan;
-import com.mmos.mmos.src.domain.entity.Project;
-import com.mmos.mmos.src.domain.entity.User;
-import com.mmos.mmos.src.repository.CalendarRepository;
+import com.mmos.mmos.src.domain.entity.primary.Calendar;
+import com.mmos.mmos.src.domain.entity.primary.Project;
+import com.mmos.mmos.src.domain.entity.primary.User;
+import com.mmos.mmos.src.repository.primary.CalendarRepository;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -106,7 +105,6 @@ public class CalendarService {
 
             List<Project> userProjectList = user.getUserProjects();
             List<Project> calendarProjectList = new ArrayList<>();
-            List<Plan> plans = new ArrayList<>();
 
             if(isExist) {
                 // 해당 달을 포함하는 Project 찾기
@@ -123,10 +121,10 @@ public class CalendarService {
                 }
 
                 // 해당 달에서 planIsVisible == true인 plan들을 리스트로 가져오기
-                plans = planService.findPlansIsVisible(calendar);
+
             }
 
-            return new CalendarSectionDto(calendar, calendarProjectList, plans);
+            return new CalendarSectionDto(calendar, calendarProjectList);
         } catch (EmptyEntityException e) {
             throw new BaseException(e.getStatus());
         }

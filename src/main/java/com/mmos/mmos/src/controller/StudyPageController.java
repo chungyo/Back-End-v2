@@ -7,7 +7,7 @@ import com.mmos.mmos.config.exception.EmptyInputException;
 import com.mmos.mmos.config.exception.NotAuthorizedAccessException;
 import com.mmos.mmos.src.domain.dto.request.*;
 import com.mmos.mmos.src.domain.dto.response.study.*;
-import com.mmos.mmos.src.domain.entity.*;
+import com.mmos.mmos.src.domain.entity.primary.*;
 import com.mmos.mmos.src.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
@@ -146,7 +146,7 @@ public class StudyPageController extends BaseController {
 
     // 스터디 아이디로 검색 & 초대 - 스터디
     @PostMapping("/members/invite")
-    public ResponseEntity<ResponseApiMessage> inviteStudy(@RequestParam Long userStudyIdx, @RequestBody String id) {
+    public ResponseEntity<ResponseApiMessage> inviteStudy(@RequestParam Long userStudyIdx, @RequestParam String id) {
         try {
             return sendResponseHttpByJson(SUCCESS, "스터디에 유저 초대 성공.", userStudyService.inviteStudy(userStudyIdx, id));
         } catch (BaseException e) {
@@ -156,7 +156,7 @@ public class StudyPageController extends BaseController {
 
     // 스터디 초대 취소 - 스터디
     @DeleteMapping("/members/invite/admin")
-    public ResponseEntity<ResponseApiMessage> cancelInvitedStudy(@RequestParam Long adminUserStudyIdx, @RequestBody Long targetUserStudyIdx) {
+    public ResponseEntity<ResponseApiMessage> cancelInvitedStudy(@RequestParam Long adminUserStudyIdx, @RequestParam Long targetUserStudyIdx) {
         try {
             userStudyService.deleteUserStudy(adminUserStudyIdx, targetUserStudyIdx, true);
             return sendResponseHttpByJson(SUCCESS, "스터디 초대 취소 성공.", null);
@@ -170,7 +170,7 @@ public class StudyPageController extends BaseController {
     public ResponseEntity<ResponseApiMessage> acceptRequest(@RequestParam Long myUserStudyIdx) {
         try {
             return sendResponseHttpByJson(SUCCESS, "스터디 초대 수락 성공.",
-                    userStudyService.updateUserStudy(null, myUserStudyIdx, false, 1));
+                    userStudyService.updateUserStudy(null, myUserStudyIdx, false, 2));
         } catch (BaseException e) {
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }
@@ -291,19 +291,25 @@ public class StudyPageController extends BaseController {
         }
     }
 
-    // 스터디 직책 변경
-//    @PatchMapping("/members")
-//    public ResponseEntity<ResponseApiMessage> updatePosition(@RequestParam Long adminUserStudyIdx, @RequestParam Long targetUserStudyIdx) {
-//        try {
-//            userStudyService.updateUserStudy(adminUserStudyIdx, targetUserStudyIdx, true, 1);
-//            return sendResponseHttpByJson(SUCCESS, "스터디 직책 변경 성공.", null);
-//        } catch (BaseException e) {
-//            return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
-//        }
-//    }
+    // 스터디 일정 참/불참
+    @PatchMapping("/projects/attend")
+        public ResponseEntity<ResponseApiMessage> updateIsAttendProject(@RequestParam Long projectIdx, @RequestParam Long memberIdx) {
+        try {
+            Project project = projectService.getProject(projectIdx);
+            Study study = project.getStudy();
 
-    // 스터디 인원 제한 변경 & 스터디 이름 변경 & 스터디 인원 직책 변경 & 스터디 완수
-    // 스터디 일정 참/불참 (스터디 장만 가능) 멤버들은 보이기만
+            for (Project studyProject : study.getStudyProjects()) {
+                if(studyProject.getProjectNumber().equals(project.getProjectNumber())
+                        && studyProject.getUser().getUserIndex().equals(memberIdx)) {
+                    projectService.updateIsAttend(studyProject.getProjectIndex());
+                }
+            }
+
+            return sendResponseHttpByJson(SUCCESS, "스터디 참여 여부 변경 성공.", null);
+        } catch (BaseException e) {
+            return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
+        }
+    }
 
     // 스터디 플젝 만들기
     @PostMapping("/projects")
@@ -332,7 +338,7 @@ public class StudyPageController extends BaseController {
                 if(studyProject.getProjectNumber() > biggestNum) {
                     biggestNum = studyProject.getProjectNumber();
                 }
-            }
+            } biggestNum++;
 
             for (UserStudy studyUserstudy : userStudy.getStudy().getStudyUserstudies()) {
                 if(studyUserstudy.getUserstudyMemberStatus() >= 3)
@@ -340,11 +346,7 @@ public class StudyPageController extends BaseController {
 
                 User user = studyUserstudy.getUser();
                 Project project;
-                if(userStudy.getStudy().getStudyProjects().isEmpty()) {
-                    project = projectService.saveProject(requestDto, user, true, 0L);
-                } else {
-                    project = projectService.saveProject(requestDto, user, true, biggestNum);
-                }
+                project = projectService.saveProject(requestDto, user, true, biggestNum);
                 user.addProject(project);
                 userStudy.getStudy().addProject(project);
             }
@@ -356,7 +358,7 @@ public class StudyPageController extends BaseController {
     }
 
     // 스터디 일정 수정: 스터디 탭에서 스터디 장만 수정 가능, 개인 플래너에서는 수정 불가능
-    @PatchMapping("projects")
+    @PatchMapping("/projects")
     public ResponseEntity<ResponseApiMessage> updateStudyProject(@RequestParam Long userStudyIdx, @RequestParam Long projectIdx, @RequestBody ProjectUpdateRequestDto requestDto) {
         try {
             if(requestDto.getNewName() == null)
@@ -383,12 +385,18 @@ public class StudyPageController extends BaseController {
     }
 
     // 일정 삭제
-    @DeleteMapping("projects")
+    @DeleteMapping("/projects")
     public ResponseEntity<ResponseApiMessage> deleteStudyProject(@RequestParam Long userStudyIdx, @RequestParam Long projectIdx) {
         try {
-            if(userStudyService.getUserStudy(userStudyIdx).getUserstudyMemberStatus().equals(1))
+            if(!userStudyService.getUserStudy(userStudyIdx).getUserstudyMemberStatus().equals(1))
                 throw new NotAuthorizedAccessException(NOT_AUTHORIZED);
-            projectService.deleteProject(projectIdx);
+            Project project = projectService.getProject(projectIdx);
+            Study study = project.getStudy();
+
+            for (Project studyProject : study.getStudyProjects()) {
+                if(project.getProjectNumber().equals(studyProject.getProjectNumber()))
+                    projectService.deleteProject(studyProject.getProjectIndex());
+            }
 
             return sendResponseHttpByJson(SUCCESS, "스터디 일정 삭제 성공", null);
         } catch (BaseException e) {

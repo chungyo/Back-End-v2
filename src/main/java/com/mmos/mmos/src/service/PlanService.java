@@ -3,14 +3,13 @@ package com.mmos.mmos.src.service;
 import com.mmos.mmos.config.exception.BaseException;
 import com.mmos.mmos.config.exception.BusinessLogicException;
 import com.mmos.mmos.config.exception.EmptyEntityException;
-import com.mmos.mmos.config.exception.OutOfRangeException;
 import com.mmos.mmos.src.domain.dto.request.PlanSaveRequestDto;
 import com.mmos.mmos.src.domain.dto.request.PlanUpdateRequestDto;
-import com.mmos.mmos.src.domain.entity.Calendar;
-import com.mmos.mmos.src.domain.entity.Plan;
-import com.mmos.mmos.src.domain.entity.Planner;
-import com.mmos.mmos.src.domain.entity.User;
-import com.mmos.mmos.src.repository.PlanRepository;
+import com.mmos.mmos.src.domain.entity.primary.Calendar;
+import com.mmos.mmos.src.domain.entity.primary.Plan;
+import com.mmos.mmos.src.domain.entity.primary.Planner;
+import com.mmos.mmos.src.domain.entity.primary.User;
+import com.mmos.mmos.src.repository.primary.PlanRepository;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.List;
 
 import static com.mmos.mmos.config.HttpResponseStatus.*;
 
@@ -37,11 +35,6 @@ public class PlanService {
 
     public Plan findPlanByIdx(Long planIdx) throws BaseException {
         return planRepository.findById(planIdx)
-                .orElseThrow(() -> new EmptyEntityException(EMPTY_PLAN));
-    }
-
-    public List<Plan> findPlansIsVisible(Calendar calendar) throws BaseException {
-        return planRepository.findPlansByPlanIsVisibleIsTrueAndPlanner_Calendar(calendar)
                 .orElseThrow(() -> new EmptyEntityException(EMPTY_PLAN));
     }
 
@@ -112,33 +105,6 @@ public class PlanService {
 
             return plan;
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
-        } catch (Exception e) {
-            throw new BaseException(DATABASE_ERROR);
-        }
-    }
-
-    @Transactional
-    public Plan updatePlanIsVisible(Long planIdx) throws BaseException {
-        try {
-            Plan plan = findPlanByIdx(planIdx);
-            Planner planner = plan.getPlanner();
-            User user = plan.getPlanner().getCalendar().getUser();
-
-            Long visiblePlanCount = planRepository.countByPlannerAndPlanIsVisibleTrue(planner);
-            Long visibleProjectCount = projectService.countByUserAndProjectIsVisibleTrue(user);
-
-            if (!plan.getPlanIsVisible()) {
-                if (visiblePlanCount + visibleProjectCount >= 5)
-                    throw new OutOfRangeException(PLAN_ISVISIBLE_FULL);
-                plan.updateIsVisible(true);
-            } else {
-                plan.updateIsVisible(false);
-            }
-
-            return plan;
-        } catch (EmptyEntityException |
-                 OutOfRangeException e) {
             throw new BaseException(e.getStatus());
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);

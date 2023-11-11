@@ -5,8 +5,11 @@ import com.mmos.mmos.src.domain.dto.request.CalendarGetRequestDto;
 import com.mmos.mmos.src.domain.dto.request.ProjectSaveRequestDto;
 import com.mmos.mmos.src.domain.dto.request.ProjectUpdateRequestDto;
 import com.mmos.mmos.src.domain.dto.response.home.CalendarSectionDto;
-import com.mmos.mmos.src.domain.entity.*;
-import com.mmos.mmos.src.repository.*;
+import com.mmos.mmos.src.domain.entity.primary.Calendar;
+import com.mmos.mmos.src.domain.entity.primary.Project;
+import com.mmos.mmos.src.domain.entity.primary.Study;
+import com.mmos.mmos.src.domain.entity.primary.User;
+import com.mmos.mmos.src.repository.primary.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +27,7 @@ public class ProjectService {
     private final CalendarService calendarService;
     private final StudyService studyService;
     private final UserStudyService userStudyService;
+
 
     public Project findProjectByIdx(Long projectIdx) throws BaseException {
         return projectRepository.findById(projectIdx)
@@ -45,7 +49,7 @@ public class ProjectService {
         }
     }
 
-    @Transactional
+        @Transactional
     public List<Project> getProjects(Long calendarIdx, Integer day) throws BaseException {
         try {
             Calendar calendar = calendarService.findCalendarByIdx(calendarIdx);
@@ -82,7 +86,7 @@ public class ProjectService {
             LocalDate startTime = requestDto.getStartTime();
             LocalDate endTime = requestDto.getEndTime();
 
-            if(requestDto.getStartTime().isAfter(requestDto.getEndTime()))
+            if (requestDto.getStartTime().isAfter(requestDto.getEndTime()))
                 throw new BusinessLogicException(BUSINESS_LOGIC_ERROR);
 
             for (LocalDate time = startTime;
@@ -90,12 +94,12 @@ public class ProjectService {
                  time = time.plusMonths(1)) {
                 CalendarSectionDto calendar =
                         calendarService.getCalendar(user.getUserIndex(), new CalendarGetRequestDto(time.getMonthValue(),
-                                                                                                    time.getYear()));
+                                time.getYear()));
             }
 
             Project project;
-            if(isStudy) {
-                if(requestDto.getStudyIdx() == null)
+            if (isStudy) {
+                if (requestDto.getStudyIdx() == null)
                     throw new EmptyInputException(EMPTY_STUDY);
                 Study study = studyService.getStudy(requestDto.getStudyIdx());
                 project = new Project(requestDto, user, study, studyNum);
@@ -113,65 +117,41 @@ public class ProjectService {
         }
     }
 
-    @Transactional
+@Transactional
     public Project updateProjectIsVisible(Long projectIdx) throws BaseException {
-        try{
+        try {
             Project project = findProjectByIdx(projectIdx);
             User user = project.getUser();
 
-            if(project.getProjectIsVisible()) {
+            if (project.getProjectIsVisible()) {
                 project.updateProjectIsVisible(false);
             } else {
-                Calendar calendar = calendarService.findCalendarByUserIdxAndDate(user.getUserIndex(),
-                        project.getProjectStartTime().getYear(),
-                        project.getProjectStartTime().getMonthValue());
-                List<Planner> plannerList = calendar.getCalendarPlanners();
                 // 플래너 isVisble 5개 넘는지 체크
                 for (LocalDate date = project.getProjectStartTime(); date.isBefore(project.getProjectEndTime().plusDays(1)); date = date.plusDays(1)) {
-                    // 달 지나면 새로운 캘린더 가져오기
-                    if (date.getMonthValue() != calendar.getCalendarMonth()) {
-                        calendar = calendarService.findCalendarByUserIdxAndDate(user.getUserIndex(), date.getYear(), date.getMonthValue());
-                        plannerList = calendar.getCalendarPlanners();
-                    }
-
-                    // 프로젝트 일정을 걸친 날들의 is visible == true 플랜 + 프로젝트 개수 세기
-                    for (Planner planner : plannerList) {
-                        if (planner.getPlannerDate().equals(date)) {
-                            int count = 0;
-                            for (Plan plannerPlan : planner.getPlannerPlans()) {
-                                if (plannerPlan.getPlanIsVisible()) {
-                                    count++;
-                                }
-                                if (count >= 5) {
-                                    throw new OutOfRangeException(PROJECT_FULL_VISIBLE);
-                                }
+                    int count = 0;
+                    for (Project userProject : user.getUserProjects()) {
+                        if ((userProject.getProjectStartTime().isBefore(date) || userProject.getProjectStartTime().isEqual(date)) &&
+                                (userProject.getProjectEndTime().isAfter(date) || userProject.getProjectEndTime().isEqual(date))) {
+                            if (userProject.getProjectIsVisible()) {
+                                count++;
                             }
-                            for (Project userProject : user.getUserProjects()) {
-                                if ((userProject.getProjectStartTime().isBefore(date) || userProject.getProjectStartTime().isEqual(date)) &&
-                                        (userProject.getProjectEndTime().isAfter(date) || userProject.getProjectEndTime().isEqual(date))) {
-                                    if (userProject.getProjectIsVisible()) {
-                                        count++;
-                                    }
-                                    if (count >= 5) {
-                                        throw new OutOfRangeException(PROJECT_FULL_VISIBLE);
-                                    }
-                                }
-                            }
-                            break;
+                        }
+                        if (count >= 5) {
+                            throw new OutOfRangeException(PROJECT_FULL_VISIBLE);
                         }
                     }
                 }
-
-                project.updateProjectIsVisible(true);
             }
-            return project;
 
+            project.updateProjectIsVisible(true);
+            return project;
         } catch (EmptyEntityException |
                  OutOfRangeException e) {
             throw new BaseException(e.getStatus());
-        } catch (Exception e) {
+        } catch (BaseException e) {
             throw new BaseException(DATABASE_ERROR);
         }
+
     }
 
     @Transactional
@@ -195,49 +175,49 @@ public class ProjectService {
             Project project = findProjectByIdx(projectIdx);
 
             // 스터디 프로젝트는 스터디에서만 수정이 가능하도록
-            if(isStudyPage) {
-                if(!project.getProjectIsStudy())
+            if (isStudyPage) {
+                if (!project.getProjectIsStudy())
                     throw new BusinessLogicException(BUSINESS_LOGIC_ERROR);
-                if(userStudyService.getUserStudy(adminUserStudyIdx).getUserstudyMemberStatus().equals(1))
+                if (userStudyService.getUserStudy(adminUserStudyIdx).getUserstudyMemberStatus().equals(1))
                     throw new NotAuthorizedAccessException(NOT_AUTHORIZED);
-            } else
-                if(project.getProjectIsStudy())
-                    throw new BusinessLogicException(BUSINESS_LOGIC_ERROR);
+            } else if (project.getProjectIsStudy())
+                throw new BusinessLogicException(BUSINESS_LOGIC_ERROR);
 
-            if(requestDto.getNewStartTime() != null &&
+            if (requestDto.getNewStartTime() != null &&
                     requestDto.getNewEndTime() != null &&
                     requestDto.getNewStartTime().isAfter(requestDto.getNewEndTime()))
                 throw new BusinessLogicException(BUSINESS_LOGIC_ERROR);
 
             // 시간도 수정할 수 있도록 수정
 
-            if(isStudyPage) {
+            if (isStudyPage) {
                 for (Project studyProject : project.getStudy().getStudyProjects()) {
-                    if(studyProject.getProjectNumber().equals(project.getProjectNumber())) {
-                        if(!requestDto.getNewName().isEmpty()) {
+                    if (studyProject.getProjectNumber().equals(project.getProjectNumber())) {
+                        if (!requestDto.getNewName().isEmpty()) {
                             project.updateProjectName(requestDto.getNewName());
                         }
-                        if(requestDto.getNewEndTime() != null) {
-                            if(project.getProjectStartTime().isAfter(requestDto.getNewEndTime()))
+                        if (requestDto.getNewEndTime() != null) {
+                            if (project.getProjectStartTime().isAfter(requestDto.getNewEndTime()))
                                 throw new BusinessLogicException(BUSINESS_LOGIC_ERROR);
                             project.updateProjectEndTime(requestDto.getNewEndTime());
-                        } if(requestDto.getNewStartTime() != null) {
-                            if(requestDto.getNewStartTime().isAfter(project.getProjectEndTime()))
+                        }
+                        if (requestDto.getNewStartTime() != null) {
+                            if (requestDto.getNewStartTime().isAfter(project.getProjectEndTime()))
                                 throw new BusinessLogicException(BUSINESS_LOGIC_ERROR);
                             project.updateProjectStartTime(requestDto.getNewStartTime());
                         }
                     }
                 }
             } else {
-                if(!requestDto.getNewName().isEmpty())
+                if (!requestDto.getNewName().isEmpty())
                     project.updateProjectName(requestDto.getNewName());
-                if(requestDto.getNewEndTime() != null) {
-                    if(project.getProjectStartTime().isAfter(requestDto.getNewEndTime()))
+                if (requestDto.getNewEndTime() != null) {
+                    if (project.getProjectStartTime().isAfter(requestDto.getNewEndTime()))
                         throw new BusinessLogicException(BUSINESS_LOGIC_ERROR);
                     project.updateProjectEndTime(requestDto.getNewEndTime());
                 }
-                if(requestDto.getNewStartTime() != null) {
-                    if(requestDto.getNewStartTime().isAfter(project.getProjectEndTime()))
+                if (requestDto.getNewStartTime() != null) {
+                    if (requestDto.getNewStartTime().isAfter(project.getProjectEndTime()))
                         throw new BusinessLogicException(BUSINESS_LOGIC_ERROR);
                     project.updateProjectStartTime(requestDto.getNewStartTime());
                 }
@@ -260,6 +240,18 @@ public class ProjectService {
         try {
             Project project = findProjectByIdx(projectIdx);
             projectRepository.delete(project);
+        } catch (EmptyEntityException e) {
+            throw new BaseException(e.getStatus());
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    @Transactional
+    public void updateIsAttend(Long projectIdx) throws BaseException {
+        try {
+            Project project = findProjectByIdx(projectIdx);
+            project.updateIsAttend();
         } catch (EmptyEntityException e) {
             throw new BaseException(e.getStatus());
         } catch (Exception e) {
