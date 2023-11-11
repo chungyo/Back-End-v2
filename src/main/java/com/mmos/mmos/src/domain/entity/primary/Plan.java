@@ -1,4 +1,4 @@
-package com.mmos.mmos.src.domain.entity;
+package com.mmos.mmos.src.domain.entity.primary;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.mmos.mmos.src.domain.dto.request.PlanSaveRequestDto;
@@ -26,12 +26,6 @@ public class Plan {
     @Column
     private Boolean planIsComplete = false;
 
-    @Column
-    private Boolean planIsStudy = false;
-
-    @Column
-    private Boolean planIsVisible = false;
-
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "plannerIndex")
@@ -46,7 +40,6 @@ public class Plan {
 
     public Plan(PlanSaveRequestDto requestDto, Planner planner) {
         this.planName = requestDto.getPlanName();
-        this.planIsStudy = requestDto.getIsStudy();
         this.planner = planner;
     }
 
@@ -57,10 +50,6 @@ public class Plan {
 
     public void updateIsComplete(Boolean planIsComplete) {
         this.planIsComplete = planIsComplete;
-    }
-
-    public void updateIsVisible(Boolean planIsVisible) {
-        this.planIsVisible = planIsVisible;
     }
 
     public void setStudyTime(Long time) {

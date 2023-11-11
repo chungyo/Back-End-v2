@@ -8,7 +8,10 @@ import com.mmos.mmos.src.domain.dto.request.*;
 import com.mmos.mmos.src.domain.dto.response.home.CalendarSectionDto;
 import com.mmos.mmos.src.domain.dto.response.planner.PlannerPageResponseDto;
 import com.mmos.mmos.src.domain.dto.response.planner.PlannerSectionDto;
-import com.mmos.mmos.src.domain.entity.*;
+import com.mmos.mmos.src.domain.entity.primary.Plan;
+import com.mmos.mmos.src.domain.entity.primary.Planner;
+import com.mmos.mmos.src.domain.entity.primary.Project;
+import com.mmos.mmos.src.domain.entity.primary.User;
 import com.mmos.mmos.src.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -125,21 +128,6 @@ public class PlannerPageController extends BaseController {
         try {
             Plan plan = planService.updatePlanIsComplete(planIdx);
             return sendResponseHttpByJson(SUCCESS, "계획 완수 여부 수정 성공", new PlannerSectionDto(plan.getPlanner()));
-        } catch (BaseException e) {
-            return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
-        }
-    }
-
-
-    /**
-     * 계획 달력에 표시 설정하는 API
-     * @param planIdx: 설정하려는 계획 인덱스
-     */
-    @PatchMapping("/plans/display")
-    public ResponseEntity<ResponseApiMessage> checkPlanIsVisible(@RequestParam Long planIdx) {
-        try {
-            Plan plan = planService.updatePlanIsVisible(planIdx);
-            return sendResponseHttpByJson(SUCCESS, "계획 표시 여부 수정 성공", new PlannerSectionDto(plan.getPlanner()));
         } catch (BaseException e) {
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }

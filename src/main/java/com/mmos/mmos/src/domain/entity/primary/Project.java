@@ -1,4 +1,4 @@
-package com.mmos.mmos.src.domain.entity;
+package com.mmos.mmos.src.domain.entity.primary;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.mmos.mmos.src.domain.dto.request.ProjectSaveRequestDto;
@@ -95,4 +95,7 @@ public class Project {
         this.study = study;
     }
 
+    public void updateIsAttend() {
+        projectIsAttend = !projectIsAttend;
+    }
 }
