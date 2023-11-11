@@ -30,7 +30,7 @@ public class FriendPlannerResponseDto {
     Planner planner;
 
     public FriendPlannerResponseDto(User friend, Badge tier, List<Badge> badges, Badge pfp, Planner planner) {
-        this.name = friend.getUserName();
+        this.name = friend.getUsername();
         this.id = friend.getUserId();
         this.universityName = friend.getMajor().getCollege().getUniversity().getUniversityName();
         this.majorName = friend.getMajor().getMajorName();

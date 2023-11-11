@@ -34,7 +34,7 @@ public class FriendSectionDto {
             if (userUserbadge.getBadge().getBadgePurpose().equals("tier") && userUserbadge.getUserbadgeIsVisible())
                 this.tier = userUserbadge.getBadge().getBadgeIcon();
         }
-        this.name = user.getUserName();
+        this.name = user.getUsername();
         this.nickname = user.getUserNickname();
         this.id = user.getUserId();
         this.WeeklyStudyTime = user.getUserWeeklyStudyTime();

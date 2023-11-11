@@ -18,7 +18,7 @@ public class MemberSectionInMemberDto {
 
     public MemberSectionInMemberDto(UserStudy userStudy) {
         this.idx = userStudy.getUser().getUserIndex();
-        this.name = userStudy.getUser().getUserName();
+        this.name = userStudy.getUser().getUsername();
         this.id = userStudy.getUser().getUserId();
         this.status = userStudy.getUserstudyMemberStatus();
     }

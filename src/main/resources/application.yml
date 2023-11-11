@@ -1,20 +1,23 @@
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/test
-    driver-class-name: org.h2.Driver
-    username: sa
+    url: jdbc:mysql://localhost:3306/mmos?serverTimezone=Asia/Seoul
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: rlarudrb119!
 
   jpa:
-    show-sql: true
+    database: mysql
+    #    database-platform: org.hibernate.dialect.MySQL8InnoDBDialect
     properties:
       hibernate:
-        ddl-auto: update
         format_sql: true
-        dialect: org.hibernate.dialect.H2Dialect
-#        hbm2ddl:
-#          auto: create
-    database: h2
+        show-sql: true
+        #        ddl-auto: update
+        hbm2ddl:
+          auto: create
 
-  h2:
-    console:
-      enabled: true
+application:
+  security:
+    jwt:
+      secret-key: 903d39eb06940f1e043c0db2e775d31dc450e47afa75c38ec4dbdd23edd2185f446853b5e6e44c9c3ca2f865713ab29d183c6224e6b22368ad7e0f65059733b4
+      expiration: 60000

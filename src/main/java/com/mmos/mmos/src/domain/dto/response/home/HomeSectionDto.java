@@ -31,7 +31,7 @@ public class HomeSectionDto {
 
     public HomeSectionDto(User user, List<Badge> badges, Badge pfp) {
         this.id = user.getUserId();
-        this.name = user.getUserName();
+        this.name = user.getUsername();
         this.nickname = user.getUserNickname();
         this.pfp = pfp.getBadgeIcon();
         this.universityName = user.getMajor().getCollege().getUniversity().getUniversityName();

@@ -4,7 +4,6 @@ import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.domain.entity.UserBadge;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
@@ -21,7 +20,7 @@ public class FriendSectionDto {
 
     public FriendSectionDto(User friend) {
         this.id = friend.getUserId();
-        this.name = friend.getUserName();
+        this.name = friend.getUsername();
         this.todayStudyTime = friend.getUserTotalStudyTime();
 
         for (UserBadge userUserbadge : friend.getUserUserbadges()) {

@@ -8,9 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FriendRepository extends JpaRepository<Friend, Long> {
-
-    Optional<Friend> findFriendByUser_UserIndexAndFriendUserIndex(Long userIdx, Long friendIdx);
-
     Optional<List<Friend>> findFriendsByUser_UserIndexAndFriendStatus(Long userIdx, Integer status);
 
     Optional<Friend> findFriendByUserAndFriend(User user, User friend);

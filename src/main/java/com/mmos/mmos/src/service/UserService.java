@@ -9,9 +9,6 @@ import com.mmos.mmos.src.domain.entity.Major;
 import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,28 +58,6 @@ public class UserService {
 
             return userRepository.save(user);
         } catch (DuplicateRequestException e) {
-            throw new BaseException(e.getStatus());
-        } catch (Exception e) {
-            throw new BaseException(DATABASE_ERROR);
-        }
-    }
-
-    @Transactional
-    public User getLoginUserByLoginId(String id) {
-        return userRepository.findUserByUserId(id)
-                .orElse(null);
-    }
-
-    @Transactional
-    public User login(LoginRequestDto requestDto) throws BaseException {
-        try {
-            User user = findUserById(requestDto.getId());
-
-            if(user.getUserPassword().equals(requestDto.getPwd()))
-                return user;
-
-            throw new BaseException(LOGIN_FAIL);
-        } catch (BaseException e) {
             throw new BaseException(e.getStatus());
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);

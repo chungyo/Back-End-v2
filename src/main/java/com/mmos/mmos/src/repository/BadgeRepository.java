@@ -7,6 +7,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BadgeRepository extends JpaRepository<Badge, Long> {
-
     Optional<List<Badge>> findBadgesByBadgePurpose(String purpose);
 }

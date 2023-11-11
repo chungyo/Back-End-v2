@@ -1,68 +1,65 @@
 package com.mmos.mmos.security;
 
-import com.mmos.mmos.src.domain.entity.User;
-import com.mmos.mmos.src.service.UserService;
+import com.mmos.mmos.src.repository.TokenRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
 
-import static com.mmos.mmos.security.Secret.JWT_SECRET_KEY;
-
+@Component
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
 
-    private final UserService userService;
+    private final UserDetailsService userDetailsService;
+    private final JwtService jwtService;
+    private final TokenRepository tokenRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String authHeader = request.getHeader("Authorization");
+        final String jwt;
+        final String userId;
 
         // Header의 Authorization 값이 비어있으면 => Jwt Token을 전송하지 않음 => 로그인 하지 않음
-        if (authorizationHeader == null) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         // Header의 Authorization 값이 'Bearer '로 시작하지 않으면 => 잘못된 토큰
-        if (!authorizationHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         // 전송받은 값에서 'Bearer ' 뒷부분(Jwt Token) 추출
-        String token = authorizationHeader.split(" ")[1];
+        jwt = authHeader.split(" ")[1];
 
-        // 전송받은 Jwt Token이 만료되었으면 => 다음 필터 진행(인증 X)
-        if (JwtTokenUtil.isExpired(token, JWT_SECRET_KEY)) {
-            filterChain.doFilter(request, response);
-            return;
+        // 유저 아이디 추출
+        userId = jwtService.extractUsername(jwt);
+
+        // 유저 아이디가 존재하고 권한은 부여 받지 못했다면
+        if(userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            // 유저를 식별자인 username 즉, 여기서는 로그인하려는 ID로 UserDetails 가져오기
+            UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
+            // 레포지토리에서 Jwt 찾기
+            boolean isTokenValid = tokenRepository.findByToken(jwt).map(t -> !t.isExpired() && !t.isRevoked()).orElse(false);
+            // 클라이언트에게 받은 Jwt가 유효한지 확인 && 서버에 저장된 토큰이 유효한지 확인
+            if(jwtService.isTokenValid(jwt, userDetails) && isTokenValid) {
+                // 둘 다 유효하다면 권한 부여
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
         }
-
-        // Jwt Token에서 loginId 추출
-        String loginId = JwtTokenUtil.getLoginId(token, JWT_SECRET_KEY);
-
-        // 추출한 loginId로 User 찾아오기
-        User loginUser = userService.getLoginUserByLoginId(loginId);
-
-        // loginUser 정보로 UsernamePasswordAuthenticationToken 발급
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                loginUser.getUserId(), null, List.of(new SimpleGrantedAuthority("USER")));
-        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-        // 권한 부여
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        // 다음 필터로 이동
         filterChain.doFilter(request, response);
     }
 }

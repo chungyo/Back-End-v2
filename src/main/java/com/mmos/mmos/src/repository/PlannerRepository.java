@@ -7,6 +7,5 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 public interface PlannerRepository extends JpaRepository<Planner, Long> {
-
     Optional<Planner> findPlannerByCalendar_CalendarIndexAndPlannerDate(Long idx, LocalDate date);
 }

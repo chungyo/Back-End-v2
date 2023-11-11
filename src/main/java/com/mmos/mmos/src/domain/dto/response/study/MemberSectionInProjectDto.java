@@ -19,7 +19,7 @@ public class MemberSectionInProjectDto {
 
     public MemberSectionInProjectDto(User user, Project project) {
         this.idx = user.getUserIndex();
-        this.name = user.getUserName();
+        this.name = user.getUsername();
         this.id = user.getUserId();
         this.isAttend = project.getProjectIsAttend();
     }

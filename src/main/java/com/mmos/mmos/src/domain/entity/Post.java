@@ -55,7 +55,7 @@ public class Post {
         this.postContents = postSaveRequestDto.getPostContents();
         this.postImage = postSaveRequestDto.getPostImage();
         this.postWriterIndex = user.getUserIndex();
-        this.postWriterName = user.getUserName();
+        this.postWriterName = user.getUsername();
         this.study = study;
         this.postCreatedAt = postCreatedAt;
         this.postUpdatedAt = postUpdatedAt;
@@ -67,7 +67,7 @@ public class Post {
 
     public void updateWriter(User user) {
         this.postWriterIndex = user.getUserIndex();
-        this.postWriterName = user.getUserName();
+        this.postWriterName = user.getUsername();
     }
 
     public void updateTitle(String title) {

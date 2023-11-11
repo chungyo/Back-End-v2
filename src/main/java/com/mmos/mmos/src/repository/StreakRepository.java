@@ -8,6 +8,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface StreakRepository extends JpaRepository<Streak, Long> {
-
     Optional<List<Streak>> findTop60ByUserOrderByStreakIndexDesc(User user);
 }

@@ -9,13 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PlanRepository extends JpaRepository<Plan, Long> {
-    Optional<List<Plan>> findPlansByPlannerAndPlanIsStudy(Planner planner, Boolean isStudy);
-
-    Optional<List<Plan>> findPlansByPlanner(Planner planner);
-
-
     Optional<List<Plan>> findPlansByPlanIsVisibleIsTrueAndPlanner_Calendar(Calendar calendar);
 
     Long countByPlannerAndPlanIsVisibleTrue(Planner planner);
-
 }
