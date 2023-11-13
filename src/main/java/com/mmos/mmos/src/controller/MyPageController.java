@@ -24,6 +24,17 @@ public class MyPageController extends BaseController {
     private final UserBadgeService userBadgeService;
 
     // 페이지 로드
+    @GetMapping("")
+    public ResponseEntity<ResponseApiMessage> getPage(@RequestParam Long userIdx) {
+        try {
+            User user = userService.getUser(userIdx);
+
+
+            return sendResponseHttpByJson(SUCCESS, "페이지 로드 성공", null);
+        } catch (BaseException e) {
+            return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
+        }
+    }
 
     // 프사 변경
     @PatchMapping("/pfp")
@@ -131,10 +142,6 @@ public class MyPageController extends BaseController {
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }
     }
-
-    // 이메일 인증
-
-    // 이메일 변경
 
     // 회원 탈퇴
     @DeleteMapping("")
