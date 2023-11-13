@@ -31,6 +31,7 @@ public class SignUpPageController extends BaseController {
     private final CollegeService collegeService;
     private final MajorService majorService;
     private final CalendarService calendarService;
+    private final UserBadgeService userBadgeService;
 
     @GetMapping("university")
     public ResponseEntity<ResponseApiMessage> getUniversities() {
@@ -82,6 +83,7 @@ public class SignUpPageController extends BaseController {
     public ResponseEntity<ResponseApiMessage> signUp(@RequestBody SignUpRequestDto requestDto) {
         try {
             User user = userService.saveUser(requestDto);
+            userBadgeService.saveUserBadge(user.getUserIndex());
 
             calendarService.saveCalendar(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), user.getUserIndex());
             return sendResponseHttpByJson(SUCCESS, "회원가입 성공", user);

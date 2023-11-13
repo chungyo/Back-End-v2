@@ -36,12 +36,11 @@ public class SecurityConfig {
                                 .requestMatchers(new AntPathRequestMatcher("/signup/**")).permitAll()
                                 .anyRequest().authenticated()
                 )
-                .logout(logoutConfig -> { logoutConfig
+                .logout(logoutConfig -> logoutConfig
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
                         .addLogoutHandler(authService)
-                        .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext()));
-                        })
+                        .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext())))
                 .build();
     }
 }

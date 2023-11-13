@@ -17,20 +17,30 @@ repositories {
 }
 
 dependencies {
+	// 이메일 인증 외부 API
 	implementation 'com.github.in-seo:univcert:master-SNAPSHOT'
+
+	// Lombok
 	implementation('org.projectlombok:lombok')
 	compileOnly('org.projectlombok:lombok')
 	annotationProcessor('org.projectlombok:lombok')
+	testImplementation('org.projectlombok:lombok')
+	testAnnotationProcessor('org.projectlombok:lombok')
+
+	// Spring
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	runtimeOnly 'com.h2database:h2'
-	runtimeOnly 'com.mysql:mysql-connector-j'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
-	testImplementation('org.projectlombok:lombok')
-	testAnnotationProcessor('org.projectlombok:lombok')
 	implementation('org.springframework.boot:spring-boot-starter-validation')
+
+	// MySQL
+	runtimeOnly 'mysql:mysql-connector-java:8.0.21'
+	runtimeOnly 'com.mysql:mysql-connector-j'
+
+
+	// JWT
 	implementation('io.jsonwebtoken:jjwt-api:0.11.5')
 	implementation('io.jsonwebtoken:jjwt-impl:0.11.5')
 	implementation('io.jsonwebtoken:jjwt-jackson:0.11.5')

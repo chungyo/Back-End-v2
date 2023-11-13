@@ -5,11 +5,11 @@ import com.mmos.mmos.src.domain.dto.request.CalendarGetRequestDto;
 import com.mmos.mmos.src.domain.dto.request.ProjectSaveRequestDto;
 import com.mmos.mmos.src.domain.dto.request.ProjectUpdateRequestDto;
 import com.mmos.mmos.src.domain.dto.response.home.CalendarSectionDto;
-import com.mmos.mmos.src.domain.entity.primary.Calendar;
-import com.mmos.mmos.src.domain.entity.primary.Project;
-import com.mmos.mmos.src.domain.entity.primary.Study;
-import com.mmos.mmos.src.domain.entity.primary.User;
-import com.mmos.mmos.src.repository.primary.ProjectRepository;
+import com.mmos.mmos.src.domain.entity.Calendar;
+import com.mmos.mmos.src.domain.entity.Project;
+import com.mmos.mmos.src.domain.entity.Study;
+import com.mmos.mmos.src.domain.entity.User;
+import com.mmos.mmos.src.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,14 +28,9 @@ public class ProjectService {
     private final StudyService studyService;
     private final UserStudyService userStudyService;
 
-
     public Project findProjectByIdx(Long projectIdx) throws BaseException {
         return projectRepository.findById(projectIdx)
                 .orElseThrow(() -> new EmptyEntityException(EMPTY_PROJECT));
-    }
-
-    public Long countByUserAndProjectIsVisibleTrue(User user) {
-        return projectRepository.countByUserAndProjectIsVisibleTrue(user);
     }
 
     @Transactional
@@ -117,7 +112,7 @@ public class ProjectService {
         }
     }
 
-@Transactional
+    @Transactional
     public Project updateProjectIsVisible(Long projectIdx) throws BaseException {
         try {
             Project project = findProjectByIdx(projectIdx);

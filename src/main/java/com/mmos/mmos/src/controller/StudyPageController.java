@@ -7,7 +7,7 @@ import com.mmos.mmos.config.exception.EmptyInputException;
 import com.mmos.mmos.config.exception.NotAuthorizedAccessException;
 import com.mmos.mmos.src.domain.dto.request.*;
 import com.mmos.mmos.src.domain.dto.response.study.*;
-import com.mmos.mmos.src.domain.entity.primary.*;
+import com.mmos.mmos.src.domain.entity.*;
 import com.mmos.mmos.src.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;

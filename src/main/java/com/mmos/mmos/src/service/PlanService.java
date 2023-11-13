@@ -5,11 +5,11 @@ import com.mmos.mmos.config.exception.BusinessLogicException;
 import com.mmos.mmos.config.exception.EmptyEntityException;
 import com.mmos.mmos.src.domain.dto.request.PlanSaveRequestDto;
 import com.mmos.mmos.src.domain.dto.request.PlanUpdateRequestDto;
-import com.mmos.mmos.src.domain.entity.primary.Calendar;
-import com.mmos.mmos.src.domain.entity.primary.Plan;
-import com.mmos.mmos.src.domain.entity.primary.Planner;
-import com.mmos.mmos.src.domain.entity.primary.User;
-import com.mmos.mmos.src.repository.primary.PlanRepository;
+import com.mmos.mmos.src.domain.entity.Calendar;
+import com.mmos.mmos.src.domain.entity.Plan;
+import com.mmos.mmos.src.domain.entity.Planner;
+import com.mmos.mmos.src.domain.entity.User;
+import com.mmos.mmos.src.repository.PlanRepository;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,17 +49,6 @@ public class PlanService {
             return planRepository.save(plan);
         } catch (EmptyEntityException e) {
             throw new BaseException(e.getStatus());
-        }
-    }
-
-    @Transactional
-    public Plan getPlan(Long planIdx) throws BaseException {
-        try {
-            return findPlanByIdx(planIdx);
-        } catch (EmptyEntityException e) {
-            throw new BaseException(EMPTY_PLAN);
-        } catch (Exception e) {
-            throw new BaseException(DATABASE_ERROR);
         }
     }
 

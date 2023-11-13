@@ -1,4 +1,4 @@
-package com.mmos.mmos.src.domain.entity.primary;
+package com.mmos.mmos.src.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.mmos.mmos.src.domain.dto.request.PlanSaveRequestDto;

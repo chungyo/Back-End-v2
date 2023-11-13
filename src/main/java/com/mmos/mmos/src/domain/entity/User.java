@@ -31,16 +31,17 @@ public class User implements UserDetails {
     private String userId;
 
     @Column
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~!@#$%^&*()+|=])[A-Za-z\\d~!@#$%^&*()+|=]{8,16}$", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
     private String userPassword;
 
     @Column
     @Pattern(regexp = "^[가-힣A-Za-z ]{2,20}$")
     private String userName;
 
-    @Column
-    @Pattern(regexp = "^[가-힣A-Za-z0-9_.]{3,20}$")
-    private String userNickname;
+
+
+    public String getUserName() {
+        return userName;
+    }
 
     @Column
     @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,6}$")
@@ -69,6 +70,9 @@ public class User implements UserDetails {
     @Column
     @ColumnDefault(value = "0")
     private Long userTopStreak = 0L;
+
+    @Column
+    private Boolean isPlannerVisible = true;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
@@ -105,7 +109,6 @@ public class User implements UserDetails {
         this.userId = responseDto.getId();
         this.userPassword = responseDto.getPwd();
         this.userName = responseDto.getName();
-        this.userNickname = responseDto.getNickname();
         this.userEmail = responseDto.getEmail();
         this.major = major;
     }
@@ -150,12 +153,12 @@ public class User implements UserDetails {
         this.userPassword = newPwd;
     }
 
-    public void updateNickname(String nickname) {
-        this.userNickname = nickname;
-    }
-
     public void updateTopStreak(Long days) {
         this.userTopStreak = days;
+    }
+
+    public void updateName(String name) {
+        this.userName = name;
     }
 
     public void updateTotalSchedule(boolean status) {
@@ -176,6 +179,10 @@ public class User implements UserDetails {
         }
     }
 
+    public void updateIsPlannerVisible(boolean status) {
+        this.isPlannerVisible = status;
+    }
+
 
     public void plusCurrentStreak() {
         this.userCurrentStreak++;
@@ -187,6 +194,10 @@ public class User implements UserDetails {
 
     public void addStreak(Streak streak) {
         this.streaks.add(streak);
+    }
+
+    public void updateId(String id) {
+        this.userId = id;
     }
 
     @Override
@@ -201,7 +212,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return userName;
+        return userId;
     }
 
     @Override

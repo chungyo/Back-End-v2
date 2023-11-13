@@ -126,7 +126,9 @@ public class FriendService {
                 throw new DuplicateRequestException(DUPLICATE_FRIEND_REQUEST);
             } catch (Exception e) {
                 response = friendRepository.save(new Friend(2, user, friend)); // 보낸 사람 Friend에 생기는 객체
-                friendRepository.save(new Friend(3, friend, user)); // 보낸 사람 Friend에 생기는 객체
+                user.addFriend(response);
+                friend.addFriend(friendRepository.save(new Friend(3, friend, user))); // 보낸 사람 Friend에 생기는 객체
+
             }
 
             return response;

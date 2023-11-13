@@ -39,7 +39,7 @@ public enum HttpResponseStatus {
     USER_DUPLICATE_SAVE(false, BAD_REQUEST.value(), "이미 존재하는 회원입니다."),
     // updatePwd
     UPDATE_USER_EMPTY_PREVPWD(false, BAD_REQUEST.value(), "이전 비밀번호를 입력해주세요."),
-    UPDATE_USER_EMPTY_NEWPWD(false, BAD_REQUEST.value(), "새 비밀번호를 입력해주세요."),
+    UPDATE_USER_EMPTY_PWD(false, BAD_REQUEST.value(), "비밀번호를 입력해주세요."),
     UPDATE_USER_SAME_PWD(false, BAD_REQUEST.value(), "기존 비밀번호와 같습니다. 새로운 비밀번호를 입력해주세요."),
     UPDATE_USER_DIFF_NEWPWD(false, BAD_REQUEST.value(), "새로운 비밀번호가 일치하지 않습니다."),
     UPDATE_USER_DIFF_PREVPWD(false, BAD_REQUEST.value(), "비밀번호를 잘못 입력하셨습니다."),

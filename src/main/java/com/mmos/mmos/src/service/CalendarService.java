@@ -5,10 +5,11 @@ import com.mmos.mmos.config.exception.DuplicateRequestException;
 import com.mmos.mmos.config.exception.EmptyEntityException;
 import com.mmos.mmos.src.domain.dto.request.CalendarGetRequestDto;
 import com.mmos.mmos.src.domain.dto.response.home.CalendarSectionDto;
-import com.mmos.mmos.src.domain.entity.primary.Calendar;
-import com.mmos.mmos.src.domain.entity.primary.Project;
-import com.mmos.mmos.src.domain.entity.primary.User;
-import com.mmos.mmos.src.repository.primary.CalendarRepository;
+import com.mmos.mmos.src.domain.entity.Calendar;
+import com.mmos.mmos.src.domain.entity.Project;
+import com.mmos.mmos.src.domain.entity.User;
+import com.mmos.mmos.src.repository.CalendarRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,25 +21,14 @@ import java.util.List;
 import static com.mmos.mmos.config.HttpResponseStatus.*;
 
 @Service
+@RequiredArgsConstructor
 public class CalendarService {
 
     private final CalendarRepository calendarRepository;
     private final UserService userService;
-    private final PlanService planService;
-
-    public CalendarService(CalendarRepository calendarRepository, @Lazy UserService userService, @Lazy PlanService planService) {
-        this.calendarRepository = calendarRepository;
-        this.userService = userService;
-        this.planService = planService;
-    }
 
     public Calendar findCalendarByMonthAndYear(Long userIdx, Integer calendarYear, Integer calendarMonth) throws BaseException {
         return calendarRepository.findCalendarByUser_UserIndexAndCalendarYearAndCalendarMonth(userIdx, calendarYear, calendarMonth)
-                .orElseThrow(() -> new EmptyEntityException(EMPTY_CALENDAR));
-    }
-
-    public Calendar findCalendarByUserIdxAndDate(Long projectIdx, Integer year, Integer month) throws BaseException {
-        return calendarRepository.findCalendarByUser_UserIndexAndCalendarYearAndCalendarMonth(projectIdx, year, month)
                 .orElseThrow(() -> new EmptyEntityException(EMPTY_CALENDAR));
     }
 
@@ -119,9 +109,6 @@ public class CalendarService {
                         calendarProjectList.add(project);
                     }
                 }
-
-                // 해당 달에서 planIsVisible == true인 plan들을 리스트로 가져오기
-
             }
 
             return new CalendarSectionDto(calendar, calendarProjectList);

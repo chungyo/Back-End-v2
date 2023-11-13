@@ -1,4 +1,4 @@
-package com.mmos.mmos.src.domain.entity.primary;
+package com.mmos.mmos.src.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

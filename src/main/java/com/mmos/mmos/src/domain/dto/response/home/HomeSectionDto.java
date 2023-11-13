@@ -16,8 +16,6 @@ public class HomeSectionDto {
     private String id;
     // 이름
     private String name;
-    // 닉네임
-    private String nickname;
     // 프사
     private String pfp;
     // 학교
@@ -32,7 +30,6 @@ public class HomeSectionDto {
     public HomeSectionDto(User user, List<Badge> badges, Badge pfp) {
         this.id = user.getUserId();
         this.name = user.getUsername();
-        this.nickname = user.getUserNickname();
         this.pfp = pfp.getBadgeIcon();
         this.universityName = user.getMajor().getCollege().getUniversity().getUniversityName();
         this.collegeName = user.getMajor().getCollege().getCollegeName();

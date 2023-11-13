@@ -39,8 +39,10 @@ public class UserBadgeService {
                 .orElseThrow(() -> new EmptyEntityException(EMPTY_USERBADGE));
     }
 
+    @Transactional
     public void saveUserBadge(Long userIdx) throws BaseException {
         try {
+            System.out.println(true);
             User user = userService.getUser(userIdx);
             List<Badge> badges = badgeService.findAllBadges();
 
@@ -150,6 +152,15 @@ public class UserBadgeService {
             return badges;
         } catch (EmptyEntityException e) {
             throw new BaseException(e.getStatus());
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    @Transactional
+    public void updatePfp(UserBadge userBadge, boolean status) throws BaseException {
+        try {
+            userBadge.updateIsVisible(status);
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

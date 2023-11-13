@@ -14,10 +14,10 @@ spring:
         show-sql: true
         #        ddl-auto: update
         hbm2ddl:
-          auto: create
+          auto: update
 
 application:
   security:
     jwt:
       secret-key: 903d39eb06940f1e043c0db2e775d31dc450e47afa75c38ec4dbdd23edd2185f446853b5e6e44c9c3ca2f865713ab29d183c6224e6b22368ad7e0f65059733b4
-      expiration: 60000
+      expiration: 3600000

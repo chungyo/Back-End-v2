@@ -18,8 +18,6 @@ public class FriendSectionDto {
     String pfp;
     // 이름
     String name;
-    // 닉네임
-    String nickname;
     // 아이디
     String id;
     // 이번 주 공부 시간
@@ -35,7 +33,6 @@ public class FriendSectionDto {
                 this.tier = userUserbadge.getBadge().getBadgeIcon();
         }
         this.name = user.getUsername();
-        this.nickname = user.getUserNickname();
         this.id = user.getUserId();
         this.WeeklyStudyTime = user.getUserWeeklyStudyTime();
         for (Calendar userCalendar : user.getUserCalendars()) {
