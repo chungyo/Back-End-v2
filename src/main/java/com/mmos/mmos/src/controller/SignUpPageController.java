@@ -2,6 +2,8 @@ package com.mmos.mmos.src.controller;
 
 import com.mmos.mmos.config.ResponseApiMessage;
 import com.mmos.mmos.config.exception.BaseException;
+import com.mmos.mmos.src.domain.dto.request.CheckEmailDto;
+import com.mmos.mmos.src.domain.dto.request.SendEmailDto;
 import com.mmos.mmos.src.domain.dto.request.SignUpRequestDto;
 import com.mmos.mmos.src.domain.entity.College;
 import com.mmos.mmos.src.domain.entity.Major;
@@ -22,7 +24,7 @@ import static com.mmos.mmos.config.HttpResponseStatus.BUSINESS_LOGIC_ERROR;
 import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
 
 @RestController
-@RequestMapping("/signup")
+@RequestMapping("/api/v1/signup")
 @RequiredArgsConstructor
 public class SignUpPageController extends BaseController {
 
@@ -50,8 +52,8 @@ public class SignUpPageController extends BaseController {
 
     // 이메일 인증
 
-    @GetMapping("college")
-    public ResponseEntity<ResponseApiMessage> getColleges(@RequestParam Long universityIdx) {
+    @GetMapping("college/{universityIdx}")
+    public ResponseEntity<ResponseApiMessage> getColleges(@PathVariable Long universityIdx) {
         try {
             List<College> colleges = collegeService.getColleges(universityIdx);
             Map<Long, String> collegeMap = new HashMap<>();
@@ -65,8 +67,8 @@ public class SignUpPageController extends BaseController {
         }
     }
 
-    @GetMapping("major")
-    public ResponseEntity<ResponseApiMessage> getMajors(@RequestParam Long collegeIdx) {
+    @GetMapping("major/{collegeIdx}")
+    public ResponseEntity<ResponseApiMessage> getMajors(@PathVariable Long collegeIdx) {
         try {
             List<Major> majors = majorService.getMajors(collegeIdx);
             Map<Long, String> majorMap = new HashMap<>();
@@ -93,9 +95,9 @@ public class SignUpPageController extends BaseController {
     }
 
     @PostMapping("/email")
-    public ResponseEntity<ResponseApiMessage> sendCertificationNumber(@RequestParam String email) {
+    public ResponseEntity<ResponseApiMessage> sendCertificationNumber(@RequestBody SendEmailDto dto) {
         try {
-            Map<String, Object> result = UnivCert.certify("ee5c770b-a868-49c3-9b98-1aaf42383c94", email, "가천대학교", true);
+            Map<String, Object> result = UnivCert.certify("ee5c770b-a868-49c3-9b98-1aaf42383c94", dto.getEmail(), "가천대학교", true);
             return sendResponseHttpByJson(SUCCESS, "이메일 전송 성공", result.get("code"));
         } catch (Exception e) {
             e.printStackTrace();
@@ -104,10 +106,10 @@ public class SignUpPageController extends BaseController {
     }
 
     @PostMapping("/email/certified")
-    public ResponseEntity<ResponseApiMessage> checkCertificationNumber(@RequestParam String email, @RequestParam int code) {
+    public ResponseEntity<ResponseApiMessage> checkCertificationNumber(@RequestBody CheckEmailDto dto) {
         try {
-            Map<String, Object> result = UnivCert.certifyCode("ee5c770b-a868-49c3-9b98-1aaf42383c94", email, "가천대학교", code);
-            return sendResponseHttpByJson(SUCCESS, result.get("message").toString(), result.get("code"));
+            Map<String, Object> result = UnivCert.certifyCode("ee5c770b-a868-49c3-9b98-1aaf42383c94", dto.getEmail(), "가천대학교", dto.getCode());
+            return sendResponseHttpByJson(SUCCESS, result.get("success").toString(), result.get("code"));
         } catch (Exception e) {
             e.printStackTrace();
             return sendResponseHttpByJson(BUSINESS_LOGIC_ERROR, "서버 오류", null);

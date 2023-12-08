@@ -50,8 +50,9 @@ public class StudyService {
 
             return study;
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }
@@ -71,7 +72,7 @@ public class StudyService {
 
             return new PageImpl<>(appliersDto, pageable, appliersDto.size());
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -82,7 +83,7 @@ public class StudyService {
         try {
             return findStudyByIdx(studyIdx);
         } catch (EmptyEntityException e) {
-            throw new BaseException(EMPTY_STUDY);
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -93,7 +94,7 @@ public class StudyService {
         try {
             studyRepository.delete(findStudyByIdx(studyIdx));
         } catch (EmptyEntityException e) {
-            throw new BaseException(EMPTY_STUDY);
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

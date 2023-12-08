@@ -2,6 +2,7 @@ package com.mmos.mmos.src.controller;
 
 import com.mmos.mmos.config.ResponseApiMessage;
 import com.mmos.mmos.config.exception.BaseException;
+import com.mmos.mmos.config.exception.NotAuthorizedAccessException;
 import com.mmos.mmos.src.domain.dto.request.CalendarGetRequestDto;
 import com.mmos.mmos.src.domain.dto.response.social.FriendPlannerResponseDto;
 import com.mmos.mmos.src.domain.dto.response.social.SocialPageResponseDto;
@@ -9,17 +10,17 @@ import com.mmos.mmos.src.domain.entity.*;
 import com.mmos.mmos.src.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.mmos.mmos.config.HttpResponseStatus.EMPTY_FRIEND;
-import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
+import static com.mmos.mmos.config.HttpResponseStatus.*;
 
 @RestController
-@RequestMapping("/social")
+@RequestMapping("/api/v1/social")
 @RequiredArgsConstructor
 public class SocialPageController extends BaseController {
 
@@ -29,13 +30,10 @@ public class SocialPageController extends BaseController {
     private final PlannerService plannerService;
     private final CalendarService calendarService;
 
-    /** (미완수)
-     * 친구 추가 기능을 완수하면 getTop3Friends 메서드 체크해봐야 함.
-     * @param userIdx
-     */
     @GetMapping("")
-    public ResponseEntity<ResponseApiMessage> getPage(@RequestParam Long userIdx) {
+    public ResponseEntity<ResponseApiMessage> getPage(@AuthenticationPrincipal User tokenUser) {
         try {
+            Long userIdx = tokenUser.getUserIndex();
             // 기본 쿼리
             userBadgeService.saveUserBadge(userIdx);
             friendService.friendWithMe(userIdx);
@@ -51,10 +49,10 @@ public class SocialPageController extends BaseController {
     }
 
     // 친구 요청 보내기
-    @PostMapping("/request")
-    public ResponseEntity<ResponseApiMessage> sendFriendRequest(@RequestParam Long userIdx, @RequestParam String friendId) {
+    @PostMapping("/request/{friendId}")
+    public ResponseEntity<ResponseApiMessage> sendFriendRequest(@AuthenticationPrincipal User tokenUser, @PathVariable String friendId) {
         try {
-            Friend request = friendService.sendFriendRequest(userIdx, friendId);
+            Friend request = friendService.sendFriendRequest(tokenUser.getUserIndex(), friendId);
 
             return sendResponseHttpByJson(SUCCESS, "친구 추가 성공", request);
         } catch (BaseException e) {
@@ -63,24 +61,25 @@ public class SocialPageController extends BaseController {
     }
 
     // 친구 요청 수락
-    @PatchMapping("/request")
-    public ResponseEntity<ResponseApiMessage> acceptFriendRequest(@RequestParam Long userIdx, @RequestParam Long friendIdx) {
+    @PatchMapping("/request/{friendIdx}")
+    public ResponseEntity<ResponseApiMessage> acceptFriendRequest(@AuthenticationPrincipal User tokenUser, @PathVariable Long friendIdx) {
         try {
-            Friend response = friendService.acceptFriendRequest(userIdx, friendIdx);
+            Friend response = friendService.acceptFriendRequest(tokenUser.getUserIndex(), friendIdx);
             List<Friend> myFriends = response.getUser().getUserFriends();
 
             return sendResponseHttpByJson(SUCCESS, "친구 요청 수락 성공", myFriends);
         } catch (BaseException e) {
+            e.printStackTrace();
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }
     }
 
     // 친구 요청 거부/취소/친구 삭제
-    @DeleteMapping("")
-    public ResponseEntity<ResponseApiMessage> rejectFriendRequest(@RequestParam Long userIdx, @RequestParam Long friendIdx) {
+    @DeleteMapping("/request/{friendIdx}")
+    public ResponseEntity<ResponseApiMessage> rejectFriendRequest(@AuthenticationPrincipal User tokenUser, @PathVariable Long friendIdx) {
         try {
-            Integer friendStatus = friendService.deleteFriendRequest(userIdx, friendIdx);
-            List<User> myFriends = friendService.getFriends(userIdx, friendStatus);
+            Integer friendStatus = friendService.deleteFriendRequest(tokenUser.getUserIndex(), friendIdx);
+            List<User> myFriends = friendService.getFriends(tokenUser.getUserIndex(), friendStatus);
 
             return sendResponseHttpByJson(SUCCESS, "친구 요청 삭제", myFriends);
         } catch (BaseException e) {
@@ -90,9 +89,9 @@ public class SocialPageController extends BaseController {
 
     // 받은 친구 요청 목록
     @GetMapping("/receive")
-    public ResponseEntity<ResponseApiMessage> getReceivedFriendRequests(@RequestParam Long userIdx) {
+    public ResponseEntity<ResponseApiMessage> getReceivedFriendRequests(@AuthenticationPrincipal User tokenUser) {
         try {
-            List<User> requestList = friendService.getFriends(userIdx, 3);
+            List<User> requestList = friendService.getFriends(tokenUser.getUserIndex(), 3);
 
             return sendResponseHttpByJson(SUCCESS, "받은 친구 요청 목록 조회 성공", requestList);
         } catch (BaseException e) {
@@ -102,9 +101,9 @@ public class SocialPageController extends BaseController {
 
     // 보낸 친구 요청 목록
     @GetMapping("/send")
-    public ResponseEntity<ResponseApiMessage> getSentFriendRequests(@RequestParam Long userIdx) {
+    public ResponseEntity<ResponseApiMessage> getSentFriendRequests(@AuthenticationPrincipal User tokenUser) {
         try {
-            List<User> requestList = friendService.getFriends(userIdx, 2);
+            List<User> requestList = friendService.getFriends(tokenUser.getUserIndex(), 2);
 
             return sendResponseHttpByJson(SUCCESS, "보낸 친구 요청 목록 조회 성공", requestList);
         } catch (BaseException e) {
@@ -113,30 +112,33 @@ public class SocialPageController extends BaseController {
     }
 
     // 친구 상단 고정
-    @PatchMapping("fix")
-    public ResponseEntity<ResponseApiMessage> updateIsFixed(@RequestParam Long userIdx, @RequestParam Long friendIdx) {
+    @PatchMapping("/fix/{friendIdx}")
+    public ResponseEntity<ResponseApiMessage> updateIsFixed(@AuthenticationPrincipal User tokenUser, @PathVariable Long friendIdx) {
         try {
-            friendService.updateIsFixed(userIdx, friendIdx);
-            List<User> myFriends = friendService.getFriends(userIdx, 1);
+            friendService.updateIsFixed(tokenUser.getUserIndex(), friendIdx);
+            List<User> myFriends = friendService.getFriends(tokenUser.getUserIndex(), 1);
 
             return sendResponseHttpByJson(SUCCESS, "친구 상단 고정/해제 성공", myFriends);
         } catch (BaseException e) {
+            e.printStackTrace();
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }
     }
 
     // 친구 플래너 확인
-    @GetMapping("friendInfo")
-    public ResponseEntity<ResponseApiMessage> getFriendPlanner(@RequestParam Long userIdx, @RequestParam Long friendUserIdx) {
+    @GetMapping("/friendInfo/{friendUserIdx}")
+    public ResponseEntity<ResponseApiMessage> getFriendPlanner(@AuthenticationPrincipal User tokenUser, @PathVariable Long friendUserIdx) {
         try {
             User friend = userService.getUser(friendUserIdx);
-            if(!friendService.getFriends(userIdx, 1).contains(friend))
+            if(!friend.getIsPlannerVisible())
+                throw new NotAuthorizedAccessException(FORBIDDEN_PLANNER);
+            if(!friendService.getFriends(tokenUser.getUserIndex(), 1).contains(friend))
                 throw new BaseException(EMPTY_FRIEND);
 
             Badge tier = userBadgeService.getRepresentBadges(friendUserIdx, "tier").get(0).getBadge();
 
             List<Badge> badges = new ArrayList<>();
-            List<UserBadge> userBadges = userBadgeService.getRepresentBadges(userIdx, "badge");
+            List<UserBadge> userBadges = userBadgeService.getRepresentBadges(tokenUser.getUserIndex(), "badge");
             for (UserBadge userBadge : userBadges) {
                 badges.add(userBadge.getBadge());
             }

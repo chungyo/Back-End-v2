@@ -113,6 +113,10 @@ public class User implements UserDetails {
         this.major = major;
     }
 
+    public String getName() {
+        return userName;
+    }
+
     public void addCalendars(Calendar calendar) {
         this.userCalendars.add(calendar);
     }

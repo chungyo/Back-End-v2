@@ -10,6 +10,7 @@ import com.mmos.mmos.src.domain.entity.*;
 import com.mmos.mmos.src.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -19,7 +20,7 @@ import java.util.List;
 import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
 
 @RestController
-@RequestMapping("/home")
+@RequestMapping("/api/v1/home")
 @RequiredArgsConstructor
 public class HomePageController extends BaseController {
 
@@ -30,13 +31,10 @@ public class HomePageController extends BaseController {
     private final UserBadgeService userBadgeService;
     private final StreakService streakService;
 
-    /**
-     * 홈 페이지 전체를 구성하는 모든 컬럼들 조회 API
-     * @param userIdx: 로그인한 사용자 인덱스
-     */
     @GetMapping("")
-    public ResponseEntity<ResponseApiMessage> getPage(@RequestParam Long userIdx) {
+    public ResponseEntity<ResponseApiMessage> getPage(@AuthenticationPrincipal User tokenUser) {
         try {
+            Long userIdx = tokenUser.getUserIndex();
             // 기본 쿼리
             userBadgeService.saveUserBadge(userIdx);
             try {
@@ -93,8 +91,8 @@ public class HomePageController extends BaseController {
      * 홈 페이지 화면에서 완수한 계획들 체크할 때 보내지는 API
      * @param planIdx: 완수한 계획 인덱스
      */
-    @PatchMapping("")
-    public ResponseEntity<ResponseApiMessage> checkTodayToDo(@RequestParam Long planIdx) {
+    @PatchMapping("/{planIdx}")
+    public ResponseEntity<ResponseApiMessage> checkTodayToDo(@PathVariable Long planIdx) {
         try {
                 Plan plan = planService.updatePlanIsComplete(planIdx);
                 return sendResponseHttpByJson(SUCCESS, "페이지 로드 성공", new TodoSectionDto(plan));

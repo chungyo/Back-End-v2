@@ -41,7 +41,7 @@ public class MajorService {
             college.addMajor(major);
             return majorRepository.save(major);
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -52,7 +52,7 @@ public class MajorService {
         try {
             return findMajorByIdx(majorIdx);
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -65,7 +65,7 @@ public class MajorService {
             College college = collegeService.findCollegeByIdx(collegeIdx);
             return findAllMajors(college);
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

@@ -2,6 +2,7 @@ package com.mmos.mmos.src.service;
 
 import com.mmos.mmos.config.exception.BaseException;
 import com.mmos.mmos.config.exception.BusinessLogicException;
+import com.mmos.mmos.config.exception.DuplicateRequestException;
 import com.mmos.mmos.config.exception.EmptyEntityException;
 import com.mmos.mmos.src.domain.dto.request.PlanSaveRequestDto;
 import com.mmos.mmos.src.domain.dto.request.PlanUpdateRequestDto;
@@ -48,7 +49,7 @@ public class PlanService {
 
             return planRepository.save(plan);
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         }
     }
 
@@ -79,7 +80,7 @@ public class PlanService {
 
             return plan;
         } catch (EmptyEntityException e) {
-            throw new BaseException(EMPTY_PLAN);
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
@@ -94,7 +95,7 @@ public class PlanService {
 
             return plan;
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -106,6 +107,10 @@ public class PlanService {
             Plan plan = findPlanByIdx(planIdx);
             if(!plan.getPlanner().getPlannerDate().isEqual(LocalDate.now()))
                 throw new BusinessLogicException(BUSINESS_LOGIC_ERROR);
+            for (Plan plannerPlan : plan.getPlanner().getPlannerPlans()) {
+                if(plannerPlan.getStudytimeStartTime() != null)
+                    throw new DuplicateRequestException(ALREADY_START_STUDY);
+            }
 
             Planner planner = plan.getPlanner();
             Calendar calendar = planner.getCalendar();
@@ -132,8 +137,9 @@ public class PlanService {
 
             return plan;
         } catch (EmptyEntityException |
-                BusinessLogicException e) {
-            throw new BaseException(e.getStatus());
+                BusinessLogicException |
+                DuplicateRequestException e) {
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -177,7 +183,7 @@ public class PlanService {
 
             return plan;
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

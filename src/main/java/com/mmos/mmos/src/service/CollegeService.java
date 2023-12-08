@@ -41,7 +41,7 @@ public class CollegeService {
 
             return collegeRepository.save(college);
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -53,7 +53,7 @@ public class CollegeService {
             University university = universityService.getUniversity(universityIdx);
             return findAllColleges(university);
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

@@ -53,7 +53,7 @@ public class PlannerService {
             return plannerRepository.save(planner);
         } catch (EmptyEntityException |
                  DuplicateRequestException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -64,7 +64,7 @@ public class PlannerService {
         try {
             return findPlannerByCalendarIdxAndDay(calendarIdx, day);
         } catch (EmptyEntityException e) {
-            throw new BaseException(EMPTY_PLANNER);
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

@@ -9,6 +9,7 @@ import com.mmos.mmos.src.domain.entity.Calendar;
 import com.mmos.mmos.src.domain.entity.Project;
 import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.repository.CalendarRepository;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -67,7 +68,7 @@ public class CalendarService {
             return calendar;
         } catch (EmptyEntityException |
                  DuplicateRequestException e) {
-          throw new BaseException(e.getStatus());
+          throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -113,7 +114,9 @@ public class CalendarService {
 
             return new CalendarSectionDto(calendar, calendarProjectList);
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
         }
     }
 }

@@ -16,7 +16,7 @@ import static com.mmos.mmos.config.HttpResponseStatus.BUSINESS_LOGIC_ERROR;
 import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
 
 @RestController
-@RequestMapping("/dev")
+@RequestMapping("/api/v1/dev")
 @RequiredArgsConstructor
 public class DevPageController extends BaseController {
 
@@ -24,8 +24,8 @@ public class DevPageController extends BaseController {
     private final UniversityService universityService;
     private final MajorService majorService;
 
-    @PostMapping("/university")
-    public ResponseEntity<ResponseApiMessage> saveUniversity(@RequestParam String name) {
+    @PostMapping("/university/{name}")
+    public ResponseEntity<ResponseApiMessage> saveUniversity(@PathVariable String name) {
         try {
             return sendResponseHttpByJson(SUCCESS, "대학 저장 성공",
                     universityService.saveUniversity(name));
@@ -34,8 +34,8 @@ public class DevPageController extends BaseController {
         }
     }
 
-    @PostMapping("/college")
-    public ResponseEntity<ResponseApiMessage> saveCollege(@RequestParam Long universityIdx,
+    @PostMapping("/college/{universityIdx}")
+    public ResponseEntity<ResponseApiMessage> saveCollege(@PathVariable Long universityIdx,
                                                           @RequestParam String name) {
         try {
             return sendResponseHttpByJson(SUCCESS, "단과대 저장 성공",
@@ -45,8 +45,8 @@ public class DevPageController extends BaseController {
         }
     }
 
-    @PostMapping("/major")
-    public ResponseEntity<ResponseApiMessage> saveMajor(@RequestParam Long collegeIdx,
+    @PostMapping("/major/{collegeIdx}")
+    public ResponseEntity<ResponseApiMessage> saveMajor(@PathVariable Long collegeIdx,
                                                           @RequestParam String name) {
         try {
             return sendResponseHttpByJson(SUCCESS, "전공 저장 성공",

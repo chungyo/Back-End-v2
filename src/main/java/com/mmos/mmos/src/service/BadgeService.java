@@ -40,7 +40,7 @@ public class BadgeService {
         try {
             return findBadgeByIdx(badgeIdx);
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -55,7 +55,7 @@ public class BadgeService {
         try {
             return findBadgesByPurpose(purpose);
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

@@ -94,7 +94,7 @@ public class UserBadgeService {
             }
 
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
@@ -117,7 +117,7 @@ public class UserBadgeService {
 
             return responseDtoList;
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -128,7 +128,7 @@ public class UserBadgeService {
         try {
             return findRepresentUserBadgesByUserIndexAndBadgePurpose(userIdx, purpose);
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -151,7 +151,7 @@ public class UserBadgeService {
 
             return badges;
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

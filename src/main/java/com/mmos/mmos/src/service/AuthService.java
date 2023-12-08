@@ -41,8 +41,9 @@ public class AuthService implements LogoutHandler {
             saveToken(user, jwtToken);
             return jwtToken;
         } catch (BaseException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }

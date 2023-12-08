@@ -47,7 +47,7 @@ public class FriendService {
                 friendRepository.save(new Friend(1, user, user));
 
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -79,7 +79,7 @@ public class FriendService {
 
             return friendListOrdered;
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -103,7 +103,7 @@ public class FriendService {
 
             return top3;
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -135,7 +135,7 @@ public class FriendService {
         } catch (EmptyEntityException |
                  DuplicateRequestException |
                  BusinessLogicException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -145,6 +145,8 @@ public class FriendService {
     public Friend acceptFriendRequest(Long userIdx, Long friendIdx) throws BaseException {
         try {
             Friend receiveRequest = findFriendByIdx(friendIdx);
+            System.out.println("receiveRequest.getFriend().getUserIndex()" +receiveRequest.getFriend().getUserIndex());
+            System.out.println("userIdx" + userIdx);
             if(receiveRequest.getFriend().getUserIndex().equals(userIdx))
                 throw new BusinessLogicException(BUSINESS_LOGIC_ERROR);
             else if (receiveRequest.getFriendStatus().equals(1))
@@ -159,7 +161,7 @@ public class FriendService {
         } catch (EmptyEntityException |
                  DuplicateRequestException |
                 BusinessLogicException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -183,7 +185,7 @@ public class FriendService {
             return friend1.getFriendStatus();
         } catch (EmptyEntityException |
                  BusinessLogicException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

@@ -52,6 +52,8 @@ public enum HttpResponseStatus {
     EMPTY_FRIEND(false, BAD_REQUEST.value(), "존재하지 않는 친구입니다."),
     DUPLICATE_FRIEND_REQUEST(false, BAD_REQUEST.value(), "중복된 친구 요청입니다."),
     LOGIN_FAIL(false, BAD_REQUEST.value(), "아이디와 비밀번호를 확인해주세요"),
+    UPDATE_DUPLICATE_ID(false, BAD_REQUEST.value(), "이미 존재하는 아이디입니다."),
+    FORBIDDEN_PLANNER(false, BAD_REQUEST.value(), "플래너 비공개 유저입니다."),
 
     // University
     EMPTY_UNIVERSITY(false,BAD_REQUEST.value(),"대학교가 존재하지 않습니다."),
@@ -78,6 +80,7 @@ public enum HttpResponseStatus {
     PLAN_REDUNDANT_REQUEST(false, BAD_REQUEST.value(),"이미 변경되었습니다."),
     PLAN_ISVISIBLE_FULL(false, BAD_REQUEST.value(),"캘린더에 표시할 수 없습니다."),
     EMPTY_PLAN(false, BAD_REQUEST.value(),"존재하지 않는 플랜입니다."),
+    ALREADY_START_STUDY(false, BAD_REQUEST.value(), "이미 다른 계획이 진행 중입니다."),
 
     // College
     EMPTY_COLLEGE(false, BAD_REQUEST.value(), "해당 대학교에 단과대학이 존재하지 않습니다."),

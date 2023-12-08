@@ -76,10 +76,7 @@ public class Study {
         this.studyUserstudies.add(userStudy);
     }
 
-    public void plusMemberNum() {
-        this.studyMemberNum++;
-    }
-    public void minusMemberNum() {
-        this.studyMemberNum--;
+    public void updateMemberNum(int num) {
+        this.studyMemberNum += num;
     }
 }

@@ -91,7 +91,7 @@ public class StreakService {
             }
         } catch (EmptyEntityException |
                 DuplicateRequestException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -103,7 +103,7 @@ public class StreakService {
             User user = userService.getUser(userIdx);
             return findStreaks60Days(user);
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

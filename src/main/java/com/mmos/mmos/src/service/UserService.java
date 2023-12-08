@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.EmptyStackException;
+
 import static com.mmos.mmos.config.HttpResponseStatus.*;
 import static com.mmos.mmos.utils.SHA256.encrypt;
 
@@ -31,12 +33,21 @@ public class UserService {
                 .orElseThrow(() -> new EmptyEntityException(EMPTY_USER));
     }
 
+    public User findUserByIdAndPwd(Long idx, String pwd) throws BaseException {
+        return userRepository.findUserByUserIndexAndUserPassword(idx, pwd)
+                .orElseThrow(() -> new EmptyEntityException(EMPTY_USER));
+    }
+
+    public boolean isExistById(String id) {
+        return userRepository.existsUserByUserId(id);
+    }
+
     @Transactional
     public User getUser(Long userIdx) throws BaseException {
         try {
             return findUserByIdx(userIdx);
         } catch (EmptyEntityException e) {
-            throw new BaseException(EMPTY_USER);
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -57,7 +68,7 @@ public class UserService {
 
             return userRepository.save(user);
         } catch (DuplicateRequestException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -85,6 +96,15 @@ public class UserService {
     public void updatePwd(User user, String pwd) throws BaseException {
         try {
             user.updatePwd(pwd);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    @Transactional
+    public void updateIsVisible(User user) throws BaseException {
+        try {
+            user.updateIsPlannerVisible(!user.getIsPlannerVisible());
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

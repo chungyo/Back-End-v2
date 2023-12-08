@@ -31,14 +31,14 @@ public class SecurityConfig {
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorizeRequest ->
                         authorizeRequest
-                                .requestMatchers(new AntPathRequestMatcher("/login/**")).permitAll()
-                                .requestMatchers(new AntPathRequestMatcher("/dev/**")).permitAll()
-                                .requestMatchers(new AntPathRequestMatcher("/signup/**")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/api/v1/login/**")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/api/v1/dev/**")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/api/v1/signup/**")).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .logout(logoutConfig -> logoutConfig
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
+                        .logoutUrl("/api/v1/logout")
+                        .logoutSuccessUrl("/api/v1/login?logout")
                         .addLogoutHandler(authService)
                         .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext())))
                 .build();

@@ -38,7 +38,7 @@ public class ProjectService {
         try {
             return findProjectByIdx(projectIdx);
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -69,7 +69,7 @@ public class ProjectService {
 
             return plannerProjectList;
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -105,8 +105,9 @@ public class ProjectService {
 
             user.addProject(project);
             return projectRepository.save(project);
-        } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+        } catch (EmptyEntityException |
+                 BusinessLogicException e) {
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -136,13 +137,13 @@ public class ProjectService {
                         }
                     }
                 }
+                project.updateProjectIsVisible(true);
             }
 
-            project.updateProjectIsVisible(true);
             return project;
         } catch (EmptyEntityException |
                  OutOfRangeException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (BaseException e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -157,7 +158,7 @@ public class ProjectService {
 
             return project;
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (BaseException e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -173,7 +174,7 @@ public class ProjectService {
             if (isStudyPage) {
                 if (!project.getProjectIsStudy())
                     throw new BusinessLogicException(BUSINESS_LOGIC_ERROR);
-                if (userStudyService.getUserStudy(adminUserStudyIdx).getUserstudyMemberStatus().equals(1))
+                if (!userStudyService.getUserStudy(adminUserStudyIdx).getUserstudyMemberStatus().equals(1))
                     throw new NotAuthorizedAccessException(NOT_AUTHORIZED);
             } else if (project.getProjectIsStudy())
                 throw new BusinessLogicException(BUSINESS_LOGIC_ERROR);
@@ -222,9 +223,11 @@ public class ProjectService {
 
             return project;
         } catch (EmptyEntityException |
-                 BusinessLogicException e) {
-            throw new BaseException(e.getStatus());
+                 BusinessLogicException |
+                 NotAuthorizedAccessException e) {
+            throw e;
         } catch (BaseException e) {
+            e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }
@@ -236,7 +239,7 @@ public class ProjectService {
             Project project = findProjectByIdx(projectIdx);
             projectRepository.delete(project);
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -248,7 +251,7 @@ public class ProjectService {
             Project project = findProjectByIdx(projectIdx);
             project.updateIsAttend();
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

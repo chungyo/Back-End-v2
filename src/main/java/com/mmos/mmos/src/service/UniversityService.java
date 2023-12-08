@@ -31,7 +31,7 @@ public class UniversityService {
         try {
             return findUniversity(universityIdx);
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

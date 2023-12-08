@@ -62,7 +62,7 @@ public class PostService {
 
             return postRepository.save(post);
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -93,8 +93,9 @@ public class PostService {
             }
 
             return post;
-        } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+        } catch (EmptyEntityException |
+                 NotAuthorizedAccessException e) {
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -106,7 +107,7 @@ public class PostService {
         try {
             return findPostByIdx(postIdx);
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -125,7 +126,7 @@ public class PostService {
 
             return new PageImpl<>(responseDtoList, pageable, responseDtoList.size());
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -159,7 +160,7 @@ public class PostService {
             Post post = findPostByIdx(postIdx);
             postRepository.delete(post);
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -171,7 +172,7 @@ public class PostService {
             List<Post> posts = searchPromotion(searchStr);
             return new PageImpl<>(posts, pageable, posts.size());
         } catch (EmptyEntityException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);

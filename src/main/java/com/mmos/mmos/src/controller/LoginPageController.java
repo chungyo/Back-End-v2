@@ -18,13 +18,12 @@ import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
 @RequiredArgsConstructor
 public class LoginPageController extends BaseController {
 
-    private final UserService userService;
     private final AuthService authService;
 
-    @PostMapping("/login")
+    @PostMapping("/api/v1/login")
     public ResponseEntity<ResponseApiMessage> login(@RequestBody LoginRequestDto requestDto) {
         try {
-            if(requestDto.getId().isEmpty()
+            if (requestDto.getId().isEmpty()
                     || requestDto.getPwd().isEmpty())
                 throw new BaseException(LOGIN_FAIL);
 
@@ -34,6 +33,4 @@ public class LoginPageController extends BaseController {
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }
     }
-
-
 }

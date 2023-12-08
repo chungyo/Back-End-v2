@@ -18,7 +18,7 @@ public class UserStudyService {
     private final UserService userService;
     private final StudyService studyService;
 
-    public UserStudy findUserStudyByStudyIdxAndUserIdx(Study study, User user) throws BaseException {
+    public UserStudy findUserStudyByStudyAndUser(Study study, User user) throws BaseException {
         return userStudyRepository.findUserStudyByStudyAndUser(study, user)
                 .orElseThrow(() -> new EmptyEntityException(EMPTY_USERSTUDY));
     }
@@ -26,6 +26,18 @@ public class UserStudyService {
     public UserStudy findUserStudyByIdx(Long userStudyIdx) throws BaseException {
         return userStudyRepository.findById(userStudyIdx)
                 .orElseThrow(() -> new EmptyEntityException(EMPTY_USERSTUDY));
+    }
+
+    @Transactional
+    public void updateStudyNum(UserStudy userStudy, boolean isPlus) throws BaseException {
+        try {
+            if(isPlus)
+                userStudy.getStudy().updateMemberNum(1);
+            else
+                userStudy.getStudy().updateMemberNum(-1);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
     }
 
     @Transactional
@@ -56,9 +68,10 @@ public class UserStudyService {
             User user = userService.findUserById(id);
             UserStudy userStudy;
             try {
-                userStudy = findUserStudyByStudyIdxAndUserIdx(leaderUserStudy.getStudy(), user);
+                userStudy = findUserStudyByStudyAndUser(leaderUserStudy.getStudy(), user);
                 throw new DuplicateRequestException(USERSTUDY_COMPLETE_REQUEST);
-            } catch (BaseException e) {
+            } catch (EmptyEntityException e) {
+                e.printStackTrace();
                 // 객체 불러오기
                 Study study = studyService.getStudy(leaderUserStudy.getStudy().getStudyIndex());
 
@@ -72,7 +85,7 @@ public class UserStudyService {
                  DuplicateRequestException |
                  NotAuthorizedAccessException |
                  OutOfRangeException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
@@ -85,34 +98,32 @@ public class UserStudyService {
             // 객체 불러오기
             Study study = studyService.getStudy(studyIdx);
             User user = userService.getUser(userIdx);
-
             // 인원 수가 충분한지 체크
             if(study.getStudyMemberLimit() <= study.getStudyMemberNum()) {
                 throw new OutOfRangeException(USERSTUDY_MEMBER_LIMIT_FULL);
             }
-
             // 중복 검사
             for (UserStudy userStudy : study.getStudyUserstudies())
                 if (userStudy.getUser().equals(user)) {
                     throw new DuplicateRequestException(USERSTUDY_COMPLETE_REQUEST);
                 }
-
             // 객체 생성
             UserStudy userStudy = new UserStudy(memberStatus, user, study);
             // 매핑
             study.addUserStudy(userStudy);
             user.adduserStudies(userStudy);
-            study.plusMemberNum();
 
             return userStudyRepository.save(userStudy);
         } catch (EmptyEntityException |
                  DuplicateRequestException |
                  OutOfRangeException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+
 
     @Transactional
     public void deleteUserStudy(Long adminUserStudyIdx, Long targetUserStudyIdx, boolean isAdmin) throws BaseException {
@@ -122,13 +133,13 @@ public class UserStudyService {
                 if(!adminUserStudy.getUserstudyMemberStatus().equals(1))
                     throw new NotAuthorizedAccessException(NOT_AUTHORIZED);
             }
-
             UserStudy targetUserStudy = findUserStudyByIdx(targetUserStudyIdx);
+
             userStudyRepository.delete(targetUserStudy);
 
         } catch (EmptyEntityException |
                  NotAuthorizedAccessException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -149,17 +160,15 @@ public class UserStudyService {
 
             if(targetUserStudy.getUserstudyMemberStatus() >= 3 &&
                     memberStatus <= 2)
-                targetUserStudy.getStudy().plusMemberNum();
+                updateStudyNum(targetUserStudy, true);
             targetUserStudy.updateMemberStatus(memberStatus);
 
             return targetUserStudy;
         } catch (EmptyEntityException |
                  NotAuthorizedAccessException e) {
-            throw new BaseException(e.getStatus());
+            throw e;
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-
-
 }

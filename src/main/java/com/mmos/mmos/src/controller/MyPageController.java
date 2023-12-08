@@ -2,33 +2,39 @@ package com.mmos.mmos.src.controller;
 
 import com.mmos.mmos.config.ResponseApiMessage;
 import com.mmos.mmos.config.exception.BaseException;
+import com.mmos.mmos.config.exception.DuplicateRequestException;
+import com.mmos.mmos.src.domain.dto.request.LoginRequestDto;
+import com.mmos.mmos.src.domain.dto.request.UpdateIdRequestDto;
 import com.mmos.mmos.src.domain.dto.request.UpdatePwdRequestDto;
 import com.mmos.mmos.src.domain.dto.request.UserDeleteRequestDto;
 import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.domain.entity.UserBadge;
+import com.mmos.mmos.src.service.AuthService;
 import com.mmos.mmos.src.service.UserBadgeService;
 import com.mmos.mmos.src.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import static com.mmos.mmos.config.HttpResponseStatus.*;
 import static com.mmos.mmos.utils.SHA256.encrypt;
 
 @RestController
-@RequestMapping("/info")
+@RequestMapping("/api/v1/info")
 @RequiredArgsConstructor
 public class MyPageController extends BaseController {
 
     private final UserService userService;
     private final UserBadgeService userBadgeService;
+    private final AuthService authService;
 
     // 페이지 로드
     @GetMapping("")
-    public ResponseEntity<ResponseApiMessage> getPage(@RequestParam Long userIdx) {
+    public ResponseEntity<ResponseApiMessage> getPage(@AuthenticationPrincipal User tokenUser) {
         try {
-            User user = userService.getUser(userIdx);
-
+            // 구현 필요
+            userService.getUser(tokenUser.getUserIndex());
 
             return sendResponseHttpByJson(SUCCESS, "페이지 로드 성공", null);
         } catch (BaseException e) {
@@ -36,18 +42,20 @@ public class MyPageController extends BaseController {
         }
     }
 
+    /***
+     * UserBadge prevPfp = userBadgeService.getRepresentBadges(userIdx, "pfp") => null
+     */
     // 프사 변경
-    @PatchMapping("/pfp")
-    public ResponseEntity<ResponseApiMessage> updatePfp(@RequestParam Long userIdx, @RequestParam Long pfpIdx) {
+    @PatchMapping("/pfp/{pfpIdx}")
+    public ResponseEntity<ResponseApiMessage> updatePfp(@AuthenticationPrincipal User tokenUser, @PathVariable Long pfpIdx) {
         try {
-            User user = userService.getUser(userIdx);
             // 기존 프사 찾기
-            System.out.println("visible pfp: " +userBadgeService.getRepresentBadges(userIdx, "pfp"));
-            UserBadge prevPfp = userBadgeService.getRepresentBadges(userIdx, "pfp").get(0);
+
+            UserBadge prevPfp = userBadgeService.getRepresentBadges(tokenUser.getUserIndex(), "pfp").get(0);
             // 새 프사 찾기
             UserBadge newPfp = null;
             boolean isExist = false;
-            for (UserBadge userUserbadge : user.getUserUserbadges()) {
+            for (UserBadge userUserbadge : tokenUser.getUserUserbadges()) {
                 if(userUserbadge.getBadge().getBadgeIndex().equals(pfpIdx)) {
                     newPfp = userUserbadge;
                     isExist = true;
@@ -70,27 +78,31 @@ public class MyPageController extends BaseController {
 
     // 아이디 변경
     @PatchMapping("/id")
-    public ResponseEntity<ResponseApiMessage> updateId(@RequestParam Long userIdx, @RequestParam String id) {
+    public ResponseEntity<ResponseApiMessage> updateId(@AuthenticationPrincipal User tokenUser, @RequestBody UpdateIdRequestDto requestDto) {
         try {
-            User user = userService.getUser(userIdx);
-            // 기존 아이디를 가져오기
-            if(user.getUserId().equals(id))
-                // 변경 성공했다는 문구는 뜨지만 사실 업데이트 되진 않았음
-                return sendResponseHttpByJson(SUCCESS, "아이디 변경 성공", null);
+            String id = requestDto.getId();
+            String pwd = requestDto.getPwd();
+
+            // 입력 아이디 중복 처리
+            if(userService.isExistById(id))
+                throw new DuplicateRequestException(UPDATE_DUPLICATE_ID);
+
+            User user = userService.findUserByIdAndPwd(tokenUser.getUserIndex(), encrypt(pwd));
             // 아이디 변경
             userService.updateId(user, id);
 
-            return sendResponseHttpByJson(SUCCESS, "아이디 변경 성공", null);
+            return sendResponseHttpByJson(SUCCESS, "아이디 변경 성공", authService.authenticate(new LoginRequestDto(id, pwd)));
         } catch (BaseException e) {
+            e.printStackTrace();
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }
     }
 
     // 이름 변경
-    @PatchMapping("/name")
-    public ResponseEntity<ResponseApiMessage> updateName(@RequestParam Long userIdx, @RequestParam String name) {
+    @PatchMapping("/name/{name}")
+    public ResponseEntity<ResponseApiMessage> updateName(@AuthenticationPrincipal User tokenUser, @PathVariable String name) {
         try {
-            User user = userService.getUser(userIdx);
+            User user = userService.getUser(tokenUser.getUserIndex());
             // 기존 이름을 가져오기
             if(user.getUsername().equals(name))
                 // 변경 성공했다는 문구는 뜨지만 사실 업데이트 되진 않았음
@@ -106,9 +118,9 @@ public class MyPageController extends BaseController {
 
     // 비밀번호 변경
     @PatchMapping("/pwd")
-    public ResponseEntity<ResponseApiMessage> updatePwd(@RequestParam Long userIdx, @RequestBody UpdatePwdRequestDto requestDto) {
+    public ResponseEntity<ResponseApiMessage> updatePwd(@AuthenticationPrincipal User tokenUser, @RequestBody UpdatePwdRequestDto requestDto) {
         try {
-            User user = userService.getUser(userIdx);
+            User user = userService.getUser(tokenUser.getUserIndex());
             String prevPwd = encrypt(requestDto.getPrevPwd());
             String newPwd = encrypt(requestDto.getNewPwd());
 
@@ -132,10 +144,10 @@ public class MyPageController extends BaseController {
 
     // 플래너 공개 설정
     @PatchMapping("/planner")
-    public ResponseEntity<ResponseApiMessage> updateIsPlannerVisible(@RequestParam Long userIdx) {
+    public ResponseEntity<ResponseApiMessage> updateIsPlannerVisible(@AuthenticationPrincipal User tokenUser) {
         try {
-            User user = userService.getUser(userIdx);
-            user.updateIsPlannerVisible(!user.getIsPlannerVisible());
+            User user = userService.getUser(tokenUser.getUserIndex());
+            userService.updateIsVisible(user);
 
             return sendResponseHttpByJson(SUCCESS, "플래너 공개 여부 변경 성공", null);
         } catch (BaseException e) {
@@ -145,10 +157,11 @@ public class MyPageController extends BaseController {
 
     // 회원 탈퇴
     @DeleteMapping("")
-    public ResponseEntity<ResponseApiMessage> deleteUser(@RequestParam Long userIdx, @RequestBody UserDeleteRequestDto requestDto) {
+    public ResponseEntity<ResponseApiMessage> deleteUser(@AuthenticationPrincipal User tokenUser, @RequestBody UserDeleteRequestDto requestDto) {
         try {
-            User user = userService.getUser(userIdx);
-            if(user.getUserPassword().equals(requestDto.getPwd()) || user.getUserPassword().equals(requestDto.getCheckPwd()))
+            User user = userService.getUser(tokenUser.getUserIndex());
+
+            if(!user.getUserPassword().equals(encrypt(requestDto.getPwd())) || !requestDto.getPwd().equals(requestDto.getCheckPwd()))
                 throw new BaseException(UPDATE_USER_DIFF_PREVPWD);
 
             userService.deleteUser(user);

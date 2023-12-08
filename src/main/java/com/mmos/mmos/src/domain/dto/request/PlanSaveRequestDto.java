@@ -10,8 +10,6 @@ import java.time.LocalDate;
 public class PlanSaveRequestDto {
 
     private String planName;
-    private Boolean isStudy;
-    private Long userStudyIdx;
     private LocalDate date;
 
 }
