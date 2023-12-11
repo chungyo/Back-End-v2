@@ -108,6 +108,8 @@ public class PlanService {
             if(!plan.getPlanner().getPlannerDate().isEqual(LocalDate.now()))
                 throw new BusinessLogicException(BUSINESS_LOGIC_ERROR);
             for (Plan plannerPlan : plan.getPlanner().getPlannerPlans()) {
+                if(plannerPlan.equals(plan))
+                    continue;
                 if(plannerPlan.getStudytimeStartTime() != null)
                     throw new DuplicateRequestException(ALREADY_START_STUDY);
             }
@@ -141,6 +143,7 @@ public class PlanService {
                 DuplicateRequestException e) {
             throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }
@@ -167,13 +170,9 @@ public class PlanService {
             LocalDate endOfWeek = today.with(DayOfWeek.SUNDAY);
             LocalDate startOfWeek = today.with(DayOfWeek.MONDAY); // 이번 주의 월요일로 설정
 
-            System.out.println("startOfWeek = " + startOfWeek);
-            System.out.println("endOfWeek = " + endOfWeek);
-
             // 이번 주 계획인지 확인하고 맞다면 이번 주 공부 시간에서도 삭제
             for(; today.isBefore(endOfWeek) || today.isEqual(endOfWeek); today = today.plusDays(1)) {
                 if(today.isEqual(plan.getPlanner().getPlannerDate())) {
-                    System.out.println(today.getDayOfMonth());
                     user.minusWeeklyTime(plan.getPlanStudyTime());
                     break;
                 }

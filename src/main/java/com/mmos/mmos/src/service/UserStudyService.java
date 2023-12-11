@@ -41,6 +41,15 @@ public class UserStudyService {
     }
 
     @Transactional
+    public void updateStudyMemberStatus(UserStudy userStudy, int status) throws BaseException {
+        try {
+            userStudy.updateMemberStatus(status);
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    @Transactional
     public UserStudy getUserStudy(Long userStudyIdx) throws BaseException {
         try {
             return findUserStudyByIdx(userStudyIdx);
@@ -129,6 +138,7 @@ public class UserStudyService {
     public void deleteUserStudy(Long adminUserStudyIdx, Long targetUserStudyIdx, boolean isAdmin) throws BaseException {
         try {
             if(isAdmin) {
+                System.out.println("adminUserStudyIdx = " + adminUserStudyIdx);
                 UserStudy adminUserStudy = findUserStudyByIdx(adminUserStudyIdx);
                 if(!adminUserStudy.getUserstudyMemberStatus().equals(1))
                     throw new NotAuthorizedAccessException(NOT_AUTHORIZED);

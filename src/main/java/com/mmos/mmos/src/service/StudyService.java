@@ -58,7 +58,7 @@ public class StudyService {
     }
 
     @Transactional
-    public Page<User> getStudyAppliersOrInvitee(Long studyIdx, Integer status, Pageable pageable) throws BaseException {
+    public List<User> getStudyAppliersOrInvitee(Long studyIdx, Integer status) throws BaseException {
         try {
             Study study = findStudyByIdx(studyIdx);
 
@@ -70,7 +70,7 @@ public class StudyService {
                 }
             }
 
-            return new PageImpl<>(appliersDto, pageable, appliersDto.size());
+            return appliersDto;
         } catch (EmptyEntityException e) {
             throw e;
         } catch (Exception e) {
@@ -90,12 +90,10 @@ public class StudyService {
     }
 
     @Transactional
-    public void deleteStudy(Long studyIdx) throws BaseException {
+    public void deleteStudy(Study study) throws BaseException {
         try {
-            studyRepository.delete(findStudyByIdx(studyIdx));
-        } catch (EmptyEntityException e) {
-            throw e;
-        } catch (Exception e) {
+            studyRepository.delete(study);
+        }  catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }

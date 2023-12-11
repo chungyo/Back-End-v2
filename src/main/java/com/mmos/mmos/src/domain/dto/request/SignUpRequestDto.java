@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class SignUpRequestDto {
+    // 이메일 인증이 완료됐는가
+    private Boolean isCertified;
     // 아이디
     private String id;
     // 비밀번호

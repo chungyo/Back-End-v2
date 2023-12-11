@@ -1,6 +1,7 @@
 package com.mmos.mmos.src.domain.dto.response.home;
 
 import com.mmos.mmos.src.domain.entity.Badge;
+import com.mmos.mmos.src.domain.entity.Friend;
 import com.mmos.mmos.src.domain.entity.Plan;
 import com.mmos.mmos.src.domain.entity.User;
 import lombok.Getter;
@@ -22,7 +23,7 @@ public class HomePageResponseDto {
     public HomePageResponseDto(User user,
                                List<Plan> plans,
                                CalendarSectionDto calendar,
-                               List<User> friends,
+                               List<Friend> friends,
                                Badge tier,
                                List<Badge> badges,
                                Badge pfp) {
@@ -41,8 +42,8 @@ public class HomePageResponseDto {
         this.calendar = calendar;
 
         // Friend Section
-        for (User myFriend : friends) {
-            friend.add(new FriendSectionDto(myFriend));
+        for (Friend myFriend : friends) {
+            friend.add(new FriendSectionDto(myFriend.getUser()));
         }
     }
 }

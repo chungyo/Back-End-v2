@@ -6,6 +6,7 @@ import com.mmos.mmos.config.exception.EmptyEntityException;
 import com.mmos.mmos.src.domain.dto.request.SignUpRequestDto;
 import com.mmos.mmos.src.domain.entity.Major;
 import com.mmos.mmos.src.domain.entity.User;
+import com.mmos.mmos.src.repository.FriendRepository;
 import com.mmos.mmos.src.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final MajorService majorService;
+    private final FriendRepository friendRepository;
 
     public User findUserByIdx(Long userIdx) throws BaseException {
         return userRepository.findById(userIdx)
@@ -115,6 +117,7 @@ public class UserService {
         try {
             userRepository.delete(user);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }

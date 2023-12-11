@@ -2,13 +2,12 @@ package com.mmos.mmos.src.controller;
 
 import com.mmos.mmos.config.ResponseApiMessage;
 import com.mmos.mmos.config.exception.BaseException;
+import com.mmos.mmos.config.exception.BusinessLogicException;
+import com.mmos.mmos.config.exception.NotAuthorizedAccessException;
 import com.mmos.mmos.src.domain.dto.request.CheckEmailDto;
 import com.mmos.mmos.src.domain.dto.request.SendEmailDto;
 import com.mmos.mmos.src.domain.dto.request.SignUpRequestDto;
-import com.mmos.mmos.src.domain.entity.College;
-import com.mmos.mmos.src.domain.entity.Major;
-import com.mmos.mmos.src.domain.entity.University;
-import com.mmos.mmos.src.domain.entity.User;
+import com.mmos.mmos.src.domain.entity.*;
 import com.mmos.mmos.src.service.*;
 import com.univcert.api.UnivCert;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.mmos.mmos.config.HttpResponseStatus.BUSINESS_LOGIC_ERROR;
-import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
+import static com.mmos.mmos.config.HttpResponseStatus.*;
 
 @RestController
 @RequestMapping("/api/v1/signup")
@@ -34,6 +32,7 @@ public class SignUpPageController extends BaseController {
     private final MajorService majorService;
     private final CalendarService calendarService;
     private final UserBadgeService userBadgeService;
+    private final FriendService friendService;
 
     @GetMapping("university")
     public ResponseEntity<ResponseApiMessage> getUniversities() {
@@ -84,10 +83,14 @@ public class SignUpPageController extends BaseController {
     @PostMapping("")
     public ResponseEntity<ResponseApiMessage> signUp(@RequestBody SignUpRequestDto requestDto) {
         try {
+            if(!requestDto.getIsCertified())
+                throw new BusinessLogicException(BUSINESS_LOGIC_ERROR);
+
             User user = userService.saveUser(requestDto);
             userBadgeService.saveUserBadge(user.getUserIndex());
-
             calendarService.saveCalendar(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), user.getUserIndex());
+            friendService.friendWithMe(user.getUserIndex());
+
             return sendResponseHttpByJson(SUCCESS, "회원가입 성공", user);
         } catch (BaseException e) {
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);

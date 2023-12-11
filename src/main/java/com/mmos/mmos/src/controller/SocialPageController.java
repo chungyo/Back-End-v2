@@ -39,10 +39,11 @@ public class SocialPageController extends BaseController {
             friendService.friendWithMe(userIdx);
 
             // 로직
-            List<User> friends = friendService.getFriends(userIdx, 1);
+            List<Friend> friends = friendService.getFriends(userIdx, 1);
             List<User> top3 = friendService.getTop3Friends(userIdx, 1);
+            Integer receivedFriendRequestsNum = friendService.getFriends(userIdx, 3).size();
 
-            return sendResponseHttpByJson(SUCCESS, "소셜 페이지 로드 성공", new SocialPageResponseDto(friends, top3));
+            return sendResponseHttpByJson(SUCCESS, "소셜 페이지 로드 성공", new SocialPageResponseDto(friends, top3, receivedFriendRequestsNum));
         } catch (BaseException e) {
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }
@@ -54,7 +55,7 @@ public class SocialPageController extends BaseController {
         try {
             Friend request = friendService.sendFriendRequest(tokenUser.getUserIndex(), friendId);
 
-            return sendResponseHttpByJson(SUCCESS, "친구 추가 성공", request);
+            return sendResponseHttpByJson(SUCCESS, "친구 요청 보내기 성공", request);
         } catch (BaseException e) {
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }
@@ -76,10 +77,10 @@ public class SocialPageController extends BaseController {
 
     // 친구 요청 거부/취소/친구 삭제
     @DeleteMapping("/request/{friendIdx}")
-    public ResponseEntity<ResponseApiMessage> rejectFriendRequest(@AuthenticationPrincipal User tokenUser, @PathVariable Long friendIdx) {
+    public ResponseEntity<ResponseApiMessage> deleteFriend(@AuthenticationPrincipal User tokenUser, @PathVariable Long friendIdx) {
         try {
             Integer friendStatus = friendService.deleteFriendRequest(tokenUser.getUserIndex(), friendIdx);
-            List<User> myFriends = friendService.getFriends(tokenUser.getUserIndex(), friendStatus);
+            List<Friend> myFriends = friendService.getFriends(tokenUser.getUserIndex(), friendStatus);
 
             return sendResponseHttpByJson(SUCCESS, "친구 요청 삭제", myFriends);
         } catch (BaseException e) {
@@ -91,7 +92,7 @@ public class SocialPageController extends BaseController {
     @GetMapping("/receive")
     public ResponseEntity<ResponseApiMessage> getReceivedFriendRequests(@AuthenticationPrincipal User tokenUser) {
         try {
-            List<User> requestList = friendService.getFriends(tokenUser.getUserIndex(), 3);
+            List<Friend> requestList = friendService.getFriends(tokenUser.getUserIndex(), 3);
 
             return sendResponseHttpByJson(SUCCESS, "받은 친구 요청 목록 조회 성공", requestList);
         } catch (BaseException e) {
@@ -103,7 +104,7 @@ public class SocialPageController extends BaseController {
     @GetMapping("/send")
     public ResponseEntity<ResponseApiMessage> getSentFriendRequests(@AuthenticationPrincipal User tokenUser) {
         try {
-            List<User> requestList = friendService.getFriends(tokenUser.getUserIndex(), 2);
+            List<Friend> requestList = friendService.getFriends(tokenUser.getUserIndex(), 2);
 
             return sendResponseHttpByJson(SUCCESS, "보낸 친구 요청 목록 조회 성공", requestList);
         } catch (BaseException e) {
@@ -116,7 +117,7 @@ public class SocialPageController extends BaseController {
     public ResponseEntity<ResponseApiMessage> updateIsFixed(@AuthenticationPrincipal User tokenUser, @PathVariable Long friendIdx) {
         try {
             friendService.updateIsFixed(tokenUser.getUserIndex(), friendIdx);
-            List<User> myFriends = friendService.getFriends(tokenUser.getUserIndex(), 1);
+            List<Friend> myFriends = friendService.getFriends(tokenUser.getUserIndex(), 1);
 
             return sendResponseHttpByJson(SUCCESS, "친구 상단 고정/해제 성공", myFriends);
         } catch (BaseException e) {
@@ -130,10 +131,20 @@ public class SocialPageController extends BaseController {
     public ResponseEntity<ResponseApiMessage> getFriendPlanner(@AuthenticationPrincipal User tokenUser, @PathVariable Long friendUserIdx) {
         try {
             User friend = userService.getUser(friendUserIdx);
-            if(!friend.getIsPlannerVisible())
+            if (!friend.getIsPlannerVisible())
                 throw new NotAuthorizedAccessException(FORBIDDEN_PLANNER);
-            if(!friendService.getFriends(tokenUser.getUserIndex(), 1).contains(friend))
-                throw new BaseException(EMPTY_FRIEND);
+            if (!tokenUser.getUserIndex().equals(friendUserIdx)) {
+                boolean isExist = false;
+                for (Friend myAllFriend : friendService.getFriends(tokenUser.getUserIndex(), 1)) {
+                    if (!myAllFriend.getFriend().equals(friend)) {
+                        isExist = true;
+                        break;
+                    }
+                }
+                if (!isExist) {
+                    throw new BaseException(EMPTY_FRIEND);
+                }
+            }
 
             Badge tier = userBadgeService.getRepresentBadges(friendUserIdx, "tier").get(0).getBadge();
 
@@ -146,13 +157,14 @@ public class SocialPageController extends BaseController {
             Badge pfp = userBadgeService.getRepresentBadges(friendUserIdx, "pfp").get(0).getBadge();
 
             Planner planner = plannerService.getPlannerByCalendarAndDate(calendarService.getCalendar(
-                    friendUserIdx,
-                    new CalendarGetRequestDto(LocalDate.now().getMonthValue(),
-                                                LocalDate.now().getYear())).getIdx(),
-                                                LocalDate.now());
+                            friendUserIdx,
+                            new CalendarGetRequestDto(LocalDate.now().getMonthValue(),
+                                    LocalDate.now().getYear())).getIdx(),
+                    LocalDate.now());
 
             return sendResponseHttpByJson(SUCCESS, "친구 플래너 조회 성공", new FriendPlannerResponseDto(friend, tier, badges, pfp, planner));
         } catch (BaseException e) {
+            e.printStackTrace();
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }
     }

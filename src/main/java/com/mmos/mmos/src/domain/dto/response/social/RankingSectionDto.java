@@ -26,7 +26,7 @@ public class RankingSectionDto {
             if (userUserbadge.getBadge().getBadgePurpose().equals("tier") && userUserbadge.getUserbadgeIsVisible())
                 this.tier = userUserbadge.getBadge().getBadgeIcon();
         }
-        this.name = user.getUsername();
+        this.name = user.getName();
         this.id = user.getUserId();
         this.WeeklyStudyTime = user.getUserWeeklyStudyTime();
     }

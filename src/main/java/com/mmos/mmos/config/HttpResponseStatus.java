@@ -111,6 +111,7 @@ public enum HttpResponseStatus {
     UPDATE_STUDY_ALREADY_COMPLETE(false, BAD_REQUEST.value(), "이미 완수한 스터디입니다."),
     EMPTY_STUDY(false, BAD_REQUEST.value(), "존재하지 않는 스터디입니다."),
 
+
     // StudyTime
     POST_STUDYTIME_DUPLICATE_REQUEST(false, BAD_REQUEST.value(), "이미 진행 중인 계획이 있습니다."),
     POST_STUDYTIME_INVALID_REQUEST(false, BAD_REQUEST.value(), "진행 중인 계획이 없습니다."),

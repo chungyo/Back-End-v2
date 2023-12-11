@@ -25,7 +25,7 @@ public class HomeSectionDto {
     // 전공
     private String majorName;
     // 도전과제 뱃지 이미지
-    private List<String> badgeImage = new ArrayList<>();
+    private List<String> badgeIcon = new ArrayList<>();
 
     public HomeSectionDto(User user, List<Badge> badges, Badge pfp) {
         this.id = user.getUserId();
@@ -35,7 +35,7 @@ public class HomeSectionDto {
         this.collegeName = user.getMajor().getCollege().getCollegeName();
         this.majorName = user.getMajor().getMajorName();
         for (Badge badge : badges) {
-            badgeImage.add(badge.getBadgeIcon());
+            badgeIcon.add(badge.getBadgeIcon());
         }
     }
 }

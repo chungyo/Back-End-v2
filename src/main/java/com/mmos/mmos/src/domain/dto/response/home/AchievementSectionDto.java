@@ -14,7 +14,7 @@ import java.util.List;
 public class AchievementSectionDto {
 
     // 티어 사진
-    private String tierImage;
+    private String tierIcon;
     // 티어 이름
     private String tierName;
     // 티어 분포도 (ex. 사용자 상위 20% -> 문구 전체)
@@ -35,7 +35,7 @@ public class AchievementSectionDto {
     private List<Streak> streakList = new ArrayList<>();
 
     public AchievementSectionDto(User user, Badge tier) {
-        this.tierImage = tier.getBadgeIcon();
+        this.tierIcon = tier.getBadgeIcon();
         this.tierName = tier.getBadgeName();
         this.tierDistribution = tier.getBadgeInfo();
         this.totalStudyTimes = user.getUserTotalStudyTime() / 60L;

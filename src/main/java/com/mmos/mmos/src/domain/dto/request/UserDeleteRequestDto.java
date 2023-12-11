@@ -7,5 +7,4 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserDeleteRequestDto {
     private String pwd;
-    private String checkPwd;
 }

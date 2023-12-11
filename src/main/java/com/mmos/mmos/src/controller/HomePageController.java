@@ -67,7 +67,7 @@ public class HomePageController extends BaseController {
             }
 
             // Friend 찾기
-            List<User> friends = friendService.getFriends(userIdx, 1);
+            List<Friend> friends = friendService.getFriends(userIdx, 1);
             // 티어 찾기
             Badge tier = userBadgeService.getRepresentBadges(userIdx, "tier").get(0).getBadge();
             // 뱃지 찾기

@@ -81,8 +81,8 @@ public class PlannerPageController extends BaseController {
         }
     } /* public ResponseEntity<ResponseApiMessage> savePlan */
 
-    @PatchMapping("/plans")
-    public ResponseEntity<ResponseApiMessage> updatePlan(@RequestParam Long planIdx, @RequestBody PlanUpdateRequestDto requestDto) {
+    @PatchMapping("/plans/{planIdx}")
+    public ResponseEntity<ResponseApiMessage> updatePlan(@PathVariable Long planIdx, @RequestBody PlanUpdateRequestDto requestDto) {
        try {
            if(requestDto.getNewName() == null)
                throw new EmptyInputException(PLAN_EMPTY_NEWNAME);
@@ -100,6 +100,18 @@ public class PlannerPageController extends BaseController {
             Plan plan = planService.updatePlanIsComplete(planIdx);
             return sendResponseHttpByJson(SUCCESS, "계획 완수 여부 수정 성공", new PlannerSectionDto(plan.getPlanner()));
         } catch (BaseException e) {
+            return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
+        }
+    }
+
+    // 공부 시간 설정
+    @PatchMapping("/plans/time/{planIdx}")
+    public ResponseEntity<ResponseApiMessage> setStudyTime(@PathVariable Long planIdx) {
+        try {
+            Plan plan = planService.setStudyTime(planIdx);
+            return sendResponseHttpByJson(SUCCESS, "계획 공부시간 설정 성공", new PlannerSectionDto(plan.getPlanner()));
+        } catch (BaseException e) {
+            e.printStackTrace();
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }
     }
@@ -183,14 +195,5 @@ public class PlannerPageController extends BaseController {
         }
     }
 
-    // 공부 시간 설정
-    @PatchMapping("/time/{planIdx}")
-    public ResponseEntity<ResponseApiMessage> setStudyTime(@PathVariable Long planIdx) {
-        try {
-            Plan plan = planService.setStudyTime(planIdx);
-            return sendResponseHttpByJson(SUCCESS, "계획 공부시간 설정 성공", new PlannerSectionDto(plan.getPlanner()));
-        } catch (BaseException e) {
-            return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
-        }
-    }
+
 }

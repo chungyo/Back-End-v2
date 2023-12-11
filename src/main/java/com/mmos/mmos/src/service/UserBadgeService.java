@@ -42,7 +42,6 @@ public class UserBadgeService {
     @Transactional
     public void saveUserBadge(Long userIdx) throws BaseException {
         try {
-            System.out.println(true);
             User user = userService.getUser(userIdx);
             List<Badge> badges = badgeService.findAllBadges();
 

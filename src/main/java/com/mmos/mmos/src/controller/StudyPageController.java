@@ -108,8 +108,8 @@ public class StudyPageController extends BaseController {
     }
 
     // 스터디 설정
-    @PatchMapping("")
-    public ResponseEntity<ResponseApiMessage> updateStudy(@RequestParam Long userStudyIdx, @RequestBody StudyUpdateRequestDto requestDto) {
+    @PatchMapping("/{userStudyIdx}")
+    public ResponseEntity<ResponseApiMessage> updateStudy(@PathVariable Long userStudyIdx, @RequestBody StudyUpdateRequestDto requestDto) {
         try {
             UserStudy userStudy = userStudyService.getUserStudy(userStudyIdx);
             return sendResponseHttpByJson(SUCCESS, "스터디 수정 성공",
@@ -120,8 +120,8 @@ public class StudyPageController extends BaseController {
     }
 
     // 스터디 홍보 글쓰기
-    @PostMapping("/promotion")
-    public ResponseEntity<ResponseApiMessage> savePromotion(@RequestParam Long userStudyIdx, @RequestBody PostSaveRequestDto requestDto) {
+    @PostMapping("/promotion/{userStudyIdx}")
+    public ResponseEntity<ResponseApiMessage> savePromotion(@PathVariable Long userStudyIdx, @RequestBody PostSaveRequestDto requestDto) {
         try {
             if(requestDto.getPostTitle().isEmpty())
                 throw new EmptyInputException(POST_POST_EMPTY_TITLE);
@@ -137,8 +137,8 @@ public class StudyPageController extends BaseController {
     }
 
     // 스터디 공지 글쓰기
-    @PostMapping("/notice")
-    public ResponseEntity<ResponseApiMessage> saveNotice(@RequestParam Long userStudyIdx, @RequestBody PostSaveRequestDto requestDto) {
+    @PostMapping("/notice/{userStudyIdx}")
+    public ResponseEntity<ResponseApiMessage> saveNotice(@PathVariable Long userStudyIdx, @RequestBody PostSaveRequestDto requestDto) {
         try {
             if(requestDto.getPostTitle().isEmpty())
                 throw new EmptyInputException(POST_POST_EMPTY_TITLE);
@@ -154,8 +154,8 @@ public class StudyPageController extends BaseController {
     }
 
     // 스터디 홍보 게시판 검색
-    @GetMapping("/promotion/search")
-    public ResponseEntity<ResponseApiMessage> searchPromotion(@RequestParam String searchStr, @PageableDefault(size = 5, sort = "postIndex", direction = Sort.Direction.ASC) Pageable pageable) {
+    @GetMapping("/promotion/search/{searchStr}")
+    public ResponseEntity<ResponseApiMessage> searchPromotion(@PathVariable String searchStr, @PageableDefault(size = 5, sort = "postIndex", direction = Sort.Direction.ASC) Pageable pageable) {
         try {
             return sendResponseHttpByJson(SUCCESS, "스터디 아이디로 검색 성공", postService.searchPromotionByTitleAndContents(searchStr, pageable));
         } catch (BaseException e) {
@@ -164,8 +164,8 @@ public class StudyPageController extends BaseController {
     }
 
     // 스터디 아이디로 검색 & 초대 - 스터디
-    @PostMapping("/members/invite/{id}")
-    public ResponseEntity<ResponseApiMessage> inviteStudy(@RequestParam Long userStudyIdx, @PathVariable String id) {
+    @PostMapping("/members/invite/{userStudyIdx}/{id}")
+    public ResponseEntity<ResponseApiMessage> inviteStudy(@PathVariable Long userStudyIdx, @PathVariable String id) {
         try {
             return sendResponseHttpByJson(SUCCESS, "스터디에 유저 초대 성공.", userStudyService.inviteStudy(userStudyIdx, id));
         } catch (BaseException e) {
@@ -208,10 +208,10 @@ public class StudyPageController extends BaseController {
 
     // 스터디 초대 목록 조회
     @GetMapping("/members/invite/{studyIdx}")
-    public ResponseEntity<ResponseApiMessage> getInviteMembers(@PathVariable Long studyIdx, @PageableDefault(size = 5, sort = "userIndex", direction = Sort.Direction.ASC) Pageable pageable) {
+    public ResponseEntity<ResponseApiMessage> getInviteMembers(@PathVariable Long studyIdx) {
         try {
             return sendResponseHttpByJson(SUCCESS, "초대한 유저 목록 조회 성공.",
-                    studyService.getStudyAppliersOrInvitee(studyIdx, 3, pageable));
+                    studyService.getStudyAppliersOrInvitee(studyIdx, 3));
         } catch (BaseException e) {
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }
@@ -219,10 +219,10 @@ public class StudyPageController extends BaseController {
 
     // 스터디 가입 요청 목록 조회
     @GetMapping("/members/enroll/{studyIdx}")
-    public ResponseEntity<ResponseApiMessage> getJoinMembers(@PathVariable Long studyIdx, @PageableDefault(size = 5, sort = "userIndex", direction = Sort.Direction.ASC) Pageable pageable) {
+    public ResponseEntity<ResponseApiMessage> getJoinMembers(@PathVariable Long studyIdx) {
         try {
             return sendResponseHttpByJson(SUCCESS, "참가 요청 받은 유저 목록 조회 성공.",
-                    studyService.getStudyAppliersOrInvitee(studyIdx, 4, pageable));
+                    studyService.getStudyAppliersOrInvitee(studyIdx, 4));
         } catch (BaseException e) {
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }
@@ -231,7 +231,7 @@ public class StudyPageController extends BaseController {
 
     // 참가 요청 보내기 - 유저
     @PostMapping("/members/enroll/{studyIdx}")
-    public ResponseEntity<ResponseApiMessage> joinStudy(@AuthenticationPrincipal User tokenUser, @PathVariable Long studyIdx) {
+    public ResponseEntity<ResponseApiMessage> joinRequestStudy(@AuthenticationPrincipal User tokenUser, @PathVariable Long studyIdx) {
         try {
             return sendResponseHttpByJson(SUCCESS, "스터디 참가 요청 성공.",
                     userStudyService.saveUserStudy(4, tokenUser.getUserIndex(), studyIdx));
@@ -242,7 +242,7 @@ public class StudyPageController extends BaseController {
 
     // 참가 요청 취소 - 유저
     @DeleteMapping("/members/enroll/{myUserStudyIdx}")
-    public ResponseEntity<ResponseApiMessage> cancelRequest(@PathVariable Long myUserStudyIdx) {
+    public ResponseEntity<ResponseApiMessage> cancelJoinRequestStudy(@PathVariable Long myUserStudyIdx) {
         try {
             userStudyService.deleteUserStudy(null, myUserStudyIdx, false);
             return sendResponseHttpByJson(SUCCESS, "스터디 참가 요청 취소 성공.", null);
@@ -278,22 +278,52 @@ public class StudyPageController extends BaseController {
     public ResponseEntity<ResponseApiMessage> kickMember(@PathVariable Long adminUserStudyIdx, @PathVariable Long targetUserStudyIdx) {
         try {
             userStudyService.deleteUserStudy(adminUserStudyIdx, targetUserStudyIdx, true);
-            UserStudy userStudy = userStudyService.getUserStudy(targetUserStudyIdx);
+            UserStudy userStudy = userStudyService.getUserStudy(adminUserStudyIdx);
             userStudyService.updateStudyNum(userStudy, false);
             return sendResponseHttpByJson(SUCCESS, "스터디 추방 성공.", null);
         } catch (BaseException e) {
+            e.printStackTrace();
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }
     }
 
     // 스터디 나가기
-    @DeleteMapping("/members/{myUserStudyIdx}")
-    public ResponseEntity<ResponseApiMessage> leaveStudy(@PathVariable Long myUserStudyIdx) {
+    @DeleteMapping(value = {"/members/{myUserStudyIdx}/{newLeaderUserStudyIdx}"
+                            , "/members/{myUserStudyIdx}"})
+    public ResponseEntity<ResponseApiMessage> leaveStudy(@PathVariable Long myUserStudyIdx, @PathVariable(required = false) Long newLeaderUserStudyIdx) {
         try {
-            userStudyService.deleteUserStudy(null, myUserStudyIdx, false);
             UserStudy userStudy = userStudyService.getUserStudy(myUserStudyIdx);
+            // 멤버 인원 수 줄이기
             userStudyService.updateStudyNum(userStudy, false);
+
+            // 새 리더 위임
+            if(userStudy.getUserstudyMemberStatus() == 1) {
+                UserStudy newLeader = userStudyService.getUserStudy(newLeaderUserStudyIdx);
+                userStudyService.updateStudyMemberStatus(newLeader, 1);
+            }
+
+            // 삭제
+            userStudyService.deleteUserStudy(null, myUserStudyIdx, false);
             return sendResponseHttpByJson(SUCCESS, "스터디 초대 나가기 성공.", null);
+        } catch (BaseException e) {
+            e.printStackTrace();
+            return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
+        }
+    }
+
+    // 스터디 리더 위임
+    @PatchMapping("/member/{myUserStudyIdx}/{newLeaderUserStudyIdx}")
+    public  ResponseEntity<ResponseApiMessage> updateNewLeader(@PathVariable Long myUserStudyIdx, @PathVariable Long newLeaderUserStudyIdx) {
+        try {
+            UserStudy myUserStudy = userStudyService.getUserStudy(myUserStudyIdx);
+            if(myUserStudy.getUserstudyMemberStatus() != 1)
+                throw new BusinessLogicException(BUSINESS_LOGIC_ERROR);
+
+            UserStudy newLeaderUserStudy = userStudyService.getUserStudy(newLeaderUserStudyIdx);
+            userStudyService.updateStudyMemberStatus(myUserStudy, 2);
+            userStudyService.updateStudyMemberStatus(newLeaderUserStudy, 1);
+
+            return sendResponseHttpByJson(SUCCESS, "스터디 리더 위임 성공.", null);
         } catch (BaseException e) {
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }
@@ -303,13 +333,15 @@ public class StudyPageController extends BaseController {
     @DeleteMapping("/{myUserStudyIdx}")
     public ResponseEntity<ResponseApiMessage> deleteStudy(@PathVariable Long myUserStudyIdx) {
         try {
-            Study study = userStudyService.getUserStudy(myUserStudyIdx).getStudy();
-            for (UserStudy studyUserstudy : study.getStudyUserstudies()) {
-                userStudyService.deleteUserStudy(myUserStudyIdx, studyUserstudy.getUserstudyIndex(), true);
-            }
-            studyService.deleteStudy(study.getStudyIndex());
+            UserStudy userStudy = userStudyService.getUserStudy(myUserStudyIdx);
+
+            if(!userStudy.getUserstudyMemberStatus().equals(1))
+                throw new NotAuthorizedAccessException(NOT_AUTHORIZED);
+
+            studyService.deleteStudy(userStudy.getStudy());
             return sendResponseHttpByJson(SUCCESS, "스터디 삭제 성공.", null);
         } catch (BaseException e) {
+            e.printStackTrace();
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }
     }

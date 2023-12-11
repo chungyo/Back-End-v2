@@ -116,6 +116,7 @@ public class CalendarService {
         } catch (EmptyEntityException e) {
             throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }

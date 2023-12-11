@@ -54,26 +54,26 @@ public class FriendService {
     }
 
     @Transactional
-    public List<User> getFriends(Long userIdx, Integer friendStatus) throws BaseException {
+    public List<Friend> getFriends(Long userIdx, Integer friendStatus) throws BaseException {
         try {
             List<Friend> friendList = findFriendsByUserIndexAndFriendStatus(userIdx, friendStatus);
-            List<User> friendListOrdered = new ArrayList<>();
+            List<Friend> friendListOrdered = new ArrayList<>();
             if (friendStatus == 1) {
                 // 고정 친구 먼저
                 for (Friend friend : friendList) {
                     if(friend.getFriendIsFixed()) {
-                        friendListOrdered.add(friend.getFriend());
+                        friendListOrdered.add(friend);
                     }
                 }
                 // 그 다음 고정 친구 아닌 유저
                 for (Friend friend : friendList) {
                     if(!friend.getFriendIsFixed()) {
-                        friendListOrdered.add(friend.getFriend());
+                        friendListOrdered.add(friend);
                     }
                 }
             } else {
                 for (Friend friend : friendList) {
-                    friendListOrdered.add(friend.getFriend());
+                    friendListOrdered.add(friend);
                 }
             }
 
@@ -145,8 +145,6 @@ public class FriendService {
     public Friend acceptFriendRequest(Long userIdx, Long friendIdx) throws BaseException {
         try {
             Friend receiveRequest = findFriendByIdx(friendIdx);
-            System.out.println("receiveRequest.getFriend().getUserIndex()" +receiveRequest.getFriend().getUserIndex());
-            System.out.println("userIdx" + userIdx);
             if(receiveRequest.getFriend().getUserIndex().equals(userIdx))
                 throw new BusinessLogicException(BUSINESS_LOGIC_ERROR);
             else if (receiveRequest.getFriendStatus().equals(1))
@@ -201,6 +199,17 @@ public class FriendService {
             friend.updateIsFixed(!friend.getFriendIsFixed());
 
             return friend;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    @Transactional
+    public void deleteFriends(User user) throws BaseException {
+        try {
+            List<Friend> friends = friendRepository.findFriendsByFriend(user);
+            friendRepository.deleteAll(friends);
         } catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
