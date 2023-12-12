@@ -353,14 +353,16 @@ public class StudyPageController extends BaseController {
             Project project = projectService.getProject(projectIdx);
             Study study = project.getStudy();
 
+            Project member = null;
             for (Project studyProject : study.getStudyProjects()) {
                 if(studyProject.getProjectNumber().equals(project.getProjectNumber())
                         && studyProject.getUser().getUserIndex().equals(memberIdx)) {
                     projectService.updateIsAttend(studyProject.getProjectIndex());
+                    member = studyProject;
                 }
             }
 
-            return sendResponseHttpByJson(SUCCESS, "스터디 참여 여부 변경 성공.", null);
+            return sendResponseHttpByJson(SUCCESS, "스터디 참여 여부 변경 성공.", member);
         } catch (BaseException e) {
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }
@@ -395,19 +397,21 @@ public class StudyPageController extends BaseController {
                 }
             } biggestNum++;
 
+            Project project = null;
             for (UserStudy studyUserstudy : userStudy.getStudy().getStudyUserstudies()) {
                 if(studyUserstudy.getUserstudyMemberStatus() >= 3)
                     continue;
 
                 User user = studyUserstudy.getUser();
-                Project project;
+
                 project = projectService.saveProject(requestDto, user, true, biggestNum);
                 user.addProject(project);
                 userStudy.getStudy().addProject(project);
             }
 
-            return sendResponseHttpByJson(SUCCESS, "스터디 일정 생성 성공", null);
+            return sendResponseHttpByJson(SUCCESS, "스터디 일정 생성 성공", project);
         } catch (BaseException e) {
+            e.printStackTrace();
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);
         }
     }
@@ -433,7 +437,7 @@ public class StudyPageController extends BaseController {
                     projectService.updateProject(studyProject.getProjectIndex(), requestDto, true, userStudyIdx);
             }
 
-            return sendResponseHttpByJson(SUCCESS, "스터디 일정 수정 성공", null);
+            return sendResponseHttpByJson(SUCCESS, "스터디 일정 수정 성공", project);
         } catch (BaseException e) {
             e.printStackTrace();
             return sendResponseHttpByJson(e.getStatus(), e.getStatus().getMessage(), null);

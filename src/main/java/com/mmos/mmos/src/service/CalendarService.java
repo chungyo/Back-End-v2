@@ -9,9 +9,7 @@ import com.mmos.mmos.src.domain.entity.Calendar;
 import com.mmos.mmos.src.domain.entity.Project;
 import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.repository.CalendarRepository;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

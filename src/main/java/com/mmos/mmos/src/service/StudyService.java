@@ -10,9 +10,6 @@ import com.mmos.mmos.src.domain.entity.UserStudy;
 import com.mmos.mmos.src.repository.PostRepository;
 import com.mmos.mmos.src.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

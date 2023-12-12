@@ -3,11 +3,13 @@ package com.mmos.mmos.src.controller;
 import com.mmos.mmos.config.ResponseApiMessage;
 import com.mmos.mmos.config.exception.BaseException;
 import com.mmos.mmos.config.exception.BusinessLogicException;
-import com.mmos.mmos.config.exception.NotAuthorizedAccessException;
 import com.mmos.mmos.src.domain.dto.request.CheckEmailDto;
 import com.mmos.mmos.src.domain.dto.request.SendEmailDto;
 import com.mmos.mmos.src.domain.dto.request.SignUpRequestDto;
-import com.mmos.mmos.src.domain.entity.*;
+import com.mmos.mmos.src.domain.entity.College;
+import com.mmos.mmos.src.domain.entity.Major;
+import com.mmos.mmos.src.domain.entity.University;
+import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.service.*;
 import com.univcert.api.UnivCert;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.mmos.mmos.config.HttpResponseStatus.*;
+import static com.mmos.mmos.config.HttpResponseStatus.BUSINESS_LOGIC_ERROR;
+import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
 
 @RestController
 @RequestMapping("/api/v1/signup")

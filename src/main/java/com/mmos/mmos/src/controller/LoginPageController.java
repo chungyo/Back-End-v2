@@ -4,7 +4,6 @@ import com.mmos.mmos.config.ResponseApiMessage;
 import com.mmos.mmos.config.exception.BaseException;
 import com.mmos.mmos.src.domain.dto.request.LoginRequestDto;
 import com.mmos.mmos.src.service.AuthService;
-import com.mmos.mmos.src.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

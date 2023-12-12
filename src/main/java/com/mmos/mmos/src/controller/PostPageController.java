@@ -2,7 +2,6 @@ package com.mmos.mmos.src.controller;
 
 import com.mmos.mmos.config.ResponseApiMessage;
 import com.mmos.mmos.config.exception.BaseException;
-import com.mmos.mmos.config.exception.BusinessLogicException;
 import com.mmos.mmos.src.domain.dto.request.PostSaveRequestDto;
 import com.mmos.mmos.src.domain.dto.response.post.PostPageResponseDto;
 import com.mmos.mmos.src.domain.entity.Post;
@@ -11,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static com.mmos.mmos.config.HttpResponseStatus.BUSINESS_LOGIC_ERROR;
 import static com.mmos.mmos.config.HttpResponseStatus.SUCCESS;
 
 @RestController

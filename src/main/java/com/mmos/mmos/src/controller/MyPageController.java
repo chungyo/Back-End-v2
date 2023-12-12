@@ -10,7 +10,6 @@ import com.mmos.mmos.src.domain.dto.request.UserDeleteRequestDto;
 import com.mmos.mmos.src.domain.dto.response.MyPageResponseDto;
 import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.domain.entity.UserBadge;
-import com.mmos.mmos.src.repository.FriendRepository;
 import com.mmos.mmos.src.service.AuthService;
 import com.mmos.mmos.src.service.FriendService;
 import com.mmos.mmos.src.service.UserBadgeService;

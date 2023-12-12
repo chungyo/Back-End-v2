@@ -9,7 +9,6 @@ import com.mmos.mmos.src.domain.entity.User;
 import com.mmos.mmos.src.domain.entity.UserBadge;
 import com.mmos.mmos.src.service.BadgeService;
 import com.mmos.mmos.src.service.UserBadgeService;
-import com.mmos.mmos.src.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
